@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <string name="bottom_sheet_agreement_title">서비스 이용을 위해\n약관에 동의해주세요.</string>
-  <string name="agreement_container_term">(필수) SUWIKI 이용약관</string>
-  <string name="agreement_container_personal_policy">(필수) 개인정보처리방침</string>
-  <string name="bottom_sheet_agreement_button">동의하고 시작하기</string>
-</resources>

@@ -1,46 +1,32 @@
+rootProject.name = "ChukChukHaksa"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
-  includeBuild("build-logic")
-  repositories {
-    google()
-    mavenCentral()
-    gradlePluginPortal()
-  }
+    repositories {
+        google {
+            mavenContent {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
 }
 
 dependencyResolutionManagement {
-  repositories {
-    google()
-    mavenCentral()
-    maven(url = "https://jitpack.io")
-  }
+    repositories {
+        google {
+            mavenContent {
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
 }
 
-rootProject.name = "uswtimetable"
-include(":app-compose")
-
-include(":common:android")
-include(":common:model")
-
-include(":remote:openmajor")
-include(":remote:timetable")
-
-include(":local:openmajor")
-include(":local:timetable")
-
-include(":data:openmajor")
-include(":data:timetable")
-
-include(":domain:openmajor")
-include(":domain:timetable")
-
-include(":presentation:navigator")
-include(":presentation:openmajor")
-include(":presentation:timetable")
-include(":local:common")
-include(":remote:common")
-include(":domain:common")
-include(":presentation:common:ui")
-include(":presentation:common:designsystem")
-include(":shared")
+include(":composeApp")
