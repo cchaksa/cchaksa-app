@@ -18,7 +18,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_17)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -29,7 +29,7 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -71,6 +71,8 @@ kotlin {
             implementation(libs.kmp.firebase.crashlytics)
             implementation(libs.kmp.firebase.analytics)
             implementation(libs.napier)
+
+            implementation(libs.accompanist.systemuicontroller)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
