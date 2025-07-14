@@ -32,6 +32,7 @@ desugar-jdk-libs = "2.1.5"
 napier = "2.7.1"
 accompanistSystemuicontroller = "0.30.1"
 glance = "1.1.1"
+composeRuntime = "1.6.10"
 
 
 [libraries]
@@ -55,6 +56,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 androidx-navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "jetbrains-androidx-navigation" }
+compose-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "composeRuntime" }
 
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }

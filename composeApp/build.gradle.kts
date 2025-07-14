@@ -48,6 +48,7 @@ kotlin {
       implementation(libs.firebase.analytics.ktx)
       implementation(libs.glance.appwidget)
       implementation(libs.glance.material3)
+      implementation(libs.compose.runtime)
     }
     commonMain.dependencies {
       implementation(compose.runtime)
@@ -62,6 +63,7 @@ kotlin {
       implementation(libs.kotlinx.immutable)
       implementation(libs.kotlinx.serialization.json)
       implementation(libs.kotlinx.datetime)
+      implementation(libs.compose.runtime)
 
       implementation(libs.koin.core)
       implementation(libs.koin.compose)

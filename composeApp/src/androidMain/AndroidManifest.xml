@@ -19,16 +19,13 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-    <receiver
-      android:name=".widget.ChukChukWidgetReceiver"
-      android:exported="true">
+    <receiver android:name=".widget.TimetableWidgetReceiver" android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
-
       <meta-data
         android:name="android.appwidget.provider"
-        android:resource="@xml/chukchuk_widget_info" />
+        android:resource="@xml/timetable_widget_info" />
     </receiver>
   </application>
 
