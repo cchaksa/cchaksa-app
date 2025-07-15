@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <application
-        android:name=".ChukChukHaksaApplication"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_wisu_logo"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_wisu_logo"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.ChukChukHaksa">
-        <activity
-            android:exported="true"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
-            android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+  <application
+    android:name=".ChukChukHaksaApplication"
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_wisu_logo"
+    android:label="@string/app_name"
+    android:roundIcon="@mipmap/ic_wisu_logo"
+    android:supportsRtl="true"
+    android:theme="@style/Theme.ChukChukHaksa">
+    <activity
+      android:name=".MainActivity"
+      android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-    </application>
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+    <receiver android:name=".widget.TimetableWidgetReceiver" android:exported="true">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/timetable_widget_info" />
+    </receiver>
+  </application>
 
 </manifest>

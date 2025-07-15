@@ -22,7 +22,6 @@ import chukchukhaksa.composeapp.generated.resources.timetable_screen_need_create
 import chukchukhaksa.composeapp.generated.resources.timetable_screen_select_type_cell_title
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.SuwikiSelectBottomSheet
-import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.model.TimetableCell
@@ -37,7 +36,8 @@ import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-
+import com.chukchukhaksa.mobile.widget.sendWidgetUpdateCommand
+import com.chukchukhaksa.mobile.common.provider.LocalAppContext
 @Composable
 fun TimetableRoute(
     padding: PaddingValues,
@@ -50,6 +50,8 @@ fun TimetableRoute(
     navigateCellEditor: (CellEditorArgument) -> Unit,
 ) {
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
+
+    val context = LocalAppContext.current
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
             is TimetableSideEffect.HandleException -> handleException(sideEffect.throwable)
@@ -63,6 +65,14 @@ fun TimetableRoute(
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getMainTimetable()
+    }
+
+    LaunchedEffect(key1 = uiState.timetable) {
+      if(context != null) {
+        if (uiState.timetable != null) {
+          sendWidgetUpdateCommand(context)
+        }
+      }
     }
 
     TimetableScreen(
