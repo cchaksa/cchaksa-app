@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.chukchukhaksa.mobile.common.provider.LocalAppContext
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
+import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.SemesterSelectScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,8 +24,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview
+@Preview()
 @Composable
 fun AppAndroidPreview() {
-    App()
+  SemesterSelectScreen()
 }
