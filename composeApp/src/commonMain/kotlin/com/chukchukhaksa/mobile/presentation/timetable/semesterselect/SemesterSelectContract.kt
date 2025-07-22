@@ -12,7 +12,7 @@ data class SemesterSelectState(
 )
 
 sealed interface SemesterSelectSideEffect {
-//  data object NavigateAddTimetableCell : SemesterSelectSideEffect
+  data object NavigateTimetableEditor : SemesterSelectSideEffect
 }
 
 val semesterList: PersistentList<Semester> = run {

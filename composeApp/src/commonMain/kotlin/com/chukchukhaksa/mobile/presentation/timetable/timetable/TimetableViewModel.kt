@@ -82,11 +82,12 @@ class TimetableViewModel(
         mviStore.setState { copy(showEditCellBottomSheet = false) }
     }
 
-    fun navigateTimetableEditor() {
-        mviStore.postSideEffect(TimetableSideEffect.NavigateTimetableEditor)
+    fun navigateSemesterSelect() {
+      mviStore.postSideEffect(TimetableSideEffect.NavigateSemesterSelect)
     }
 
-    fun navigateTimetableList() {
+
+  fun navigateTimetableList() {
         mviStore.postSideEffect(TimetableSideEffect.NavigateTimetableList)
     }
 

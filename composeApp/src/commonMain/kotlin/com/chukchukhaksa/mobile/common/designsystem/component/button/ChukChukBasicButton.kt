@@ -6,8 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
@@ -34,12 +36,18 @@ fun ChukChukBasicButton(
   } else {
     Pair(Color(0xffD9D9E3), Color(0xffA3A2B1))
   }
+  val clickableModifier = if (enable) {
+    Modifier.clickable(onClick = onClick)
+  } else {
+    Modifier
+  }
+
   Box(
     modifier = modifier
-      .height(64.dp)
+      .wrapContentHeight()
       .clip(RoundedCornerShape(10.dp))
+      .then(clickableModifier)
       .background(containerBackground)
-      .clickable { onClick() }
       .padding(18.dp),
   ) {
       Text(
@@ -69,17 +77,23 @@ fun BoxScope.ChukChukBasicButton(
   } else {
     Pair(Color(0xffD9D9E3), Color(0xffA3A2B1))
   }
+  val clickableModifier = if (enable) {
+    Modifier.clickable(onClick = onClick)
+  } else {
+    Modifier
+  }
+
   Box(
     modifier = modifier
       .align(Alignment.BottomCenter)
-      .height(64.dp)
+      .wrapContentHeight()
       .clip(RoundedCornerShape(10.dp))
+      .then(clickableModifier)
       .background(containerBackground)
-      .clickable { onClick() }
       .padding(18.dp),
   ) {
     Text(
-      modifier = Modifier.fillMaxSize(),
+      modifier = Modifier.fillMaxWidth(),
       text = text,
       color = textColor,
       fontSize = 18.sp,

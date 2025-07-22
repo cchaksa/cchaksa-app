@@ -26,11 +26,12 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun ChukChukAppBarWithTitle(
+  modifier: Modifier = Modifier,
   title: String,
   onClickBackButton: () -> Unit,
 ) {
   Box(
-    modifier = Modifier
+    modifier = modifier
       .fillMaxWidth()
       .wrapContentHeight()
       .padding(14.dp)

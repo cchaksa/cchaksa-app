@@ -4,9 +4,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,75 +24,90 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.ChukChukAppBarWithTitle
 import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
 import com.chukchukhaksa.mobile.common.designsystem.component.container.ChukChukSelectionContainer
+import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toPersistentList
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SemesterSelectRoute(
-    viewModel: SemesterSelectViewModel = koinViewModel(),
+  viewModel: SemesterSelectViewModel = koinViewModel(),
+  popBackStack: () -> Unit = {},
+  navigateTimetableEditor: () -> Unit = {},
 ) {
-    val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
-    viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
-
+  val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
+  viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
+    when (sideEffect) {
+      is SemesterSelectSideEffect.NavigateTimetableEditor -> navigateTimetableEditor()
     }
-    SemesterSelectScreen(
-        uiState = uiState,
-        onClickSemester = viewModel::updateSelectedSemesterIndex
-    )
+  }
+  SemesterSelectScreen(
+    uiState = uiState,
+    onClickBackButton = popBackStack,
+    onClickSemester = viewModel::updateSelectedSemesterIndex,
+    onClickNextButton = viewModel::navigateTimetableEditor,
+  )
 }
 
 @Composable
 fun SemesterSelectScreen(
-    uiState: SemesterSelectState = SemesterSelectState(),
-    onClickSemester: (Int) -> Unit = {},
+  uiState: SemesterSelectState = SemesterSelectState(),
+  onClickBackButton: () -> Unit = {},
+  onClickSemester: (Int) -> Unit = {},
+  onClickNextButton: () -> Unit = {},
 ) {
-    val semesters = semesterList.map { it.toText() }.toPersistentList()
+  val semesters = semesterList.map { it.toText() }.toPersistentList()
+  val scrollState = rememberScrollState()
 
+  SuwikiBackground(
+    contentWindowInsets = WindowInsets.navigationBars,
+    color = GrayFB,
+  ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ChukChukAppBarWithTitle(
-                title = "시간표 생성하기",
-                onClickBackButton = { },
-            )
-
-            Text(
-                modifier = Modifier.padding(top = 20.dp, bottom = 32.dp),
-                text = "수강학기를 선택해주세요",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                style = TextStyle(letterSpacing = (-0.01).em)
-            )
-
-            Column(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                semesters.forEachIndexed { idx, semester ->
-                    Napier.i("idx == uiState.selectSemesterIndex: ${idx == uiState.selectSemesterIndex}")
-                    ChukChukSelectionContainer(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = semester,
-                        isSelected = idx == uiState.selectSemesterIndex,
-                        onClick = { onClickSemester(idx) }
-                    )
-                }
-            }
-        }
-        ChukChukBasicButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, bottom = 36.dp),
-            text = "다음",
-            enable = uiState.nextBtnEnable,
-            onClick = {}
+      Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        ChukChukAppBarWithTitle(
+          modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
+          title = "시간표 생성하기",
+          onClickBackButton = { onClickBackButton() },
         )
+
+        Text(
+          modifier = Modifier.padding(top = 20.dp, bottom = 32.dp),
+          text = "수강학기를 선택해주세요",
+          fontSize = 24.sp,
+          fontWeight = FontWeight.Bold,
+          textAlign = TextAlign.Center,
+          style = TextStyle(letterSpacing = (-0.01).em),
+        )
+
+        Column(
+          modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .verticalScroll(scrollState),
+          verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+          semesters.forEachIndexed { idx, semester ->
+            ChukChukSelectionContainer(
+              modifier = Modifier.fillMaxWidth(),
+              text = semester,
+              isSelected = idx == uiState.selectSemesterIndex,
+              onClick = { onClickSemester(idx) },
+            )
+          }
+        }
+      }
+      ChukChukBasicButton(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(start = 20.dp, end = 20.dp, bottom = 36.dp),
+        text = "다음",
+        enable = uiState.nextBtnEnable,
+        onClick = { onClickNextButton() },
+      )
     }
+  }
 }
