@@ -84,6 +84,7 @@ fun App(
                             onShowToast = viewModel::onShowToast,
                             navigateOpenMajor = navigator::navigateOpenMajor,
                             navigateCellEditor = navigator::navigateCellEditor,
+                            navigateSemesterSelect = navigator::navigateSemesterSelect,
                         )
                     }
 

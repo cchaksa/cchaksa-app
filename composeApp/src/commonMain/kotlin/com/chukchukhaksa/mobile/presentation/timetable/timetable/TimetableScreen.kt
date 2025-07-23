@@ -42,12 +42,12 @@ import com.chukchukhaksa.mobile.common.provider.LocalAppContext
 fun TimetableRoute(
     padding: PaddingValues,
     viewModel: TimetableViewModel = koinViewModel(),
-    navigateTimetableEditor: () -> Unit,
     navigateOpenLecture: () -> Unit,
     navigateTimetableList: () -> Unit,
     handleException: (Throwable) -> Unit,
     onShowToast: (String) -> Unit,
     navigateCellEditor: (CellEditorArgument) -> Unit,
+    navigateSemesterSelect: () -> Unit,
 ) {
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
 
@@ -57,9 +57,9 @@ fun TimetableRoute(
             is TimetableSideEffect.HandleException -> handleException(sideEffect.throwable)
             TimetableSideEffect.NavigateAddTimetableCell -> navigateOpenLecture()
             TimetableSideEffect.ShowNeedCreateTimetableToast -> onShowToast(getString(Res.string.timetable_screen_need_create_timetable))
-            TimetableSideEffect.NavigateTimetableEditor -> navigateTimetableEditor()
             is TimetableSideEffect.NavigateCellEditor -> navigateCellEditor(sideEffect.argument)
             TimetableSideEffect.NavigateTimetableList -> navigateTimetableList()
+            TimetableSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
         }
     }
 
@@ -78,7 +78,7 @@ fun TimetableRoute(
     TimetableScreen(
         padding = padding,
         uiState = uiState,
-        onClickAddTimetable = viewModel::navigateTimetableEditor,
+        onClickAddTimetable = viewModel::navigateSemesterSelect,
         onClickAppbarAdd = viewModel::navigateAddTimetableCell,
         onClickTimetableCell = viewModel::showEditCellBottomSheet,
         onDismissEditCellBottomSheet = viewModel::hideEditCellBottomSheet,

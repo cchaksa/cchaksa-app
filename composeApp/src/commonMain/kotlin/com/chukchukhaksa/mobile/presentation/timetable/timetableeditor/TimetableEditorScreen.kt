@@ -28,6 +28,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.container.SuwikiSe
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.SuwikiRegularTextField
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
+import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.semesterList
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
