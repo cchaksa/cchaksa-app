@@ -13,6 +13,10 @@ import chukchukhaksa.composeapp.generated.resources.notosanskrbold
 import chukchukhaksa.composeapp.generated.resources.notosanskrlight
 import chukchukhaksa.composeapp.generated.resources.notosanskrmedium
 import chukchukhaksa.composeapp.generated.resources.notosanskrregular
+import chukchukhaksa.composeapp.generated.resources.paperlogybold
+import chukchukhaksa.composeapp.generated.resources.suitbold
+import chukchukhaksa.composeapp.generated.resources.suitmedium
+import chukchukhaksa.composeapp.generated.resources.suitregular
 import org.jetbrains.compose.resources.Font
 
 @Composable
@@ -24,9 +28,45 @@ fun notoSansFamily() = FontFamily(
 )
 
 @Composable
+fun paperlogyFamily() = FontFamily(
+    Font(Res.font.paperlogybold, FontWeight.Bold),
+)
+
+@Composable
+fun suitFamily() = FontFamily(
+    Font(Res.font.suitbold, FontWeight.Bold),
+    Font(Res.font.suitmedium, FontWeight.Medium),
+    Font(Res.font.suitregular, FontWeight.Normal),
+)
+
+@Composable
 private fun notoSansStyle() = TextStyle(
     fontFamily = notoSansFamily(),
     lineHeight = 1.5.em,
+    lineHeightStyle = LineHeightStyle(
+        alignment = LineHeightStyle.Alignment.Center,
+        trim = LineHeightStyle.Trim.None,
+    ),
+    color = Black,
+)
+
+@Composable
+private fun paperlogyStyle() = TextStyle(
+    fontFamily = paperlogyFamily(),
+    lineHeight = 1.5.em,
+    letterSpacing = (-0.01).em,
+    lineHeightStyle = LineHeightStyle(
+        alignment = LineHeightStyle.Alignment.Center,
+        trim = LineHeightStyle.Trim.None,
+    ),
+    color = Black,
+)
+
+@Composable
+private fun suitStyle() = TextStyle(
+    fontFamily = suitFamily(),
+    lineHeight = 1.6.em,
+    letterSpacing = (-0.02).em,
     lineHeightStyle = LineHeightStyle(
         alignment = LineHeightStyle.Alignment.Center,
         trim = LineHeightStyle.Trim.None,
@@ -128,6 +168,70 @@ fun Typography(): SuwikiTypography {
     )
 }
 
+@Composable
+fun CCHaksaTypography(): CCHaksaTypography {
+    val paperlogyStyle = paperlogyStyle()
+    val suitStyle = suitStyle()
+
+    return CCHaksaTypography(
+        titleExlg2 = paperlogyStyle.copy(
+            fontWeight = FontWeight.Bold,
+            fontSize = 32.sp,
+        ),
+        titleExlg = paperlogyStyle.copy(
+            fontWeight = FontWeight.Bold,
+            fontSize = 28.sp,
+        ),
+        titleLg = paperlogyStyle.copy(
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+        ),
+
+        bodyExlg = suitStyle.copy(
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+        ),
+        bodyLgStrong = suitStyle.copy(
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+        ),
+        bodyLg = suitStyle.copy(
+            fontWeight = FontWeight.Normal,
+            fontSize = 18.sp,
+        ),
+        bodyMdStrong = suitStyle.copy(
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+        ),
+        bodyMd = suitStyle.copy(
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+        ),
+        bodySm = suitStyle.copy(
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.sp,
+        ),
+        bodyXs = suitStyle.copy(
+            fontWeight = FontWeight.Normal,
+            fontSize = 12.sp,
+        ),
+    )
+}
+
+data class CCHaksaTypography(
+    val titleExlg2: TextStyle,
+    val titleExlg: TextStyle,
+    val titleLg: TextStyle,
+
+    val bodyExlg: TextStyle,
+    val bodyLgStrong: TextStyle,
+    val bodyLg: TextStyle,
+    val bodyMdStrong: TextStyle,
+    val bodyMd: TextStyle,
+    val bodySm: TextStyle,
+    val bodyXs: TextStyle,
+)
+
 data class SuwikiTypography(
     val header1: TextStyle,
     val header2: TextStyle,
@@ -177,5 +281,20 @@ val LocalTypography = staticCompositionLocalOf {
         caption5 = TextStyle.Default,
         caption6 = TextStyle.Default,
         caption7 = TextStyle.Default,
+    )
+}
+
+val LocalCCHaksaTypography = staticCompositionLocalOf {
+    CCHaksaTypography(
+        titleExlg2 = TextStyle.Default,
+        titleExlg = TextStyle.Default,
+        titleLg = TextStyle.Default,
+        bodyExlg = TextStyle.Default,
+        bodyLgStrong = TextStyle.Default,
+        bodyLg = TextStyle.Default,
+        bodyMdStrong = TextStyle.Default,
+        bodyMd = TextStyle.Default,
+        bodySm = TextStyle.Default,
+        bodyXs = TextStyle.Default,
     )
 }
