@@ -22,9 +22,32 @@ fun SuwikiTheme(
   }
 }
 
+@Composable
+fun CCHaksaTheme(
+  content: @Composable () -> Unit,
+) {
+  CompositionLocalProvider(
+    LocalCCHaksaTypography provides CCHaksaTypography(),
+  ) {
+    MaterialTheme(
+      colorScheme = lightColorScheme(
+        background = White100,
+      ),
+      content = content,
+    )
+  }
+}
+
 object SuwikiTheme {
   val typography: SuwikiTypography
     @Composable
     @ReadOnlyComposable
     get() = LocalTypography.current
+}
+
+object CCHaksaTheme {
+  val typography: CCHaksaTypography
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalCCHaksaTypography.current
 }
