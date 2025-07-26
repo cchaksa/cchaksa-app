@@ -10,7 +10,7 @@ import kotlinx.datetime.toLocalDateTime
 data class SemesterSelectState(
   val selectSemesterIndex: Int? = null,
   val selectSemester: Semester? = null,
-  val nextBtnEnable: Boolean = false,
+  val nextButtonEnable: Boolean = false,
 )
 
 sealed interface SemesterSelectSideEffect {

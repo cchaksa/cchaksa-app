@@ -4,14 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,23 +21,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.create_timetable_need_select_semester
 import chukchukhaksa.composeapp.generated.resources.create_timetable_screen_placeholder
-import chukchukhaksa.composeapp.generated.resources.word_complete
-import chukchukhaksa.composeapp.generated.resources.word_select_semester
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.ChukChukAppBarWithTitle
-import com.chukchukhaksa.mobile.common.designsystem.component.appbar.SuwikiAppBarWithTitle
-import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.SuwikiSelectBottomSheet
 import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
-import com.chukchukhaksa.mobile.common.designsystem.component.button.SuwikiContainedLargeButton
-import com.chukchukhaksa.mobile.common.designsystem.component.container.SuwikiSelectionContainer
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.ChukChukRegularTextField
-import com.chukchukhaksa.mobile.common.designsystem.component.textfield.SuwikiRegularTextField
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.semesterList
-import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -110,7 +98,7 @@ fun TimetableEditorScreen(
                     modifier = Modifier.padding(top = 196.dp, start = 4.dp, end = 4.dp),
                     value = uiState.name,
                     onValueChanged = onValueChangeTimetableName,
-                    onClearBtnClicked = onClickTextFieldClearButton,
+                    onClearButtonClicked = onClickTextFieldClearButton,
                     placeholder = stringResource(Res.string.create_timetable_screen_placeholder),
                 )
 

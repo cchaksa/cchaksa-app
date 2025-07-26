@@ -102,7 +102,7 @@ fun SemesterSelectScreen(
           .align(Alignment.BottomCenter)
           .padding(start = 20.dp, end = 20.dp, bottom = 36.dp),
         text = "다음",
-        enable = uiState.nextBtnEnable,
+        enable = uiState.nextButtonEnable,
         onClick = { onClickNextButton(semesterList[uiState.selectSemesterIndex!!]) },
       )
     }

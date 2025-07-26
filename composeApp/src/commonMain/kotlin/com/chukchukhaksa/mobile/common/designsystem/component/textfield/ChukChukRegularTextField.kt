@@ -11,13 +11,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.designsystem.component.button.TextFieldClearButton
@@ -33,7 +31,7 @@ fun ChukChukRegularTextField(
   modifier: Modifier = Modifier,
   value: String = "",
   onValueChanged: (String) -> Unit = {},
-  onClearBtnClicked: () -> Unit = {},
+  onClearButtonClicked: () -> Unit = {},
   placeholder: String = "",
 ) {
   val (borderColor, textColor, textStyle) = if(value.isEmpty()) {
@@ -70,7 +68,7 @@ fun ChukChukRegularTextField(
           }
         }
         Spacer(modifier = Modifier.width(8.dp))
-        TextFieldClearButton(onClick = onClearBtnClicked)
+        TextFieldClearButton(onClick = onClearButtonClicked)
       }
     },
   )

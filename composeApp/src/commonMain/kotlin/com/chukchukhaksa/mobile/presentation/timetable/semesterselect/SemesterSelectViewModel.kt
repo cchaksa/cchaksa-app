@@ -1,6 +1,5 @@
 package com.chukchukhaksa.mobile.presentation.timetable.semesterselect
 
-import androidx.compose.runtime.SideEffect
 import androidx.lifecycle.ViewModel
 import com.chukchukhaksa.mobile.common.ui.mviStore
 
@@ -11,7 +10,7 @@ class SemesterSelectViewModel : ViewModel() {
         mviStore.setState {
             copy(selectSemesterIndex = if (mviStore.uiState.value.selectSemesterIndex == idx) null else idx)
         }
-        mviStore.setState { copy(nextBtnEnable = mviStore.uiState.value.selectSemesterIndex != null) }
+        mviStore.setState { copy(nextButtonEnable = mviStore.uiState.value.selectSemesterIndex != null) }
 
     }
 
