@@ -17,12 +17,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.ChukChukAppBarWithTitle
@@ -31,6 +27,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.container.ChukChuk
 import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
+import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import kotlinx.collections.immutable.toPersistentList
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -38,12 +35,12 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SemesterSelectRoute(
   viewModel: SemesterSelectViewModel = koinViewModel(),
   popBackStack: () -> Unit = {},
-  navigateTimetableEditor: () -> Unit = {},
+  navigateTimetableEditor: (TimetableEditorArgument) -> Unit,
 ) {
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
   viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
     when (sideEffect) {
-      is SemesterSelectSideEffect.NavigateTimetableEditor -> navigateTimetableEditor()
+      is SemesterSelectSideEffect.NavigateTimetableEditor -> navigateTimetableEditor(sideEffect.semester)
     }
   }
   SemesterSelectScreen(
@@ -59,7 +56,7 @@ fun SemesterSelectScreen(
   uiState: SemesterSelectState = SemesterSelectState(),
   onClickBackButton: () -> Unit = {},
   onClickSemester: (Int) -> Unit = {},
-  onClickNextButton: () -> Unit = {},
+  onClickNextButton: (Semester) -> Unit = {},
 ) {
   val semesters = semesterList.map { it.toText() }.toPersistentList()
   val scrollState = rememberScrollState()
@@ -106,7 +103,7 @@ fun SemesterSelectScreen(
           .padding(start = 20.dp, end = 20.dp, bottom = 36.dp),
         text = "다음",
         enable = uiState.nextBtnEnable,
-        onClick = { onClickNextButton() },
+        onClick = { onClickNextButton(semesterList[uiState.selectSemesterIndex!!]) },
       )
     }
   }

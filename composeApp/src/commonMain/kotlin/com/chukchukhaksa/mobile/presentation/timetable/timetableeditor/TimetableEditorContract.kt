@@ -7,7 +7,6 @@ import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.Semester
 
 data class TimetableEditorState(
     val name: String = "",
-    val isSheetOpenSemester: Boolean = false,
     val selectedSemesterPosition: Int? = null,
 ) {
     val semester = selectedSemesterPosition?.let { semesterList.getOrNull(it) }

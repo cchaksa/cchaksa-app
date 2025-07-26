@@ -124,7 +124,7 @@ fun NavGraphBuilder.timetableNavGraph(
   ) {
       SemesterSelectRoute(
         popBackStack = popBackStack,
-        navigateTimetableEditor = { navigateTimetableEditor(TimetableEditorArgument()) },
+        navigateTimetableEditor = navigateTimetableEditor,
     )
   }
 }

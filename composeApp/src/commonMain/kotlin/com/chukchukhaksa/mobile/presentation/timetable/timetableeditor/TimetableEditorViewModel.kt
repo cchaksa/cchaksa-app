@@ -26,18 +26,6 @@ class TimetableEditorViewModel(
         timetableEditorArgument.toState(),
     )
 
-    fun showSemesterBottomSheet() {
-        mviStore.setState { copy(isSheetOpenSemester = true) }
-    }
-
-    fun hideSemesterBottomSheet() {
-        mviStore.setState { copy(isSheetOpenSemester = false) }
-    }
-
-    fun updateSemesterPosition(position: Int) {
-        mviStore.setState { copy(selectedSemesterPosition = position) }
-    }
-
     fun updateName(name: String) {
         mviStore.setState { copy(name = name) }
     }
