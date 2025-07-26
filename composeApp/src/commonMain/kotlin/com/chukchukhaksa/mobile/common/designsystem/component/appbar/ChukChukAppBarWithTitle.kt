@@ -14,14 +14,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
 import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.ic_appbar_arrow_left_chukchuk
+import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
+import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -50,10 +47,8 @@ fun ChukChukAppBarWithTitle(
       )
       Text(
         text = title,
-        fontSize = 16.sp,
-        color = Color(0xff2B2B2B),
-        fontWeight = FontWeight.Bold,
-        style = TextStyle(letterSpacing = (-0.02).em),
+        color = Black100,
+        style = CCHaksaTheme.typography.bodyMdStrong,
       )
     }
   }

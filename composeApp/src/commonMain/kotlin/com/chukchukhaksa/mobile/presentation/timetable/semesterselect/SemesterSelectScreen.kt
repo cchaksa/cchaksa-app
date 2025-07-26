@@ -28,6 +28,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.ChukChukAppBarWithTitle
 import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
 import com.chukchukhaksa.mobile.common.designsystem.component.container.ChukChukSelectionContainer
+import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import kotlinx.collections.immutable.toPersistentList
@@ -78,10 +79,8 @@ fun SemesterSelectScreen(
         Text(
           modifier = Modifier.padding(top = 20.dp, bottom = 32.dp),
           text = "수강학기를 선택해주세요",
-          fontSize = 24.sp,
-          fontWeight = FontWeight.Bold,
           textAlign = TextAlign.Center,
-          style = TextStyle(letterSpacing = (-0.01).em),
+          style = CCHaksaTheme.typography.titleLg,
         )
 
         Column(

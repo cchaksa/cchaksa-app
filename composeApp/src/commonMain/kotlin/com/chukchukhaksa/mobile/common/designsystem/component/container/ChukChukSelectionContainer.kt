@@ -15,13 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
+import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
+import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
+import com.chukchukhaksa.mobile.common.designsystem.theme.Purple500
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 
 @Composable
 fun ChukChukSelectionContainer(
@@ -31,9 +30,9 @@ fun ChukChukSelectionContainer(
   onClick: () -> Unit,
 ) {
   val (containerBackground, textColor, borderColor) = if (isSelected) {
-    Triple(Color(0xff2B2B2B), Color(0xff9F94FF), Color(0xff2B2B2B))
+    Triple(Black100, Purple500, Black100)
   } else {
-    Triple(Color(0xffFFFFFF), Color(0xff2B2B2B), Color(0xFFE8E9EF))
+    Triple(White100, Black100, Gray200)
   }
   Box(
     modifier = modifier
@@ -49,13 +48,8 @@ fun ChukChukSelectionContainer(
         .align(Alignment.CenterStart),
       text = text,
       color = textColor,
-      fontSize = 18.sp,
-      textAlign = TextAlign.Start,
-      fontWeight = FontWeight.Bold,
-      style = TextStyle(
-        letterSpacing = (-0.02).em,
-        lineHeight = 1.5.em
-      ),
+//      textAlign = TextAlign.Start,
+      style = CCHaksaTheme.typography.bodyLgStrong,
     )
   }
 }

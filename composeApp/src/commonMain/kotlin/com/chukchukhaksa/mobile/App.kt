@@ -19,6 +19,7 @@ import chukchukhaksa.composeapp.generated.resources.dialog_update_mandatory_head
 import chukchukhaksa.composeapp.generated.resources.word_confirm
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.SuwikiDialog
 import com.chukchukhaksa.mobile.common.designsystem.component.toast.SuwikiToast
+import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.kmp.SetStatusBarColor
@@ -37,7 +38,7 @@ fun App(
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     SetStatusBarColor()
-    SuwikiTheme {
+    CCHaksaTheme {
         KoinContext {
             val uiState = viewModel.mviStore.uiState.collectAsState().value
             val uriHandler = LocalUriHandler.current
