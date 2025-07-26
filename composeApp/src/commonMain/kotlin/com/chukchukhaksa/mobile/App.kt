@@ -86,6 +86,7 @@ fun App(
                             navigateOpenMajor = navigator::navigateOpenMajor,
                             navigateCellEditor = navigator::navigateCellEditor,
                             navigateSemesterSelect = navigator::navigateSemesterSelect,
+                            navigateTimetable = navigator::navigatetimetable,
                         )
                     }
 

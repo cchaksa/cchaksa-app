@@ -11,6 +11,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.Timet
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateCellEditor
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateOpenLecture
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateSemesterSelect
+import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateTimetable
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateTimetableEditor
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateTimetableList
 
@@ -41,6 +42,10 @@ class MainNavigator(
 
     fun navigateOpenLecture() {
         navController.navigateOpenLecture()
+    }
+
+    fun navigatetimetable() {
+        navController.navigateTimetable()
     }
 
     fun popBackStackIfNotHome() {

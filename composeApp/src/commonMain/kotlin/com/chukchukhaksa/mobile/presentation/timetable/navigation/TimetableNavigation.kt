@@ -34,7 +34,11 @@ fun NavController.navigateCellEditor(argument: CellEditorArgument = CellEditorAr
 }
 
 fun NavController.navigateSemesterSelect() {
-  navigate(TimetableRoute.semesterSelectRoute)
+    navigate(TimetableRoute.semesterSelectRoute)
+}
+
+fun NavController.navigateTimetable() {
+    popBackStack(TimetableRoute.route, inclusive = false)
 }
 
 fun NavGraphBuilder.timetableNavGraph(
@@ -47,6 +51,7 @@ fun NavGraphBuilder.timetableNavGraph(
     navigateOpenLecture: () -> Unit,
     navigateCellEditor: (CellEditorArgument) -> Unit,
     navigateSemesterSelect: () -> Unit,
+    navigateTimetable:() -> Unit,
     handleException: (Throwable) -> Unit,
     onShowToast: (String) -> Unit,
 ) {
@@ -74,6 +79,7 @@ fun NavGraphBuilder.timetableNavGraph(
         ),
     ) {
         TimetableEditorRoute(
+            navigateTimetable = navigateTimetable,
             popBackStack = popBackStack,
             handleException = handleException,
             onShowToast = onShowToast,

@@ -48,6 +48,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun TimetableEditorRoute(
     viewModel: TimetableEditorViewModel = koinViewModel(),
+    navigateTimetable: () -> Unit,
     popBackStack: () -> Unit,
     handleException: (Throwable) -> Unit,
     onShowToast: (String) -> Unit,
@@ -60,6 +61,7 @@ fun TimetableEditorRoute(
             TimetableEditorSideEffect.NeedSelectSemesterToast -> onShowToast(
                 getString(Res.string.create_timetable_need_select_semester),
             )
+            TimetableEditorSideEffect.NavigateTimetable -> navigateTimetable()
         }
     }
     TimetableEditorScreen(

@@ -19,6 +19,7 @@ internal fun TimetableEditorArgument.toState() = TimetableEditorState(
 )
 
 sealed interface TimetableEditorSideEffect {
+    data object NavigateTimetable : TimetableEditorSideEffect
     data object PopBackStack : TimetableEditorSideEffect
     data object NeedSelectSemesterToast : TimetableEditorSideEffect
     data class HandleException(val throwable: Throwable) : TimetableEditorSideEffect

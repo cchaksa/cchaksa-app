@@ -59,7 +59,7 @@ class TimetableEditorViewModel(
 
         useCase
             .onSuccess {
-                mviStore.postSideEffect(TimetableEditorSideEffect.PopBackStack)
+                mviStore.postSideEffect(TimetableEditorSideEffect.NavigateTimetable)
             }.onFailure {
                 mviStore.postSideEffect(TimetableEditorSideEffect.HandleException(it))
             }
