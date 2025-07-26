@@ -61,14 +61,10 @@ fun SemesterSelectScreen(
   val semesters = semesterList.map { it.toText() }.toPersistentList()
   val scrollState = rememberScrollState()
 
-  SuwikiBackground(
-    contentWindowInsets = WindowInsets.navigationBars,
-    color = GrayFB,
-  ) {
+  SuwikiBackground {
     Box(modifier = Modifier.fillMaxSize()) {
       Column(horizontalAlignment = Alignment.CenterHorizontally) {
         ChukChukAppBarWithTitle(
-          modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
           title = "시간표 생성하기",
           onClickBackButton = { onClickBackButton() },
         )
