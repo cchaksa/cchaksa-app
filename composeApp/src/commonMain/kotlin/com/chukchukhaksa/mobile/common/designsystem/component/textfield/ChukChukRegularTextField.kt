@@ -58,7 +58,6 @@ fun ChukChukRegularTextField(
         verticalAlignment = Alignment.CenterVertically,
       ) {
         Box(modifier = Modifier.weight(1f)) {
-          innerTextField()
           if (value.isEmpty()) {
             Text(
               text = placeholder,
@@ -66,6 +65,7 @@ fun ChukChukRegularTextField(
               style = textStyle
             )
           }
+          innerTextField()
         }
         Spacer(modifier = Modifier.width(8.dp))
         TextFieldClearButton(onClick = onClearButtonClicked)
