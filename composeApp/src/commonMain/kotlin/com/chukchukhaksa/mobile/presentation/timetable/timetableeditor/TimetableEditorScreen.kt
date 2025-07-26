@@ -33,6 +33,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.Suwiki
 import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
 import com.chukchukhaksa.mobile.common.designsystem.component.button.SuwikiContainedLargeButton
 import com.chukchukhaksa.mobile.common.designsystem.component.container.SuwikiSelectionContainer
+import com.chukchukhaksa.mobile.common.designsystem.component.textfield.ChukChukRegularTextField
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.SuwikiRegularTextField
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
@@ -103,11 +104,11 @@ fun TimetableEditorScreen(
                   textAlign = TextAlign.Center,
                 )
 
-                SuwikiRegularTextField(
+                ChukChukRegularTextField(
                     modifier = Modifier.padding(top = 196.dp, start = 4.dp, end = 4.dp),
                     value = uiState.name,
-                    onValueChange = onValueChangeTimetableName,
-                    onClickClearButton = onClickTextFieldClearButton,
+                    onValueChanged = onValueChangeTimetableName,
+                    onClearBtnClicked = onClickTextFieldClearButton,
                     placeholder = stringResource(Res.string.create_timetable_screen_placeholder),
                 )
 
