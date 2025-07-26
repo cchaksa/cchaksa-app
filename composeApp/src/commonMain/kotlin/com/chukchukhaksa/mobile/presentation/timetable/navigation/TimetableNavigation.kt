@@ -38,7 +38,9 @@ fun NavController.navigateSemesterSelect() {
 }
 
 fun NavController.navigateTimetable() {
-    popBackStack(TimetableRoute.route, inclusive = false)
+    navigate(TimetableRoute.route) {
+      popUpTo(0)
+    }
 }
 
 fun NavGraphBuilder.timetableNavGraph(
