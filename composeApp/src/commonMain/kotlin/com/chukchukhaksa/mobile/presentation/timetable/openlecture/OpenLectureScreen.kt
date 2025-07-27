@@ -51,7 +51,7 @@ import chukchukhaksa.composeapp.generated.resources.word_open_major
 import chukchukhaksa.composeapp.generated.resources.word_school_level
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.SuwikiAppBarWithTextButton
-import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.SuwikiBottomSheet
+import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchBottomSheet
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.SuwikiSelectBottomSheet
 import com.chukchukhaksa.mobile.common.designsystem.component.button.SuwikiContainedLargeButton
 import com.chukchukhaksa.mobile.common.designsystem.component.loading.LoadingScreen
@@ -303,8 +303,7 @@ private fun ColorSelectBottomSheet(
     onClickColorChip: (TimetableCellColor) -> Unit,
     onClickApply: () -> Unit,
 ) {
-    SuwikiBottomSheet(
-        isSheetOpen = isSheetOpen,
+    CchBottomSheet(
         onDismissRequest = onDismissColorSelectBottomSheet,
     ) {
         Column(
