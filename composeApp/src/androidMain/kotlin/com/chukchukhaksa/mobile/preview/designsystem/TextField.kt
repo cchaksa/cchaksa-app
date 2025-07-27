@@ -12,8 +12,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchSearchTextField
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.SuwikiRegularTextField
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.SuwikiSmallTextField
+import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 
@@ -81,6 +83,44 @@ fun SuwikiSmallTextFieldPreview() {
                 value = normalValue,
                 onValueChange = { normalValue = it },
                 onClickClearButton = { normalValue = "" },
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@Composable
+fun CchSearchTextFieldPreview() {
+    CCHaksaTheme {
+        var beforeValue by remember { mutableStateOf("") }
+        var typingValue by remember { mutableStateOf("강의명") }
+        var afterValue by remember { mutableStateOf("강의명강의명") }
+
+        Column(
+            modifier = Modifier
+                .background(White)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            // Before state
+            CchSearchTextField(
+                value = beforeValue,
+                onValueChange = { beforeValue = it },
+                placeholder = "강의명을 입력하세요"
+            )
+
+            // Typing state  
+            CchSearchTextField(
+                value = typingValue,
+                onValueChange = { typingValue = it },
+                placeholder = "강의명을 입력하세요"
+            )
+
+            // After state
+            CchSearchTextField(
+                value = afterValue,
+                onValueChange = { afterValue = it },
+                placeholder = "강의명을 입력하세요"
             )
         }
     }

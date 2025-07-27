@@ -148,3 +148,4 @@ When creating new UI components:
 2. Preview components in `preview/designsystem/` package
 3. Follow existing color naming conventions (100-600 scale)
 4. Prefer typography styles over hardcoded text styles
+```
