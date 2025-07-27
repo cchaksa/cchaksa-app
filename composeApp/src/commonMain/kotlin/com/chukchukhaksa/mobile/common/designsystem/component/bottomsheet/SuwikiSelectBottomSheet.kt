@@ -36,11 +36,10 @@ fun SuwikiSelectBottomSheet(
     title: String,
     selectedPosition: Int?,
 ) {
-    SuwikiBottomSheet(
+    CchBottomSheet(
         sheetState = rememberModalBottomSheetState(
             skipPartiallyExpanded = true,
         ),
-        isSheetOpen = isSheetOpen,
         onDismissRequest = onDismissRequest,
     ) {
         SuwikiSelectBottomSheetContent(
