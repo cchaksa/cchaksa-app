@@ -1,5 +1,6 @@
 package com.chukchukhaksa.mobile.presentation.timetable.semesterselect
 
+import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.datetime.Clock
@@ -8,11 +9,12 @@ import kotlinx.datetime.toLocalDateTime
 
 data class SemesterSelectState(
   val selectSemesterIndex: Int? = null,
-  val nextBtnEnable: Boolean = false,
+  val selectSemester: Semester? = null,
+  val nextButtonEnable: Boolean = false,
 )
 
 sealed interface SemesterSelectSideEffect {
-  data object NavigateTimetableEditor : SemesterSelectSideEffect
+  data class NavigateTimetableEditor(val semester: TimetableEditorArgument): SemesterSelectSideEffect
 }
 
 val semesterList: PersistentList<Semester> = run {
@@ -35,3 +37,8 @@ data class Semester(
 ) {
   fun toText() = "${year}년 ${semester}학기"
 }
+
+fun Semester.toTimetableEditorArgument() = TimetableEditorArgument(
+  year = year,
+  semester = semester,
+)

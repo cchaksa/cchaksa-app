@@ -10,11 +10,16 @@ class SemesterSelectViewModel : ViewModel() {
         mviStore.setState {
             copy(selectSemesterIndex = if (mviStore.uiState.value.selectSemesterIndex == idx) null else idx)
         }
-        mviStore.setState { copy(nextBtnEnable = mviStore.uiState.value.selectSemesterIndex != null) }
+        mviStore.setState { copy(nextButtonEnable = mviStore.uiState.value.selectSemesterIndex != null) }
+
     }
 
-    fun navigateTimetableEditor() {
-      mviStore.postSideEffect(SemesterSelectSideEffect.NavigateTimetableEditor)
+    fun updateSelectSemester(semester: Semester?) = mviStore.setState { copy(selectSemester = semester) }
+
+    fun navigateTimetableEditor(semester: Semester?) {
+      if (semester != null) {
+        mviStore.postSideEffect(SemesterSelectSideEffect.NavigateTimetableEditor(semester.toTimetableEditorArgument()))
+      }
     }
 
 }

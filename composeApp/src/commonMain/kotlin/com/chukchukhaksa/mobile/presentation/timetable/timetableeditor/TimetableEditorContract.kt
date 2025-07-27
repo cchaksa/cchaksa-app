@@ -7,7 +7,6 @@ import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.Semester
 
 data class TimetableEditorState(
     val name: String = "",
-    val isSheetOpenSemester: Boolean = false,
     val selectedSemesterPosition: Int? = null,
 ) {
     val semester = selectedSemesterPosition?.let { semesterList.getOrNull(it) }
@@ -20,6 +19,7 @@ internal fun TimetableEditorArgument.toState() = TimetableEditorState(
 )
 
 sealed interface TimetableEditorSideEffect {
+    data object NavigateTimetable : TimetableEditorSideEffect
     data object PopBackStack : TimetableEditorSideEffect
     data object NeedSelectSemesterToast : TimetableEditorSideEffect
     data class HandleException(val throwable: Throwable) : TimetableEditorSideEffect

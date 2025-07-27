@@ -17,19 +17,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.ChukChukAppBarWithTitle
 import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
 import com.chukchukhaksa.mobile.common.designsystem.component.container.ChukChukSelectionContainer
+import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
+import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import kotlinx.collections.immutable.toPersistentList
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -37,12 +35,12 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SemesterSelectRoute(
   viewModel: SemesterSelectViewModel = koinViewModel(),
   popBackStack: () -> Unit = {},
-  navigateTimetableEditor: () -> Unit = {},
+  navigateTimetableEditor: (TimetableEditorArgument) -> Unit,
 ) {
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
   viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
     when (sideEffect) {
-      is SemesterSelectSideEffect.NavigateTimetableEditor -> navigateTimetableEditor()
+      is SemesterSelectSideEffect.NavigateTimetableEditor -> navigateTimetableEditor(sideEffect.semester)
     }
   }
   SemesterSelectScreen(
@@ -58,19 +56,15 @@ fun SemesterSelectScreen(
   uiState: SemesterSelectState = SemesterSelectState(),
   onClickBackButton: () -> Unit = {},
   onClickSemester: (Int) -> Unit = {},
-  onClickNextButton: () -> Unit = {},
+  onClickNextButton: (Semester) -> Unit = {},
 ) {
   val semesters = semesterList.map { it.toText() }.toPersistentList()
   val scrollState = rememberScrollState()
 
-  SuwikiBackground(
-    contentWindowInsets = WindowInsets.navigationBars,
-    color = GrayFB,
-  ) {
+  SuwikiBackground {
     Box(modifier = Modifier.fillMaxSize()) {
       Column(horizontalAlignment = Alignment.CenterHorizontally) {
         ChukChukAppBarWithTitle(
-          modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
           title = "시간표 생성하기",
           onClickBackButton = { onClickBackButton() },
         )
@@ -78,10 +72,8 @@ fun SemesterSelectScreen(
         Text(
           modifier = Modifier.padding(top = 20.dp, bottom = 32.dp),
           text = "수강학기를 선택해주세요",
-          fontSize = 24.sp,
-          fontWeight = FontWeight.Bold,
           textAlign = TextAlign.Center,
-          style = TextStyle(letterSpacing = (-0.01).em),
+          style = CCHaksaTheme.typography.titleLg,
         )
 
         Column(
@@ -104,10 +96,10 @@ fun SemesterSelectScreen(
         modifier = Modifier
           .fillMaxWidth()
           .align(Alignment.BottomCenter)
-          .padding(start = 20.dp, end = 20.dp, bottom = 36.dp),
+          .padding(start = 16.dp, end = 16.dp, bottom = 36.dp),
         text = "다음",
-        enable = uiState.nextBtnEnable,
-        onClick = { onClickNextButton() },
+        enable = uiState.nextButtonEnable,
+        onClick = { onClickNextButton(semesterList[uiState.selectSemesterIndex!!]) },
       )
     }
   }
