@@ -94,7 +94,7 @@ fun CchSearchTextFieldPreview() {
     CCHaksaTheme {
         var beforeValue by remember { mutableStateOf("") }
         var typingValue by remember { mutableStateOf("강의명") }
-        var afterValue by remember { mutableStateOf("강의명강의명") }
+        var afterValue by remember { mutableStateOf("강의명강의명강의명강의명강의명강의명강의명강의명") }
 
         Column(
             modifier = Modifier
@@ -109,7 +109,7 @@ fun CchSearchTextFieldPreview() {
                 placeholder = "강의명을 입력하세요"
             )
 
-            // Typing state  
+            // Typing state
             CchSearchTextField(
                 value = typingValue,
                 onValueChange = { typingValue = it },
