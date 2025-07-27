@@ -11,7 +11,7 @@ data class TimetableState(
   val cellType: TimetableCellType = TimetableCellType.CLASSNAME_PROFESSOR_LOCATION,
   val selectedCell: TimetableCell = TimetableCell(color = TimetableCellColor.GRAY_DARK),
   val showEditCellBottomSheet: Boolean = false,
-  val showTimetableEmptyColumn: Boolean? = null,
+  val timetableScreenContent: TimetableScreenContent? = null,
   val showSelectCellTypeBottomSheet: Boolean = false,
 )
 
@@ -22,4 +22,10 @@ sealed interface TimetableSideEffect {
   data class NavigateCellEditor(val argument: CellEditorArgument) : TimetableSideEffect
   data class HandleException(val throwable: Throwable) : TimetableSideEffect
   data object NavigateSemesterSelect : TimetableSideEffect
+}
+
+enum class TimetableScreenContent {
+  TIMETABLE,
+  EMPTY_TIMETABLE,
+  HOME
 }

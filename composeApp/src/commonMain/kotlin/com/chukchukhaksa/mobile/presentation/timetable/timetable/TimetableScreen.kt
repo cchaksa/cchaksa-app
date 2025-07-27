@@ -23,6 +23,7 @@ import chukchukhaksa.composeapp.generated.resources.timetable_screen_need_create
 import chukchukhaksa.composeapp.generated.resources.timetable_screen_select_type_cell_title
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.SuwikiSelectBottomSheet
+import com.chukchukhaksa.mobile.common.designsystem.component.tabbar.CchTabBar
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.model.TimetableCell
@@ -95,6 +96,9 @@ fun TimetableRoute(
         },
         onClickSetting = viewModel::showSelectCellTypeBottomSheet,
         onClickHamburger = viewModel::navigateTimetableList,
+        onClickHome = viewModel::showHomeScreen,
+        onClickTimetable = viewModel::getMainTimetable,
+        onClickMyPage = viewModel::showHomeScreen,
     )
 }
 
@@ -112,6 +116,9 @@ fun TimetableScreen(
     onClickSelectBottomSheetItem: (Int) -> Unit = {},
     onClickSetting: () -> Unit = {},
     onClickHamburger: () -> Unit = {},
+    onClickHome: () -> Unit = {},
+    onClickTimetable: () -> Unit = {},
+    onClickMyPage: () -> Unit = {}
 ) {
     val semester = "${uiState.timetable?.year}년 ${uiState.timetable?.semester}학기"
     SuwikiBackground {
@@ -120,17 +127,15 @@ fun TimetableScreen(
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            TimetableAppbar(
-                modifier = Modifier.padding(top = 8.dp, bottom = 12.dp, start = 20.dp, end = 20.dp),
-                semester = semester,
-                name = uiState.timetable?.name,
-                onClickAdd = onClickAppbarAdd,
-                onClickHamburger = onClickHamburger,
-                onClickSetting = onClickSetting,
+            CchTabBar(
+                timetableScreenContent = uiState.timetableScreenContent ?: TimetableScreenContent.EMPTY_TIMETABLE,
+                onClickHome = { onClickHome() },
+                onClickTimetable = { onClickTimetable() },
+                onClickMyPage = { onClickMyPage() }
             )
 
             AnimatedVisibility(
-                visible = uiState.showTimetableEmptyColumn == true,
+                visible = uiState.timetableScreenContent == TimetableScreenContent.EMPTY_TIMETABLE,
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
@@ -143,15 +148,25 @@ fun TimetableScreen(
             }
 
             AnimatedVisibility(
-                visible = uiState.showTimetableEmptyColumn == false,
+                visible = uiState.timetableScreenContent == TimetableScreenContent.TIMETABLE,
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
-                Timetable(
-                    timetable = uiState.timetable ?: com.chukchukhaksa.mobile.common.model.Timetable(),
-                    type = uiState.cellType,
-                    onClickTimetableCell = onClickTimetableCell,
+              Column {
+                TimetableAppbar(
+                  modifier = Modifier.padding(top = 8.dp, bottom = 12.dp, start = 20.dp, end = 20.dp),
+                  semester = semester,
+                  name = uiState.timetable?.name,
+                  onClickAdd = onClickAppbarAdd,
+                  onClickHamburger = onClickHamburger,
+                  onClickSetting = onClickSetting,
                 )
+                Timetable(
+                  timetable = uiState.timetable ?: com.chukchukhaksa.mobile.common.model.Timetable(),
+                  type = uiState.cellType,
+                  onClickTimetableCell = onClickTimetableCell,
+                )
+              }
             }
         }
     }

@@ -1,0 +1,90 @@
+package com.chukchukhaksa.mobile.common.designsystem.component.tabbar
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import chukchukhaksa.composeapp.generated.resources.Res
+import chukchukhaksa.composeapp.generated.resources.ic_tabbar_dot
+import chukchukhaksa.composeapp.generated.resources.ic_tabbar_mypage
+import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
+import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
+import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.presentation.timetable.timetable.TimetableScreenContent
+import org.jetbrains.compose.resources.painterResource
+
+@Composable
+fun CchTabBar(
+  timetableScreenContent: TimetableScreenContent,
+  onClickHome: () -> Unit,
+  onClickTimetable: () -> Unit,
+  onClickMyPage: () -> Unit,
+) {
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(10.dp)
+  ) {
+    CchTabBarItem(
+      modifier = Modifier.padding(start = 14.dp, end = 24.dp, bottom = 2.dp),
+      text = "홈",
+      isSelected = (timetableScreenContent == TimetableScreenContent.HOME),
+      onClick = { onClickHome() }
+    )
+
+    CchTabBarItem(
+      modifier = Modifier.padding(bottom = 2.dp),
+      text = "시간표",
+      isSelected = (timetableScreenContent == TimetableScreenContent.EMPTY_TIMETABLE || timetableScreenContent == TimetableScreenContent.TIMETABLE),
+      onClick = { onClickTimetable() }
+    )
+
+    Spacer(modifier = Modifier.weight(1f))
+
+    Icon(
+      modifier = Modifier
+        .padding(top = 4.dp, bottom = 4.dp, end = 10.dp)
+        .clickable { onClickMyPage() },
+      painter = painterResource(Res.drawable.ic_tabbar_mypage),
+      contentDescription = "",
+      tint = Black100,
+    )
+  }
+}
+
+@Composable
+fun CchTabBarItem(
+  modifier: Modifier = Modifier,
+  text: String,
+  isSelected: Boolean,
+  onClick: () -> Unit,
+) {
+  val textColor = if (isSelected) Black100 else Gray400
+
+  Column(
+    modifier = modifier.suwikiClickable { onClick() },
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    Icon(
+      painter = painterResource(Res.drawable.ic_tabbar_dot),
+      contentDescription = "",
+      tint = if (isSelected) Black100 else White100,
+    )
+    Text(
+      text = text,
+      style = CCHaksaTheme.typography.bodyMdStrong,
+      color = textColor,
+    )
+  }
+}
