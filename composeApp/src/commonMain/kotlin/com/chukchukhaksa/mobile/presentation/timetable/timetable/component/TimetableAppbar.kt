@@ -3,6 +3,7 @@ package com.chukchukhaksa.mobile.presentation.timetable.timetable.component
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -20,7 +21,10 @@ import chukchukhaksa.composeapp.generated.resources.ic_timetable_hamburger
 import chukchukhaksa.composeapp.generated.resources.ic_timetable_setting
 import chukchukhaksa.composeapp.generated.resources.word_timetable
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black
+import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
+import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
+import com.chukchukhaksa.mobile.common.designsystem.theme.Purple600
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.ui.suwikiClickable
 import org.jetbrains.compose.resources.painterResource
@@ -28,59 +32,69 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TimetableAppbar(
-    modifier: Modifier = Modifier,
-    name: String? = null,
-    onClickAdd: () -> Unit = {},
-    onClickHamburger: () -> Unit = {},
-    onClickSetting: () -> Unit = {},
+  modifier: Modifier = Modifier,
+  semester: String? = null,
+  name: String? = null,
+  onClickAdd: () -> Unit = {},
+  onClickHamburger: () -> Unit = {},
+  onClickSetting: () -> Unit = {},
 ) {
+  Column(
+    modifier = modifier.fillMaxWidth(),
+    verticalArrangement = Arrangement.spacedBy(2.dp),
+    horizontalAlignment = Alignment.Start,
+  ) {
+    Text(
+      text = semester ?: "",
+      style = CCHaksaTheme.typography.bodySm,
+      color = Purple600,
+    )
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 28.dp, start = 24.dp, end = 20.dp, bottom = 12.dp),
-        verticalAlignment = Alignment.Bottom,
-        horizontalArrangement = Arrangement.spacedBy(18.dp),
+      modifier = Modifier.fillMaxWidth(),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Crossfade(
-            modifier = Modifier.weight(1f),
-            targetState = name,
-            label = "name",
-        ) { name ->
-            Text(
-                modifier = Modifier.weight(1f),
-                overflow = TextOverflow.Ellipsis,
-                text = name ?: stringResource(Res.string.word_timetable),
-                style = SuwikiTheme.typography.header1,
-                color = Black,
-                maxLines = 1,
-            )
-        }
-
-        Icon(
-            modifier = Modifier
-                .clip(CircleShape)
-                .suwikiClickable(onClick = onClickAdd),
-            painter = painterResource(Res.drawable.ic_timetable_add),
-            contentDescription = "",
-            tint = Gray95,
+      Crossfade(
+        modifier = Modifier.weight(1f),
+        targetState = name,
+        label = "name",
+      ) { name ->
+        Text(
+          modifier = Modifier.weight(1f),
+          overflow = TextOverflow.Ellipsis,
+          text = name ?: stringResource(Res.string.word_timetable),
+          style = CCHaksaTheme.typography.bodyLgStrong,
+          color = Black100,
+          maxLines = 1,
         )
+      }
 
-        Icon(
-            modifier = Modifier
-                .clip(CircleShape)
-                .suwikiClickable(onClick = onClickHamburger),
-            painter = painterResource(Res.drawable.ic_timetable_hamburger),
-            contentDescription = "",
-            tint = Gray95,
-        )
+      Icon(
+        modifier = Modifier
+          .clip(CircleShape)
+          .suwikiClickable(onClick = onClickAdd),
+        painter = painterResource(Res.drawable.ic_timetable_add),
+        contentDescription = "",
+        tint = Black100,
+      )
 
-        Icon(
-            modifier = Modifier
-                .clip(CircleShape)
-                .suwikiClickable(onClick = onClickSetting),
-            painter = painterResource(Res.drawable.ic_timetable_setting),
-            contentDescription = "",
-            tint = Gray95,
-        )
+      Icon(
+        modifier = Modifier
+          .clip(CircleShape)
+          .suwikiClickable(onClick = onClickHamburger),
+        painter = painterResource(Res.drawable.ic_timetable_hamburger),
+        contentDescription = "",
+        tint = Black100,
+      )
+
+      Icon(
+        modifier = Modifier
+          .clip(CircleShape)
+          .suwikiClickable(onClick = onClickSetting),
+        painter = painterResource(Res.drawable.ic_timetable_setting),
+        contentDescription = "",
+        tint = Black100,
+      )
     }
+  }
 }

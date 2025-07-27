@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.timetable_screen_need_create_timetable
@@ -112,17 +113,16 @@ fun TimetableScreen(
     onClickSetting: () -> Unit = {},
     onClickHamburger: () -> Unit = {},
 ) {
-    SuwikiBackground(
-        contentWindowInsets = WindowInsets.navigationBars,
-        color = GrayFB
-    ) {
+    val semester = "${uiState.timetable?.year}년 ${uiState.timetable?.semester}학기"
+    SuwikiBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
         ) {
             TimetableAppbar(
-                modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
+                modifier = Modifier.padding(top = 8.dp, bottom = 12.dp, start = 20.dp, end = 20.dp),
+                semester = semester,
                 name = uiState.timetable?.name,
                 onClickAdd = onClickAppbarAdd,
                 onClickHamburger = onClickHamburger,
