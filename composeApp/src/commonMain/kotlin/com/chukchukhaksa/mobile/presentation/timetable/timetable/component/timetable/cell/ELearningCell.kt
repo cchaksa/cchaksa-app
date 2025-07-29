@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.chukchukhaksa.mobile.common.model.TimetableCell
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.toText
 
 @Composable
@@ -25,7 +25,7 @@ internal fun ELearningCell(
     EmptyCell(
         modifier = modifier
             .fillMaxWidth()
-            .suwikiClickable {
+            .cchClickable {
                 onClickClassCell(cell)
             },
         text = text,

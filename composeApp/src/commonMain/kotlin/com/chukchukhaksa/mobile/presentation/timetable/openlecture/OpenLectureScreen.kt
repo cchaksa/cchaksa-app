@@ -62,7 +62,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.model.OpenLecture
 import com.chukchukhaksa.mobile.common.model.TimetableCellColor
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.common.ui.timetableCellColorHexMap
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor.OpenMajorBottomSheet
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
@@ -337,7 +337,7 @@ private fun ColorSelectBottomSheet(
               .aspectRatio(1f)
               .clip(CircleShape)
               .background(Color(timetableCellColorHexMap[it]!!))
-              .suwikiClickable(
+              .cchClickable(
                 rippleEnabled = false,
                 onClick = { onClickColorChip(it) },
               ),
@@ -372,7 +372,7 @@ private fun FilterContainer(
     modifier = Modifier
       .clip(RoundedCornerShape(size = 10.dp))
       .border(width = 1.dp, color = GrayF6, shape = RoundedCornerShape(size = 10.dp))
-      .suwikiClickable(onClick = onClick)
+      .cchClickable(onClick = onClick)
       .padding(vertical = 6.dp, horizontal = 9.dp),
     verticalAlignment = Alignment.CenterVertically,
   ) {

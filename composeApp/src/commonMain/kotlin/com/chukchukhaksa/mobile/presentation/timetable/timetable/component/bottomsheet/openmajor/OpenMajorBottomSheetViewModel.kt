@@ -13,65 +13,60 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class OpenMajorBottomSheetViewModel(
-    private val getOpenMajorListUseCase: GetOpenMajorListUseCase,
-    private val openLectureRepository: OpenLectureRepository,
-    savedStateHandle: SavedStateHandle,
+  private val getOpenMajorListUseCase: GetOpenMajorListUseCase,
+  private val openLectureRepository: OpenLectureRepository,
 ) : ViewModel() {
-    val mviStore: MviStore<OpenMajorState, OpenMajorSideEffect> = mviStore(OpenMajorState())
+  val mviStore: MviStore<OpenMajorState, OpenMajorSideEffect> = mviStore(OpenMajorState())
 
-    private var selectedOpenMajor = "전체"
-    private val allOpenMajorList = mutableListOf<String>()
+  private var selectedOpenMajor = "전체"
+  private val allOpenMajorList = mutableListOf<String>()
 
-    fun updateSearchValue(searchValue: String) {
-        mviStore.setState { copy(searchValue = searchValue) }
-        reduceOpenMajorList(searchValue)
+  fun updateSearchValue(searchValue: String) {
+    mviStore.setState { copy(searchValue = searchValue) }
+    reduceOpenMajorList(searchValue)
+  }
+
+  fun updateSelectedOpenMajor(openMajor: String) {
+    selectedOpenMajor = openMajor
+    mviStore.postSideEffect(OpenMajorSideEffect.PopBackStackWithArgument(selectedOpenMajor))
+  }
+
+  fun popBackStack() {
+    mviStore.postSideEffect(OpenMajorSideEffect.PopBackStack)
+  }
+
+  fun changeBottomShadowVisible(show: Boolean) {
+    mviStore.setState { copy(showBottomShadow = show) }
+  }
+
+  fun setInitialSelectedOpenMajor(initialSelectedOpenMajor: String) {
+    selectedOpenMajor = initialSelectedOpenMajor
+  }
+
+  fun initData() {
+    mviStore.setState { copy(isLoading = true) }
+    getOpenMajor()
+    mviStore.setState { copy(isLoading = false) }
+  }
+
+  private fun getOpenMajor() {
+    getOpenMajorListUseCase().onEach {
+      allOpenMajorList.clear()
+      val firebaseOpenMajor = openLectureRepository.getOpenMajor()
+      allOpenMajorList.addAll((it + firebaseOpenMajor).distinct())
+      reduceOpenMajorList()
+    }.catch {
+    }.launchIn(viewModelScope)
+  }
+
+  private fun reduceOpenMajorList(searchValue: String = mviStore.uiState.value.searchValue) {
+    mviStore.setState {
+      copy(
+        filteredAllOpenMajorList = allOpenMajorList.toOpenMajorList(
+          searchValue = searchValue,
+          selectedOpenMajor = selectedOpenMajor,
+        ),
+      )
     }
-
-    fun updateSelectedOpenMajor(openMajor: String) {
-        selectedOpenMajor = openMajor
-        reduceOpenMajorList()
-    }
-
-    fun popBackStack() {
-        mviStore.postSideEffect(OpenMajorSideEffect.PopBackStack)
-    }
-
-    fun popBackStackWithArgument() {
-        mviStore.postSideEffect(OpenMajorSideEffect.PopBackStackWithArgument(selectedOpenMajor))
-    }
-
-    fun changeBottomShadowVisible(show: Boolean) {
-        mviStore.setState { copy(showBottomShadow = show) }
-    }
-
-    fun setInitialSelectedOpenMajor(initialSelectedOpenMajor: String) {
-        selectedOpenMajor = initialSelectedOpenMajor
-    }
-
-    fun initData() {
-        mviStore.setState { copy(isLoading = true) }
-        getOpenMajor()
-        mviStore.setState{ copy(isLoading = false) }
-    }
-
-    private fun getOpenMajor() {
-        getOpenMajorListUseCase().onEach {
-            allOpenMajorList.clear()
-            val firebaseOpenMajor = openLectureRepository.getOpenMajor()
-            allOpenMajorList.addAll((it + firebaseOpenMajor).distinct())
-            reduceOpenMajorList()
-        }.catch {
-        }.launchIn(viewModelScope)
-    }
-
-    private fun reduceOpenMajorList(searchValue: String = mviStore.uiState.value.searchValue) {
-        mviStore.setState {
-                copy(
-                    filteredAllOpenMajorList = allOpenMajorList.toOpenMajorList(
-                        searchValue = searchValue,
-                        selectedOpenMajor = selectedOpenMajor,
-                    ),
-                )
-            }
-    }
+  }
 }

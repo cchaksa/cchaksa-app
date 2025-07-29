@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.ic_appbar_arrow_left_chukchuk
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -48,7 +48,7 @@ fun ChukChukAppBarWithTitle(
       Text(
         text = title,
         color = Black100,
-        style = CCHaksaTheme.typography.bodyMdStrong,
+        style = CchTheme.typography.bodyMdStrong,
       )
     }
   }

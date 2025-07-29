@@ -28,7 +28,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.GrayDA
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -56,7 +56,7 @@ fun OpenLectureCard(
                     strokeWidth = strokeWidth,
                 )
             }
-            .suwikiClickable(
+            .cchClickable(
                 onClick = onClick,
             )
             .padding(horizontal = 24.dp, vertical = 16.dp),

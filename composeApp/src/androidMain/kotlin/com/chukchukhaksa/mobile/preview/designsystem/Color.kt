@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray300
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
@@ -64,7 +65,7 @@ fun ColorItem(
 
         Text(
             text = name,
-            style = CCHaksaTheme.typography.bodyMd,
+            style = CchTheme.typography.bodyMd,
             color = Black100,
             fontSize = 14.sp,
         )
@@ -83,7 +84,7 @@ fun CCHaksaColorPreview() {
         ) {
             Text(
                 text = "Cool Gray",
-                style = CCHaksaTheme.typography.titleLg,
+                style = CchTheme.typography.titleLg,
                 modifier = Modifier.padding(bottom = 8.dp),
             )
 
@@ -95,7 +96,7 @@ fun CCHaksaColorPreview() {
 
             Text(
                 text = "Purple",
-                style = CCHaksaTheme.typography.titleLg,
+                style = CchTheme.typography.titleLg,
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
             )
 
@@ -108,7 +109,7 @@ fun CCHaksaColorPreview() {
 
             Text(
                 text = "Red",
-                style = CCHaksaTheme.typography.titleLg,
+                style = CchTheme.typography.titleLg,
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
             )
 
@@ -119,7 +120,7 @@ fun CCHaksaColorPreview() {
 
             Text(
                 text = "Yellow",
-                style = CCHaksaTheme.typography.titleLg,
+                style = CchTheme.typography.titleLg,
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
             )
 
@@ -128,7 +129,7 @@ fun CCHaksaColorPreview() {
 
             Text(
                 text = "Green",
-                style = CCHaksaTheme.typography.titleLg,
+                style = CchTheme.typography.titleLg,
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
             )
 

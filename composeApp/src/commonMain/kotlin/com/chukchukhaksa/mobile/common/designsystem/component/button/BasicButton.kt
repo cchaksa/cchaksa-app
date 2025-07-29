@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 
 @Composable
 fun BasicButton(
@@ -45,7 +45,7 @@ fun BasicButton(
                 color = borderColor,
                 shape = shape,
             )
-            .suwikiClickable(
+            .cchClickable(
                 runIf = clickable,
                 rippleColor = rippleColor,
                 onClick = onClick,

@@ -17,7 +17,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.model.TimetableCellColor
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.common.ui.timetableCellColorHexMap
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.timetableBorderWidth
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.timetableHeightPerHour
@@ -62,7 +62,7 @@ fun ClassCell(
             .border(width = timetableBorderWidth, color = GrayF6)
             .padding(timetableBorderWidth)
             .background(Color(data.color.toHex()))
-            .suwikiClickable {
+            .cchClickable {
                 onClick(data)
             },
     ) {

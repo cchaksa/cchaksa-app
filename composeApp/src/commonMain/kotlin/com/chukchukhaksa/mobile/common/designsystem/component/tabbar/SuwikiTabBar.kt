@@ -33,7 +33,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Black
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 
 enum class SubComposeID {
   PRE_CALCULATE_ITEM,
@@ -142,7 +142,7 @@ fun TabTitle(
     modifier = Modifier
       .wrapContentWidth(Alignment.CenterHorizontally)
       .padding(12.dp)
-      .suwikiClickable(
+      .cchClickable(
         rippleEnabled = false,
         onClick = { onClick(position) },
       ),
