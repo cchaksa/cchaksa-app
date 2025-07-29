@@ -108,7 +108,7 @@ private fun OpenMajorBottomSheetContent(
   onClickSearchBarClearButton: () -> Unit = {},
 ) {
     Column(
-        modifier = Modifier.height(400.dp),
+        modifier = Modifier.height(400.dp), // TODO 척척학사 디자인 반영하면서 매직 넘버 제거 예정 (@이진욱)
     ) {
         SuwikiSearchBar(
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
