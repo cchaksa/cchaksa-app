@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.presentation.openmajor.model
+package com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor.model
 
 import kotlinx.collections.immutable.toPersistentList
 import kotlin.uuid.ExperimentalUuidApi
@@ -10,23 +10,6 @@ data class OpenMajor(
     val name: String,
     val isSelected: Boolean = false,
 )
-
-@OptIn(ExperimentalUuidApi::class)
-fun List<String>.toBookmarkedOpenMajorList(
-    searchValue: String,
-    selectedOpenMajor: String,
-) = filter { openMajor ->
-    if (searchValue.isNotEmpty()) {
-        searchValue in openMajor
-    } else {
-        true
-    }
-}.map { name ->
-    OpenMajor(
-        name = name,
-        isSelected = selectedOpenMajor == name,
-    )
-}.toPersistentList()
 
 @OptIn(ExperimentalUuidApi::class)
 fun List<String>.toOpenMajorList(

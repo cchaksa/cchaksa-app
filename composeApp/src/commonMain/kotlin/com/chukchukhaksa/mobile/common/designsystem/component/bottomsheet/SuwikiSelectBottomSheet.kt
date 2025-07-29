@@ -29,7 +29,6 @@ import org.jetbrains.compose.resources.painterResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SuwikiSelectBottomSheet(
-    isSheetOpen: Boolean,
     onDismissRequest: () -> Unit,
     onClickItem: (Int) -> Unit,
     itemList: PersistentList<String>,

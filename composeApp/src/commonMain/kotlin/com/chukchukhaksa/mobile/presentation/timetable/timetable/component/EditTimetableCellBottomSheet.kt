@@ -32,7 +32,6 @@ import org.jetbrains.compose.resources.stringResource
 fun EditTimetableCellBottomSheet(
     onDismissRequest: () -> Unit = {},
     cell: TimetableCell = TimetableCell(color = TimetableCellColor.GRAY_DARK),
-    isSheetOpen: Boolean = false,
     onClickDeleteButton: (TimetableCell) -> Unit = {},
     onClickEditButton: (TimetableCell) -> Unit = {},
 ) {

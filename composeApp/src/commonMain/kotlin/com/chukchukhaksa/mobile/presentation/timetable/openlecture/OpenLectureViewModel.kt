@@ -189,6 +189,19 @@ class OpenLectureViewModel(
         mviStore.setState { copy(showSchoolLevelBottomSheet = false) }
     }
 
+    fun showOpenMajorBottomSheet() {
+        mviStore.setState { copy(showOpenMajorBottomSheet = true) }
+    }
+
+    fun hideOpenMajorBottomSheet() {
+        mviStore.setState { copy(showOpenMajorBottomSheet = false) }
+    }
+
+    fun confirmOpenMajor(selectedOpenMajor: String) {
+        updateSelectedOpenMajor(selectedOpenMajor)
+        hideOpenMajorBottomSheet()
+    }
+
     fun popBackStack() {
         mviStore.postSideEffect(OpenLectureSideEffect.PopBackStack)
     }

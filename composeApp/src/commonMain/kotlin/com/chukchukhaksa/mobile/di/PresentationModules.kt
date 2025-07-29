@@ -1,7 +1,7 @@
 package com.chukchukhaksa.mobile.di
 
 import com.chukchukhaksa.mobile.MainViewModel
-import com.chukchukhaksa.mobile.presentation.openmajor.OpenMajorViewModel
+import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor.OpenMajorBottomSheetViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.openlecture.OpenLectureViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.TimetableViewModel
@@ -18,6 +18,6 @@ val presentationModule = module {
     viewModelOf(::MainViewModel)
     viewModelOf(::CellEditorViewModel)
     viewModelOf(::OpenLectureViewModel)
-    viewModelOf(::OpenMajorViewModel)
+    viewModelOf(::OpenMajorBottomSheetViewModel)
     viewModelOf(::SemesterSelectViewModel)
 }

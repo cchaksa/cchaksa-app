@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.presentation.openmajor.component
+package com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +18,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.ui.suwikiClickable
 
 @Composable
-fun OpenMajorContainer(
+fun OpenMajorItem(
     modifier: Modifier = Modifier,
     text: String,
     isChecked: Boolean,
