@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.presentation.openmajor
+package com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -7,31 +7,24 @@ import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
 import com.chukchukhaksa.mobile.domain.openmajor.usecase.GetOpenMajorListUseCase
 import com.chukchukhaksa.mobile.domain.timetable.repository.OpenLectureRepository
-import com.chukchukhaksa.mobile.presentation.openmajor.model.toOpenMajorList
-import com.chukchukhaksa.mobile.presentation.openmajor.navigation.OpenMajorRoute
+import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor.model.toOpenMajorList
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 
-class OpenMajorViewModel(
+class OpenMajorBottomSheetViewModel(
     private val getOpenMajorListUseCase: GetOpenMajorListUseCase,
     private val openLectureRepository: OpenLectureRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val mviStore: MviStore<OpenMajorState, OpenMajorSideEffect> = mviStore(OpenMajorState())
 
-    private var selectedOpenMajor = savedStateHandle[OpenMajorRoute.ARGUMENT_NAME] ?: "전체"
+    private var selectedOpenMajor = "전체"
     private val allOpenMajorList = mutableListOf<String>()
 
     fun updateSearchValue(searchValue: String) {
         mviStore.setState { copy(searchValue = searchValue) }
         reduceOpenMajorList(searchValue)
-    }
-
-    fun syncPagerState(currentPage: Int) {
-        mviStore.setState { copy(currentPage = currentPage) }
     }
 
     fun updateSelectedOpenMajor(openMajor: String) {
@@ -49,6 +42,10 @@ class OpenMajorViewModel(
 
     fun changeBottomShadowVisible(show: Boolean) {
         mviStore.setState { copy(showBottomShadow = show) }
+    }
+
+    fun setInitialSelectedOpenMajor(initialSelectedOpenMajor: String) {
+        selectedOpenMajor = initialSelectedOpenMajor
     }
 
     fun initData() {

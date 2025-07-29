@@ -24,8 +24,6 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.kmp.SetStatusBarColor
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import com.chukchukhaksa.mobile.presentation.openmajor.navigation.OpenMajorRoute
-import com.chukchukhaksa.mobile.presentation.openmajor.navigation.openMajorNavGraph
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.timetableNavGraph
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinContext
@@ -61,29 +59,15 @@ fun App(
                         navController = navigator.navController,
                         startDestination = navigator.startDestination,
                     ) {
-                        openMajorNavGraph(
-                            popBackStack = navigator::popBackStackIfNotHome,
-                            popBackStackWithArgument = { openMajor ->
-                                navigator.navController.previousBackStackEntry?.savedStateHandle?.set(
-                                    OpenMajorRoute.ARGUMENT_NAME,
-                                    openMajor,
-                                )
-                                navigator.popBackStackIfNotHome()
-                            },
-                            handleException = viewModel::handleException,
-                            onShowToast = viewModel::onShowToast,
-                        )
 
                         timetableNavGraph(
                             padding = innerPadding,
-                            argumentName = OpenMajorRoute.ARGUMENT_NAME,
                             popBackStack = navigator::popBackStackIfNotHome,
                             navigateTimetableEditor = navigator::navigateTimetableEditor,
                             navigateTimetableList = navigator::navigateTimetableList,
                             navigateOpenLecture = navigator::navigateOpenLecture,
                             handleException = viewModel::handleException,
                             onShowToast = viewModel::onShowToast,
-                            navigateOpenMajor = navigator::navigateOpenMajor,
                             navigateCellEditor = navigator::navigateCellEditor,
                             navigateSemesterSelect = navigator::navigateSemesterSelect,
                             navigateTimetable = navigator::navigatetimetable,
