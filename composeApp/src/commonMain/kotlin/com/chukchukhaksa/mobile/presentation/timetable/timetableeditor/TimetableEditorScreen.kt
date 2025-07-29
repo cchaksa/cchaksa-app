@@ -26,7 +26,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.appbar.ChukChukApp
 import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.ChukChukRegularTextField
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import org.jetbrains.compose.resources.getString
@@ -89,7 +89,7 @@ fun TimetableEditorScreen(
                     .width(240.dp)
                     .padding(top = 8.dp),
                   text = "선택한 학기의 시간표 이름을 정해주세요",
-                  style = CCHaksaTheme.typography.titleLg,
+                  style = CchTheme.typography.titleLg,
                   color = Black100,
                   textAlign = TextAlign.Center,
                 )

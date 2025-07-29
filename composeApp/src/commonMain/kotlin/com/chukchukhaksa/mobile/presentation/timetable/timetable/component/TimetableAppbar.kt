@@ -22,7 +22,7 @@ import chukchukhaksa.composeapp.generated.resources.word_timetable
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -59,7 +59,7 @@ fun TimetableAppbar(
         Icon(
             modifier = Modifier
                 .clip(CircleShape)
-                .suwikiClickable(onClick = onClickAdd),
+                .cchClickable(onClick = onClickAdd),
             painter = painterResource(Res.drawable.ic_timetable_add),
             contentDescription = "",
             tint = Gray95,
@@ -68,7 +68,7 @@ fun TimetableAppbar(
         Icon(
             modifier = Modifier
                 .clip(CircleShape)
-                .suwikiClickable(onClick = onClickHamburger),
+                .cchClickable(onClick = onClickHamburger),
             painter = painterResource(Res.drawable.ic_timetable_hamburger),
             contentDescription = "",
             tint = Gray95,
@@ -77,7 +77,7 @@ fun TimetableAppbar(
         Icon(
             modifier = Modifier
                 .clip(CircleShape)
-                .suwikiClickable(onClick = onClickSetting),
+                .cchClickable(onClick = onClickSetting),
             painter = painterResource(Res.drawable.ic_timetable_setting),
             contentDescription = "",
             tint = Gray95,

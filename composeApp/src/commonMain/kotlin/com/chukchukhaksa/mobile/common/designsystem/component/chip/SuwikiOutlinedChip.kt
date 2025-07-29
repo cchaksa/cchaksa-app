@@ -16,7 +16,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.GrayDA
 import com.chukchukhaksa.mobile.common.designsystem.theme.Primary
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 
 @Composable
 fun SuwikiOutlinedChip(
@@ -34,7 +34,7 @@ fun SuwikiOutlinedChip(
   Box(
     modifier = modifier
       .clip(RoundedCornerShape(5.dp))
-      .suwikiClickable(onClick = onClick)
+      .cchClickable(onClick = onClick)
       .background(color = White)
       .border(width = 1.dp, color = borderLineColor, shape = RoundedCornerShape(5.dp))
       .padding(vertical = 4.dp, horizontal = 6.dp),

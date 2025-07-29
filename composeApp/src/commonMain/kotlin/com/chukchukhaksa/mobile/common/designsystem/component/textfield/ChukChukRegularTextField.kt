@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.designsystem.component.button.TextFieldClearButton
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.Purple600
@@ -35,9 +35,9 @@ fun ChukChukRegularTextField(
   placeholder: String = "",
 ) {
   val (borderColor, textColor, textStyle) = if(value.isEmpty()) {
-    Triple(Gray200, Gray400, CCHaksaTheme.typography.bodyLg)
+    Triple(Gray200, Gray400, CchTheme.typography.bodyLg)
   } else {
-    Triple(Purple600, Black100, CCHaksaTheme.typography.bodyLgStrong)
+    Triple(Purple600, Black100, CchTheme.typography.bodyLgStrong)
   }
   BasicTextField(
     value = value,

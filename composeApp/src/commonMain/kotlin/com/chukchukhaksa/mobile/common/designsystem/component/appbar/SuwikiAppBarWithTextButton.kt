@@ -21,7 +21,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.Primary
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -47,12 +47,12 @@ fun SuwikiAppBarWithTextButton(
       modifier = Modifier
         .size(24.dp)
         .clip(CircleShape)
-        .suwikiClickable(onClick = onClickBack)
+        .cchClickable(onClick = onClickBack)
         .padding(vertical = 2.dp, horizontal = 6.5.dp),
     )
     Text(
       modifier = Modifier
-        .suwikiClickable(onClick = onClickTextButton)
+        .cchClickable(onClick = onClickTextButton)
         .padding(vertical = 4.dp, horizontal = 8.dp),
       color = Primary,
       style = SuwikiTheme.typography.body6,

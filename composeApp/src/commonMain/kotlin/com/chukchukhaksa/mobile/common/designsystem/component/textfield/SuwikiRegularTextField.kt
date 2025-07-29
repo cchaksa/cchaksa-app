@@ -39,7 +39,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.GrayCB
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
 import com.chukchukhaksa.mobile.common.designsystem.theme.Primary
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -133,7 +133,7 @@ fun SuwikiRegularTextField(
                                     modifier = modifier
                                         .size(24.dp)
                                         .clip(CircleShape)
-                                        .suwikiClickable(onClick = onClickEyeIcon),
+                                        .cchClickable(onClick = onClickEyeIcon),
                                     painter = painterResource(resource = if (showValue) Res.drawable.ic_eye_off else Res.drawable.ic_eye_on),
                                     tint = Gray95,
                                     contentDescription = "",

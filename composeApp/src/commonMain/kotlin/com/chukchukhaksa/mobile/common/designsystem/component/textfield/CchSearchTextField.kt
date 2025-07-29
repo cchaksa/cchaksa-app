@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray600
@@ -91,10 +91,10 @@ object CchSearchTextFieldDefaults {
 fun CchSearchTextField(
   value: String,
   onValueChange: (String) -> Unit,
-  placeholder: String,
   modifier: Modifier = Modifier,
+  placeholder: String? = null,
   enabled: Boolean = true,
-  textStyle: TextStyle = CCHaksaTheme.typography.bodyMd,
+  textStyle: TextStyle = CchTheme.typography.bodyMd,
   colors: CchSearchTextFieldColors = CchSearchTextFieldDefaults.colors(),
   interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
@@ -142,7 +142,7 @@ fun CchSearchTextField(
         Box(
           modifier = Modifier.weight(1f),
         ) {
-          if (value.isEmpty()) {
+          if (value.isEmpty() && placeholder != null) {
             Text(
               text = placeholder,
               style = textStyle,

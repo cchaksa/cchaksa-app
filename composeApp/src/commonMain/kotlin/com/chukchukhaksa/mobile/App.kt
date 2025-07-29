@@ -1,9 +1,5 @@
 package com.chukchukhaksa.mobile
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
@@ -20,7 +16,6 @@ import chukchukhaksa.composeapp.generated.resources.word_confirm
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.SuwikiDialog
 import com.chukchukhaksa.mobile.common.designsystem.component.toast.SuwikiToast
 import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.kmp.SetStatusBarColor
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle

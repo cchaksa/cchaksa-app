@@ -8,7 +8,7 @@ import androidx.compose.ui.draw.clip
 import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.ic_textfield_clear
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -19,7 +19,7 @@ fun TextFieldClearButton(
   Icon(
     modifier = modifier
       .clip(CircleShape)
-      .suwikiClickable(onClick = onClick),
+      .cchClickable(onClick = onClick),
     painter = painterResource(resource = Res.drawable.ic_textfield_clear),
     tint = Gray95,
     contentDescription = "",

@@ -4,13 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -24,8 +20,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.ChukChukAppBarWithTitle
 import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
 import com.chukchukhaksa.mobile.common.designsystem.component.container.ChukChukSelectionContainer
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import kotlinx.collections.immutable.toPersistentList
@@ -73,7 +68,7 @@ fun SemesterSelectScreen(
           modifier = Modifier.padding(top = 20.dp, bottom = 32.dp),
           text = "수강학기를 선택해주세요",
           textAlign = TextAlign.Center,
-          style = CCHaksaTheme.typography.titleLg,
+          style = CchTheme.typography.titleLg,
         )
 
         Column(

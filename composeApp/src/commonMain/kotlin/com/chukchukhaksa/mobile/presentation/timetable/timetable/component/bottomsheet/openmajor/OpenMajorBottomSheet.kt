@@ -2,10 +2,9 @@ package com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bott
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -19,23 +18,18 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.open_major_empty_search_result
 import chukchukhaksa.composeapp.generated.resources.open_major_screen_search_bar_placeholder
-import chukchukhaksa.composeapp.generated.resources.word_confirm
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchBottomSheet
-import com.chukchukhaksa.mobile.common.designsystem.component.button.SuwikiContainedLargeButton
 import com.chukchukhaksa.mobile.common.designsystem.component.loading.LoadingScreen
-import com.chukchukhaksa.mobile.common.designsystem.component.searchbar.SuwikiSearchBar
+import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchSearchTextField
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import com.chukchukhaksa.mobile.common.ui.shadow.suwikiShadow
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor.model.OpenMajor
 import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.compose.resources.stringResource
@@ -53,147 +47,126 @@ fun OpenMajorBottomSheet(
   handleException: (Throwable) -> Unit,
   onShowToast: (String) -> Unit,
 ) {
-    val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
+  val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
 
-    viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
-        when (sideEffect) {
-            is OpenMajorSideEffect.HandleException -> handleException(sideEffect.throwable)
-            OpenMajorSideEffect.PopBackStack -> onDismissRequest()
-            is OpenMajorSideEffect.PopBackStackWithArgument -> onConfirm(sideEffect.argument)
-        }
+  viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
+    when (sideEffect) {
+      is OpenMajorSideEffect.HandleException -> handleException(sideEffect.throwable)
+      OpenMajorSideEffect.PopBackStack -> onDismissRequest()
+      is OpenMajorSideEffect.PopBackStackWithArgument -> onConfirm(sideEffect.argument)
     }
+  }
 
 
-    val allOpenMajorListState = rememberLazyListState()
+  val allOpenMajorListState = rememberLazyListState()
 
-    val onReachedBottomAllOpenMajor by remember {
-        derivedStateOf {
-            allOpenMajorListState.isScrolledToEnd()
-        }
+  val onReachedBottomAllOpenMajor by remember {
+    derivedStateOf {
+      allOpenMajorListState.isScrolledToEnd()
     }
+  }
 
-    LaunchedEffect(onReachedBottomAllOpenMajor) {
-        viewModel.changeBottomShadowVisible(!onReachedBottomAllOpenMajor)
-    }
+  LaunchedEffect(onReachedBottomAllOpenMajor) {
+    viewModel.changeBottomShadowVisible(!onReachedBottomAllOpenMajor)
+  }
 
-    LaunchedEffect(selectedOpenMajor) {
-        viewModel.setInitialSelectedOpenMajor(selectedOpenMajor)
-    }
+  LaunchedEffect(selectedOpenMajor) {
+    viewModel.setInitialSelectedOpenMajor(selectedOpenMajor)
+  }
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.initData()
-    }
+  LaunchedEffect(key1 = Unit) {
+    viewModel.initData()
+  }
 
-    CchBottomSheet(
-        onDismissRequest = onDismissRequest,
-    ) {
-        OpenMajorBottomSheetContent(
-            uiState = uiState,
-            allOpenMajorListState = allOpenMajorListState,
-            onClickConfirmButton = viewModel::popBackStackWithArgument,
-            onClickOpenMajorContainer = viewModel::updateSelectedOpenMajor,
-            onValueChangeSearchBar = viewModel::updateSearchValue,
-            onClickSearchBarClearButton = { viewModel.updateSearchValue("") },
-        )
-    }
+  CchBottomSheet(
+    onDismissRequest = onDismissRequest,
+  ) {
+    OpenMajorBottomSheetContent(
+      uiState = uiState,
+      allOpenMajorListState = allOpenMajorListState,
+      onClickOpenMajorContainer = viewModel::updateSelectedOpenMajor,
+      onValueChangeSearchBar = viewModel::updateSearchValue,
+    )
+  }
 }
 
 @Composable
 private fun OpenMajorBottomSheetContent(
   uiState: OpenMajorState = OpenMajorState(),
   allOpenMajorListState: LazyListState = rememberLazyListState(),
-  onClickConfirmButton: () -> Unit = {},
   onClickOpenMajorContainer: (String) -> Unit = {},
   onValueChangeSearchBar: (String) -> Unit = {},
-  onClickSearchBarClearButton: () -> Unit = {},
 ) {
-    Column(
-        modifier = Modifier.height(400.dp), // TODO 척척학사 디자인 반영하면서 매직 넘버 제거 예정 (@이진욱)
-    ) {
-        SuwikiSearchBar(
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
-            placeholder = stringResource(Res.string.open_major_screen_search_bar_placeholder),
-            value = uiState.searchValue,
-            onClickClearButton = onClickSearchBarClearButton,
-            onValueChange = onValueChangeSearchBar,
-        )
+  Column {
+    CchSearchTextField(
+      modifier = Modifier.padding(horizontal = 20.dp),
+      value = uiState.searchValue,
+      onValueChange = onValueChangeSearchBar,
+      placeholder = stringResource(Res.string.open_major_screen_search_bar_placeholder),
+    )
 
-        if (uiState.showAllOpenMajorEmptySearchResultScreen) {
-            EmptyText(stringResource(Res.string.open_major_empty_search_result))
-        } else {
-            OpenMajorLazyColumn(
-                modifier = Modifier.weight(1f),
-                listState = allOpenMajorListState,
-                openMajorList = uiState.filteredAllOpenMajorList,
-                onClickOpenMajorContainer = onClickOpenMajorContainer,
-            )
-        }
+    Spacer(Modifier.height(8.dp))
 
-        Box(
-            modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
-        ) {
-            SuwikiContainedLargeButton(
-                modifier = Modifier
-                    .imePadding()
-                    .suwikiShadow(
-                        color = if (uiState.showBottomShadow) White else Color.Transparent,
-                        blurRadius = 80.dp,
-                        spread = 50.dp,
-                    ),
-                text = stringResource(Res.string.word_confirm),
-                onClick = onClickConfirmButton,
-            )
-        }
+    if (uiState.showAllOpenMajorEmptySearchResultScreen) {
+      EmptyText(stringResource(Res.string.open_major_empty_search_result))
+    } else {
+      OpenMajorLazyColumn(
+        listState = allOpenMajorListState,
+        openMajorList = uiState.filteredAllOpenMajorList,
+        searchValue = uiState.searchValue,
+        onClickOpenMajorContainer = onClickOpenMajorContainer,
+      )
     }
+  }
 
-    if (uiState.isLoading) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            LoadingScreen()
-        }
+  if (uiState.isLoading) {
+    Box(modifier = Modifier.fillMaxSize()) {
+      LoadingScreen()
     }
+  }
 }
 
 @Composable
 private fun EmptyText(
-    text: String = "",
+  text: String = "",
 ) {
-    Text(
-        modifier = Modifier
-            .padding(52.dp)
-            .fillMaxSize(),
-        textAlign = TextAlign.Center,
-        text = text,
-        style = SuwikiTheme.typography.header4,
-        color = Gray95,
-    )
+  Text(
+    modifier = Modifier
+      .padding(52.dp)
+      .fillMaxSize(),
+    textAlign = TextAlign.Center,
+    text = text,
+    style = SuwikiTheme.typography.header4,
+    color = Gray95,
+  )
 }
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
 private fun OpenMajorLazyColumn(
-    modifier: Modifier = Modifier,
-    listState: LazyListState,
-    openMajorList: PersistentList<OpenMajor>,
-    onClickOpenMajorContainer: (String) -> Unit = {},
+  modifier: Modifier = Modifier,
+  listState: LazyListState,
+  openMajorList: PersistentList<OpenMajor>,
+  searchValue: String = "",
+  onClickOpenMajorContainer: (String) -> Unit = {},
 ) {
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        state = listState,
-        contentPadding = PaddingValues(top = 12.dp),
-    ) {
-        items(
-            items = openMajorList,
-            key = { it.id },
-        ) { openMajor ->
-            with(openMajor) {
-                OpenMajorItem(
-                    text = name,
-                    isChecked = isSelected,
-                    onClick = { onClickOpenMajorContainer(name) },
-                )
-            }
-        }
+  LazyColumn(
+    modifier = modifier.height(56.dp * 5),
+    state = listState,
+  ) {
+    items(
+      items = openMajorList,
+      key = { it.id },
+    ) { openMajor ->
+      with(openMajor) {
+        OpenMajorItem(
+          text = name,
+          searchValue = searchValue,
+          onClick = { onClickOpenMajorContainer(name) },
+        )
+      }
     }
+  }
 }
 
 //@OptIn(ExperimentalFoundationApi::class)
@@ -206,5 +179,5 @@ private fun OpenMajorLazyColumn(
 //}
 
 fun LazyListState.isScrolledToEnd() =
-    layoutInfo.visibleItemsInfo.lastOrNull()?.index == layoutInfo.totalItemsCount - 1
+  layoutInfo.visibleItemsInfo.lastOrNull()?.index == layoutInfo.totalItemsCount - 1
 

@@ -22,7 +22,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.Primary
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.compose.resources.painterResource
 
@@ -63,7 +63,7 @@ private fun SuwikiSelectContainer(
             .background(White)
             .fillMaxWidth()
             .wrapContentHeight()
-            .suwikiClickable(
+            .cchClickable(
                 onClick = onClick,
                 rippleColor = Gray6A,
             ),
