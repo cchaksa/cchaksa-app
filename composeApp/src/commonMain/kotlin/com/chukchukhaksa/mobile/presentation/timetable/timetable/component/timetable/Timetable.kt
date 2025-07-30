@@ -3,15 +3,15 @@ package com.chukchukhaksa.mobile.presentation.timetable.timetable.component.time
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
 import com.chukchukhaksa.mobile.common.model.Timetable
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.model.TimetableDay
@@ -40,17 +40,20 @@ fun Timetable(
 
     // TODO 리컴포지션 최적화 필요
     val cellGroupedByDay = timetable.cellList.groupBy { it.day }
+    val eLearningCellList =  cellGroupedByDay.filter { it.key in listOf(TimetableDay.SAT, TimetableDay.E_LEARNING) }
 
     Column(
         modifier = modifier
+            .padding(horizontal = 20.dp)
             .fillMaxWidth()
-            .border(width = timetableBorderWidth, color = GrayF6)
+            .border(width = timetableBorderWidth, color = Gray200, shape = RoundedCornerShape(12.dp))
             .verticalScroll(scrollState),
     ) {
         Row {
             TimeColumn(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(0.06f),
                 maxPeriod = maxPeriod,
+                isHasELearning = eLearningCellList.isNotEmpty(),
             )
 
             TimetableDay.entries
@@ -58,26 +61,25 @@ fun Timetable(
                 .filter { it !in listOf(TimetableDay.SAT, TimetableDay.E_LEARNING) }
                 .forEach { day ->
                     ClassColumn(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(0.188f),
                         type = type,
                         day = day,
                         cellList = cellGroupedByDay[day] ?: emptyList(),
                         lastPeriod = maxPeriod,
+                        isHasELearning = eLearningCellList.isNotEmpty(),
                         onClickClassCell = onClickTimetableCell,
                     )
                 }
         }
 
-        cellGroupedByDay
-            .filter { it.key in listOf(TimetableDay.SAT, TimetableDay.E_LEARNING) }
+      eLearningCellList
             .flatMap { it.value }
             .forEach { cell ->
                 ELearningCell(
                     onClickClassCell = onClickTimetableCell,
                     cell = cell,
+                    isLast = cell == eLearningCellList.flatMap { it.value }.last(),
                 )
             }
-
-        Spacer(modifier = Modifier.size(100.dp))
     }
 }

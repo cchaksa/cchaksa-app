@@ -6,6 +6,7 @@ import com.chukchukhaksa.mobile.common.model.TimetableDay
 internal val timetableHeightPerHour = 48.dp
 
 internal val timetableBorderWidth = 0.5.dp
+//internal val timetableBorderWidth = 1.dp
 
 const val MINUTE60 = 60
 const val MINUTE10 = 10
