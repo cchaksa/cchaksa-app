@@ -21,7 +21,7 @@ import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.timetable_screen_need_create_timetable
 import chukchukhaksa.composeapp.generated.resources.timetable_screen_select_type_cell_title
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
-import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.SuwikiSelectBottomSheet
+import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchSelectBottomSheet
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.model.TimetableCell
@@ -158,7 +158,7 @@ fun TimetableScreen(
   }
 
   if (uiState.showSelectCellTypeBottomSheet) {
-    SuwikiSelectBottomSheet(
+    CchSelectBottomSheet(
       onDismissRequest = onDismissSelectBottomSheet,
       onClickItem = onClickSelectBottomSheetItem,
       itemList = TimetableCellType.entries.map { it.text }
