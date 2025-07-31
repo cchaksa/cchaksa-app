@@ -23,115 +23,108 @@ import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.word_add
 import com.chukchukhaksa.mobile.common.designsystem.component.button.SuwikiContainedSmallButton
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black
+import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray100
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray500
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray6A
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayDA
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun OpenLectureCard(
-    modifier: Modifier = Modifier,
-    className: String,
-    professor: String,
-    cellInfo: String,
-    grade: String,
-    classType: String,
-    openMajor: String,
-    onClick: () -> Unit,
-    onClickAdd: () -> Unit,
+  modifier: Modifier = Modifier,
+  className: String,
+  professor: String,
+  cellInfo: String,
+  grade: String,
+  classType: String,
+  openMajor: String,
+  isSelected: Boolean,
+  onClick: () -> Unit,
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(White)
-            .drawBehind {
-                val strokeWidth = 1.dp.toPx()
-                drawLine(
-                    color = GrayF6,
-                    start = Offset(0f, size.height - strokeWidth),
-                    end = Offset(size.width, size.height - strokeWidth),
-                    strokeWidth = strokeWidth,
-                )
-            }
-            .cchClickable(
-                onClick = onClick,
-            )
-            .padding(horizontal = 24.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+  Row(
+    modifier = modifier
+      .fillMaxWidth()
+      .background(if (isSelected) Gray100 else White100)
+      .drawBehind {
+        val strokeWidth = 1.dp.toPx()
+        drawLine(
+          color = Gray100,
+          start = Offset(0f, size.height - strokeWidth),
+          end = Offset(size.width, size.height - strokeWidth),
+          strokeWidth = strokeWidth,
+        )
+      }
+      .cchClickable(
+        onClick = onClick,
+      )
+      .padding(horizontal = 20.dp, vertical = 14.dp),
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.SpaceBetween,
+  ) {
+    Column(
+      modifier = Modifier.weight(1f),
+      verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .height(IntrinsicSize.Min),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                Text(
-                    modifier = Modifier.weight(1f, fill = false),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    text = className,
-                    style = SuwikiTheme.typography.body6,
-                    color = Black,
-                )
-                VerticalDivider(
-                    color = GrayDA,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(1.dp)
-                        .padding(vertical = 3.dp),
-                )
-                Text(
-                    maxLines = 1,
-                    text = professor,
-                    overflow = TextOverflow.Ellipsis,
-                    style = SuwikiTheme.typography.body6,
-                    color = Black,
-                )
-            }
+      Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+          .height(IntrinsicSize.Min),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+      ) {
+        Text(
+          modifier = Modifier.weight(1f, fill = false),
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+          text = className,
+          style = CchTheme.typography.bodySmStrong,
+          color = Black100,
+        )
 
-            Text(
-                text = cellInfo,
-                style = SuwikiTheme.typography.caption4,
-                color = Gray6A,
-            )
+        Text(
+          maxLines = 1,
+          text = professor,
+          overflow = TextOverflow.Ellipsis,
+          style = CchTheme.typography.bodyXs,
+          color = Gray500,
+        )
+      }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                Text(
-                    text = grade,
-                    style = SuwikiTheme.typography.caption4,
-                    color = Gray6A,
-                )
-                Text(
-                    text = classType,
-                    style = SuwikiTheme.typography.caption4,
-                    color = Gray6A,
-                )
-                Text(
-                    maxLines = 1,
-                    text = openMajor,
-                    style = SuwikiTheme.typography.caption4,
-                    color = Gray6A,
-                )
-            }
-        }
+      Text(
+        text = cellInfo,
+        style = CchTheme.typography.bodyXs,
+        color = Gray500,
+      )
 
-        SuwikiContainedSmallButton(text = stringResource(Res.string.word_add), onClick = onClickAdd)
+      Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+      ) {
+        Text(
+          text = grade,
+          style = CchTheme.typography.bodyXs,
+          color = Gray500,
+        )
+        Text(
+          text = classType,
+          style = CchTheme.typography.bodyXs,
+          color = Gray500,
+        )
+        Text(
+          maxLines = 1,
+          text = openMajor,
+          style = CchTheme.typography.bodyXs,
+          color = Gray500,
+        )
+      }
     }
-//    HorizontalDivider(
-//      thickness = 1.dp,
-//      color = GrayF6,
-//    )
+  }
 }
 
 //@Preview
