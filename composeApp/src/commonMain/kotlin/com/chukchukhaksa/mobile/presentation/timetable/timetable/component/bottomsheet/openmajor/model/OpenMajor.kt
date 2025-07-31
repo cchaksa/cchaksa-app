@@ -7,17 +7,17 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 data class OpenMajor(
     val id: Uuid = Uuid.random(),
-    val name: String,
+    val name: String?,
     val isSelected: Boolean = false,
 )
 
 @OptIn(ExperimentalUuidApi::class)
-fun List<String>.toOpenMajorList(
+fun List<String?>.toOpenMajorList(
     searchValue: String,
-    selectedOpenMajor: String,
+    selectedOpenMajor: String?,
 ) = filter { openMajor ->
     if (searchValue.isNotEmpty()) {
-        searchValue in openMajor
+      openMajor?.contains(searchValue) == true
     } else {
         true
     }

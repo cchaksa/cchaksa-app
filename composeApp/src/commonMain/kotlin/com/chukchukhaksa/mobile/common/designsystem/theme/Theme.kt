@@ -23,7 +23,7 @@ fun SuwikiTheme(
 }
 
 @Composable
-fun CCHaksaTheme(
+fun CchTheme(
   content: @Composable () -> Unit,
 ) {
   CompositionLocalProvider(

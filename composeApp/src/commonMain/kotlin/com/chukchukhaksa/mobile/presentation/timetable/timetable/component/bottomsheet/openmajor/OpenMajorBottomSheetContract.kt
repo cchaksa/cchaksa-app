@@ -19,5 +19,5 @@ data class OpenMajorState(
 sealed interface OpenMajorSideEffect {
     data class HandleException(val throwable: Throwable) : OpenMajorSideEffect
     data object PopBackStack : OpenMajorSideEffect
-    data class PopBackStackWithArgument(val argument: String) : OpenMajorSideEffect
+    data class PopBackStackWithArgument(val argument: String?) : OpenMajorSideEffect
 }

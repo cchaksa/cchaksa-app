@@ -88,7 +88,7 @@ fun NavGraphBuilder.timetableNavGraph(
 
     composable(route = TimetableRoute.openLectureRoute) {
         OpenLectureRoute(
-            selectedOpenMajor = "전체",
+            selectedOpenMajor = null,
             popBackStack = popBackStack,
             handleException = handleException,
             onShowToast = onShowToast,

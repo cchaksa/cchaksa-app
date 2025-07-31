@@ -1,7 +1,6 @@
 package com.chukchukhaksa.mobile.di
 
 import com.chukchukhaksa.mobile.domain.config.usecase.CheckNeedForceUpdateUseCase
-import com.chukchukhaksa.mobile.domain.openmajor.usecase.GetOpenMajorListUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.GetAllTimetableUseCase
@@ -20,9 +19,6 @@ import org.koin.dsl.module
 val domainModule = module {
     /*TODO("factory / single 생성 방식 검토 필요")*/
     /*TODO("UseCase(인자 추가 되면 get() 함수 추가)")*/
-
-    // OpenMajor
-    factory { GetOpenMajorListUseCase() }
 
     // Timetable management use cases
     factory { DeleteTimetableUseCase(get()) }

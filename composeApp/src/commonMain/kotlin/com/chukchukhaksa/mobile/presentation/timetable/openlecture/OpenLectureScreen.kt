@@ -1,5 +1,6 @@
 package com.chukchukhaksa.mobile.presentation.timetable.openlecture
 
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -10,8 +11,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -39,7 +43,11 @@ import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.add_timetable_cell_search_bar_placeholder
 import chukchukhaksa.composeapp.generated.resources.add_timetable_screen_add_lecture
 import chukchukhaksa.composeapp.generated.resources.ic_align_checked
+import chukchukhaksa.composeapp.generated.resources.ic_arrow
+import chukchukhaksa.composeapp.generated.resources.ic_arrow_sm
 import chukchukhaksa.composeapp.generated.resources.ic_dropdown_arrow_down
+import chukchukhaksa.composeapp.generated.resources.ic_plus_s
+import chukchukhaksa.composeapp.generated.resources.ic_textfield_clear
 import chukchukhaksa.composeapp.generated.resources.open_lecture_screen_empty_result_description
 import chukchukhaksa.composeapp.generated.resources.open_lecture_screen_empty_result_title
 import chukchukhaksa.composeapp.generated.resources.open_lecture_success_add_cell_toast
@@ -53,16 +61,25 @@ import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchSel
 import com.chukchukhaksa.mobile.common.designsystem.component.button.SuwikiContainedLargeButton
 import com.chukchukhaksa.mobile.common.designsystem.component.loading.LoadingScreen
 import com.chukchukhaksa.mobile.common.designsystem.component.searchbar.SuwikiSearchBar
+import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchSearchTextField
+import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray600
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray6A
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
 import com.chukchukhaksa.mobile.common.designsystem.theme.Primary
+import com.chukchukhaksa.mobile.common.designsystem.theme.Purple100
+import com.chukchukhaksa.mobile.common.designsystem.theme.Purple600
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.model.OpenLecture
 import com.chukchukhaksa.mobile.common.model.TimetableCellColor
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.common.ui.cchClickable
+import com.chukchukhaksa.mobile.common.ui.runIf
 import com.chukchukhaksa.mobile.common.ui.timetableCellColorHexMap
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor.OpenMajorBottomSheet
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
@@ -78,7 +95,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun OpenLectureRoute(
   viewModel: OpenLectureViewModel = koinViewModel(),
-  selectedOpenMajor: String,
+  selectedOpenMajor: String?,
   popBackStack: () -> Unit,
   handleException: (Throwable) -> Unit,
   onShowToast: (String) -> Unit,
@@ -98,7 +115,6 @@ fun OpenLectureRoute(
 
       OpenLectureSideEffect.PopBackStack -> popBackStack()
       OpenLectureSideEffect.ScrollToTop -> scope.launch {
-//                awaitFrame()
         listState.animateScrollToItem(0)
       }
 
@@ -128,7 +144,6 @@ fun OpenLectureRoute(
     },
     onClickBack = viewModel::popBackStack,
     onClickSearchButton = viewModel::searchOpenLecture,
-    onClickClearButton = { viewModel.updateSearchValue("") },
     onValueChangeSearch = viewModel::updateSearchValue,
     onClickCellAdd = viewModel::showSelectColorBottomSheet,
     onClickApply = {
@@ -156,7 +171,6 @@ fun OpenLectureScreen(
   onClickSchoolLevelBottomSheetItem: (Int) -> Unit = {},
   onClickBack: () -> Unit = {},
   onClickSearchButton: (String) -> Unit = {},
-  onClickClearButton: () -> Unit = {},
   onValueChangeSearch: (String) -> Unit = {},
   onClickCellAdd: (OpenLecture) -> Unit = {},
   onClickApply: () -> Unit = {},
@@ -165,54 +179,77 @@ fun OpenLectureScreen(
   onClickClassInfoCard: (OpenLecture) -> Unit = {},
   onClickCustomAdd: () -> Unit = {},
   onDismissOpenMajorBottomSheet: () -> Unit = {},
-  onConfirmOpenMajor: (String) -> Unit = {},
+  onConfirmOpenMajor: (String?) -> Unit = {},
   handleException: (Throwable) -> Unit = {},
   onShowToast: (String) -> Unit = {},
 ) {
-
   SuwikiBackground {
-    // TODO Collapsing toolbar 적용 필요
     Column(
       modifier = Modifier
         .fillMaxSize()
         .background(White),
     ) {
-      SuwikiAppBarWithTextButton(
-        buttonText = stringResource(Res.string.add_timetable_screen_add_lecture),
-        onClickBack = onClickBack,
-        onClickTextButton = onClickCustomAdd,
-      )
+      Row(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(start = 14.dp, top = 11.dp, bottom = 14.dp, end = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        Icon(
+          modifier = Modifier
+            .clip(CircleShape)
+            .cchClickable(onClick = onClickBack),
+          painter = painterResource(resource = Res.drawable.ic_arrow),
+          tint = Black100,
+          contentDescription = "뒤로가기",
+        )
+
+        Spacer(Modifier.width(2.dp))
+
+        Text(
+          text = "강의추가",
+          style = CchTheme.typography.bodyLgStrong,
+        )
+      }
 
       Column(
         modifier = Modifier
           .weight(1f),
       ) {
         Column {
+          CchSearchTextField(
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
+            placeholder = stringResource(Res.string.add_timetable_cell_search_bar_placeholder),
+            value = uiState.searchValue,
+            onValueChange = onValueChangeSearch,
+            onSearchAction = { onClickSearchButton(uiState.searchValue) },
+          )
+
           Row(
-            modifier = Modifier.padding(horizontal = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.padding(horizontal = 20.dp),
           ) {
+            val openMajorFiltered = uiState.selectedOpenMajor != null
+            val schoolLevelFiltered = uiState.schoolLevel != SchoolLevel.ALL
             FilterContainer(
-              filterName = stringResource(Res.string.word_open_major),
-              value = uiState.selectedOpenMajor,
+              value = uiState.selectedOpenMajor ?: "전체 학과",
               onClick = onClickOpenMajorFilterContainer,
+              isSelected = openMajorFiltered,
             )
 
+            Spacer(Modifier.width(8.dp))
+
             FilterContainer(
-              filterName = stringResource(Res.string.word_school_level),
-              value = stringResource(uiState.schoolLevel.stringResId),
+              value = if (schoolLevelFiltered.not()) "전체 학년" else stringResource(uiState.schoolLevel.stringResId),
               onClick = onClickSchoolLevelFilterContainer,
+              isSelected = schoolLevelFiltered,
+            )
+
+            Spacer(Modifier.weight(1f))
+
+            CustomAddButton(
+              onClick = onClickCustomAdd,
             )
           }
-
-          SuwikiSearchBar(
-            modifier = Modifier.padding(top = 10.dp),
-            placeholder = stringResource(Res.string.add_timetable_cell_search_bar_placeholder),
-            onClickSearchButton = onClickSearchButton,
-            value = uiState.searchValue,
-            onClickClearButton = onClickClearButton,
-            onValueChange = onValueChangeSearch,
-          )
 
           Text(
             modifier = Modifier
@@ -227,22 +264,12 @@ fun OpenLectureScreen(
           Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
           ) {
-            Spacer(modifier = Modifier.size(52.dp))
-
             Text(
               text = stringResource(Res.string.open_lecture_screen_empty_result_title),
-              style = SuwikiTheme.typography.header4,
-              color = Gray95,
-            )
-
-            Spacer(modifier = Modifier.size(12.dp))
-
-            Text(
-              text = stringResource(Res.string.open_lecture_screen_empty_result_description),
-              style = SuwikiTheme.typography.body5,
-              textAlign = TextAlign.Center,
-              color = Gray95,
+              style = CchTheme.typography.bodyMd,
+              color = Gray600,
             )
           }
         }
@@ -363,25 +390,55 @@ private fun ColorSelectBottomSheet(
 
 @Composable
 private fun FilterContainer(
-  filterName: String,
   value: String,
+  onClick: () -> Unit,
+  isSelected: Boolean = false,
+) {
+  val backgroundColor = if (isSelected) Purple100 else White100
+  val textColor = if (isSelected) Purple600 else Gray600
+  val iconColor = if (isSelected) Purple600 else Gray600
+
+  Row(
+    modifier = Modifier
+      .clip(RoundedCornerShape(size = 6.dp))
+      .background(backgroundColor)
+      .cchClickable(onClick = onClick)
+      .runIf(isSelected.not()) { border(width = 1.dp, color = Gray200, shape = RoundedCornerShape(size = 6.dp)) }
+      .padding(8.dp),
+    verticalAlignment = Alignment.CenterVertically,
+  ) {
+    Text(text = value, style = CchTheme.typography.bodySm, color = textColor)
+    Spacer(Modifier.width(2.dp))
+    Icon(
+      painter = painterResource(Res.drawable.ic_arrow_sm),
+      contentDescription = null,
+      tint = iconColor,
+    )
+  }
+}
+
+@Composable
+private fun CustomAddButton(
   onClick: () -> Unit,
 ) {
   Row(
     modifier = Modifier
-      .clip(RoundedCornerShape(size = 10.dp))
-      .border(width = 1.dp, color = GrayF6, shape = RoundedCornerShape(size = 10.dp))
-      .cchClickable(onClick = onClick)
-      .padding(vertical = 6.dp, horizontal = 9.dp),
+      .clip(RoundedCornerShape(6.dp))
+      .background(Black100)
+      .cchClickable(onClick = onClick, rippleColor = White100)
+      .padding(start = 6.dp, top = 7.dp, bottom = 6.dp, end = 10.dp),
     verticalAlignment = Alignment.CenterVertically,
   ) {
-    Text(text = filterName, style = SuwikiTheme.typography.body6, color = Gray6A)
-    Spacer(modifier = Modifier.size(4.dp))
-    Text(text = value, style = SuwikiTheme.typography.body6, color = Primary)
     Icon(
-      painter = painterResource(Res.drawable.ic_dropdown_arrow_down),
+      painter = painterResource(Res.drawable.ic_plus_s),
       contentDescription = null,
-      tint = Gray6A,
+      tint = White100,
+    )
+
+    Text(
+      text = "직접 추가",
+      style = CchTheme.typography.bodySm,
+      color = White100,
     )
   }
 }
