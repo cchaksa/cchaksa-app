@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray300
@@ -75,7 +74,7 @@ fun ColorItem(
 @Preview(showBackground = true, heightDp = 1500)
 @Composable
 fun CCHaksaColorPreview() {
-    CCHaksaTheme {
+    CchTheme {
         Column(
             modifier = Modifier
                 .background(White100)

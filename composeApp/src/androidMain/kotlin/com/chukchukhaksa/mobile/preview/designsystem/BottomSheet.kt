@@ -10,7 +10,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchBottomSheet
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -23,7 +23,7 @@ fun SuwikiBottomSheetPreview() {
         Text("Bottom Sheet 열기")
     }
 
-  CCHaksaTheme {
+  CchTheme {
     if (visible) {
       CchBottomSheet(
         onDismissRequest = { visible = !visible },

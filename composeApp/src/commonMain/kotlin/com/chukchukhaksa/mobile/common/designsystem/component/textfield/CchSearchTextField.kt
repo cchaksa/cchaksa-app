@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -91,6 +92,7 @@ object CchSearchTextFieldDefaults {
 fun CchSearchTextField(
   value: String,
   onValueChange: (String) -> Unit,
+  onSearchAction: () -> Unit,
   modifier: Modifier = Modifier,
   placeholder: String? = null,
   enabled: Boolean = true,
@@ -128,6 +130,7 @@ fun CchSearchTextField(
     textStyle = textStyle.copy(color = colors.textColor),
     cursorBrush = SolidColor(colors.cursorColor),
     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+    keyboardActions = KeyboardActions(onSearch = { onSearchAction() }),
     interactionSource = interactionSource,
     decorationBox = { innerTextField ->
       Row(

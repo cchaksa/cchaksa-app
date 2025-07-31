@@ -144,7 +144,7 @@ class OpenLectureViewModel(
         getOpenLectureList()
     }
 
-    fun updateSelectedOpenMajor(openMajor: String) {
+    fun updateSelectedOpenMajor(openMajor: String?) {
         if (openMajor == mviStore.uiState.value.selectedOpenMajor) return
 
         mviStore.setState {
@@ -162,7 +162,7 @@ class OpenLectureViewModel(
             getOpenLectureListUseCase(
                 GetOpenLectureListUseCase.Param(
                     lectureOrProfessorName = search,
-                    major = if (currentState.selectedOpenMajor == "전체") null else currentState.selectedOpenMajor,
+                    major = currentState.selectedOpenMajor,
                     grade = currentState.schoolLevel.query,
                 ),
             ).onSuccess { newData ->
@@ -197,7 +197,7 @@ class OpenLectureViewModel(
         mviStore.setState { copy(showOpenMajorBottomSheet = false) }
     }
 
-    fun confirmOpenMajor(selectedOpenMajor: String) {
+    fun confirmOpenMajor(selectedOpenMajor: String?) {
         updateSelectedOpenMajor(selectedOpenMajor)
         hideOpenMajorBottomSheet()
     }

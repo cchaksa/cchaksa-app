@@ -40,10 +40,10 @@ import kotlin.uuid.ExperimentalUuidApi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OpenMajorBottomSheet(
-  selectedOpenMajor: String,
+  selectedOpenMajor: String?,
   viewModel: OpenMajorBottomSheetViewModel = koinViewModel(),
   onDismissRequest: () -> Unit,
-  onConfirm: (String) -> Unit,
+  onConfirm: (String?) -> Unit,
   handleException: (Throwable) -> Unit,
   onShowToast: (String) -> Unit,
 ) {
@@ -94,7 +94,7 @@ fun OpenMajorBottomSheet(
 private fun OpenMajorBottomSheetContent(
   uiState: OpenMajorState = OpenMajorState(),
   allOpenMajorListState: LazyListState = rememberLazyListState(),
-  onClickOpenMajorContainer: (String) -> Unit = {},
+  onClickOpenMajorContainer: (String?) -> Unit = {},
   onValueChangeSearchBar: (String) -> Unit = {},
 ) {
   Column {
@@ -103,6 +103,7 @@ private fun OpenMajorBottomSheetContent(
       value = uiState.searchValue,
       onValueChange = onValueChangeSearchBar,
       placeholder = stringResource(Res.string.open_major_screen_search_bar_placeholder),
+      onSearchAction = {},
     )
 
     Spacer(Modifier.height(8.dp))
@@ -148,7 +149,7 @@ private fun OpenMajorLazyColumn(
   listState: LazyListState,
   openMajorList: PersistentList<OpenMajor>,
   searchValue: String = "",
-  onClickOpenMajorContainer: (String) -> Unit = {},
+  onClickOpenMajorContainer: (String?) -> Unit = {},
 ) {
   LazyColumn(
     modifier = modifier.height(56.dp * 5),
@@ -160,7 +161,7 @@ private fun OpenMajorLazyColumn(
     ) { openMajor ->
       with(openMajor) {
         OpenMajorItem(
-          text = name,
+          text = name ?: "전체",
           searchValue = searchValue,
           onClick = { onClickOpenMajorContainer(name) },
         )

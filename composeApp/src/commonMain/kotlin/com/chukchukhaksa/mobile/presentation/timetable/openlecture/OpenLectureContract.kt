@@ -16,7 +16,7 @@ import org.jetbrains.compose.resources.stringResource
 data class OpenLectureState(
     val searchValue: String = "",
     val openLectureList: PersistentList<OpenLecture> = persistentListOf(),
-    val selectedOpenMajor: String = "전체",
+    val selectedOpenMajor: String? = null,
     val showSchoolLevelBottomSheet: Boolean = false,
     val showOpenMajorBottomSheet: Boolean = false,
     val schoolLevel: SchoolLevel = SchoolLevel.ALL,

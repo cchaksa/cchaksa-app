@@ -120,7 +120,7 @@
   <string name="create_timetable_screen_placeholder">시간표명을 입력해주세요</string>
   <string name="timetable_screen_need_create_timetable">시간표를 먼저 생성해주세요</string>
   <string name="add_timetable_screen_add_lecture">강의 직접추가</string>
-  <string name="add_timetable_cell_search_bar_placeholder">강의명 또는 교수명을 검색하세요</string>
+  <string name="add_timetable_cell_search_bar_placeholder">강의명 또는 교수명을 입력해주세요</string>
   <string name="all_timetable_cell_screen_grade_1">1학년</string>
   <string name="all_timetable_cell_screen_grade_2">2학년</string>
   <string name="all_timetable_cell_screen_grade_3">3학년</string>
@@ -150,7 +150,7 @@
   <string name="timetable_list_screen_empty_timetable">시간표가 없어요</string>
   <string name="delete_timetable_dialog_title">시간표 삭제</string>
   <string name="delete_timetable_dialog_body">정말로 삭제하시겠어요?</string>
-  <string name="open_lecture_screen_empty_result_title">결과가 없습니다.</string>
+  <string name="open_lecture_screen_empty_result_title">검색된 강의가 없습니다.</string>
   <string name="open_lecture_screen_empty_result_description">검색어가 올바르지 않거나,\n개설강좌가 아직 업데이트되지 않았어요.</string>
 
   <string name="word_bookmark">즐겨찾기</string>
