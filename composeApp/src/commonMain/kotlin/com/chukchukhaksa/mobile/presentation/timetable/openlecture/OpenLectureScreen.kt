@@ -58,6 +58,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.SuwikiAppBarWithTextButton
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchBottomSheet
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchSelectBottomSheet
+import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
 import com.chukchukhaksa.mobile.common.designsystem.component.button.SuwikiContainedLargeButton
 import com.chukchukhaksa.mobile.common.designsystem.component.loading.LoadingScreen
 import com.chukchukhaksa.mobile.common.designsystem.component.searchbar.SuwikiSearchBar
@@ -85,6 +86,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.botto
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.openlecture.component.OpenLectureCard
 import com.chukchukhaksa.mobile.presentation.timetable.openlecture.model.SchoolLevel
+import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.semesterList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
@@ -184,121 +186,134 @@ fun OpenLectureScreen(
   onShowToast: (String) -> Unit = {},
 ) {
   SuwikiBackground {
-    Column(
-      modifier = Modifier
-        .fillMaxSize()
-        .background(White),
-    ) {
-      Row(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(start = 14.dp, top = 11.dp, bottom = 14.dp, end = 14.dp),
-        verticalAlignment = Alignment.CenterVertically,
-      ) {
-        Icon(
-          modifier = Modifier
-            .clip(CircleShape)
-            .cchClickable(onClick = onClickBack),
-          painter = painterResource(resource = Res.drawable.ic_arrow),
-          tint = Black100,
-          contentDescription = "뒤로가기",
-        )
-
-        Spacer(Modifier.width(2.dp))
-
-        Text(
-          text = "강의추가",
-          style = CchTheme.typography.bodyLgStrong,
-        )
-      }
-
+    Box {
       Column(
         modifier = Modifier
-          .weight(1f),
+          .fillMaxSize()
+          .background(White),
       ) {
-        Column {
-          CchSearchTextField(
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
-            placeholder = stringResource(Res.string.add_timetable_cell_search_bar_placeholder),
-            value = uiState.searchValue,
-            onValueChange = onValueChangeSearch,
-            onSearchAction = { onClickSearchButton(uiState.searchValue) },
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 14.dp, top = 11.dp, bottom = 14.dp, end = 14.dp),
+          verticalAlignment = Alignment.CenterVertically,
+        ) {
+          Icon(
+            modifier = Modifier
+              .clip(CircleShape)
+              .cchClickable(onClick = onClickBack),
+            painter = painterResource(resource = Res.drawable.ic_arrow),
+            tint = Black100,
+            contentDescription = "뒤로가기",
           )
 
-          Row(
-            modifier = Modifier.padding(horizontal = 20.dp),
-          ) {
-            val openMajorFiltered = uiState.selectedOpenMajor != null
-            val schoolLevelFiltered = uiState.schoolLevel != SchoolLevel.ALL
-            FilterContainer(
-              value = uiState.selectedOpenMajor ?: "전체 학과",
-              onClick = onClickOpenMajorFilterContainer,
-              isSelected = openMajorFiltered,
-            )
-
-            Spacer(Modifier.width(8.dp))
-
-            FilterContainer(
-              value = if (schoolLevelFiltered.not()) "전체 학년" else stringResource(uiState.schoolLevel.stringResId),
-              onClick = onClickSchoolLevelFilterContainer,
-              isSelected = schoolLevelFiltered,
-            )
-
-            Spacer(Modifier.weight(1f))
-
-            CustomAddButton(
-              onClick = onClickCustomAdd,
-            )
-          }
+          Spacer(Modifier.width(2.dp))
 
           Text(
-            modifier = Modifier
-              .padding(top = 10.dp, end = 20.dp)
-              .align(Alignment.End),
-            text = "최근 갱신일: ${uiState.lastUpdatedDate ?: "확인 중"}",
-            style = SuwikiTheme.typography.body7,
-            color = Gray95,
+            text = "강의추가",
+            style = CchTheme.typography.bodyLgStrong,
           )
         }
-        if (uiState.openLectureList.isEmpty() && uiState.isLoading.not()) {
-          Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-          ) {
+
+        Column(
+          modifier = Modifier
+            .weight(1f),
+        ) {
+          Column {
+            CchSearchTextField(
+              modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
+              placeholder = stringResource(Res.string.add_timetable_cell_search_bar_placeholder),
+              value = uiState.searchValue,
+              onValueChange = onValueChangeSearch,
+              onSearchAction = { onClickSearchButton(uiState.searchValue) },
+            )
+
+            Row(
+              modifier = Modifier.padding(horizontal = 20.dp),
+            ) {
+              val openMajorFiltered = uiState.selectedOpenMajor != null
+              val schoolLevelFiltered = uiState.schoolLevel != SchoolLevel.ALL
+              FilterContainer(
+                value = uiState.selectedOpenMajor ?: "전체 학과",
+                onClick = onClickOpenMajorFilterContainer,
+                isSelected = openMajorFiltered,
+              )
+
+              Spacer(Modifier.width(8.dp))
+
+              FilterContainer(
+                value = if (schoolLevelFiltered.not()) "전체 학년" else stringResource(uiState.schoolLevel.stringResId),
+                onClick = onClickSchoolLevelFilterContainer,
+                isSelected = schoolLevelFiltered,
+              )
+
+              Spacer(Modifier.weight(1f))
+
+              CustomAddButton(
+                onClick = onClickCustomAdd,
+              )
+            }
+
             Text(
-              text = stringResource(Res.string.open_lecture_screen_empty_result_title),
-              style = CchTheme.typography.bodyMd,
-              color = Gray600,
+              modifier = Modifier
+                .padding(top = 10.dp, end = 20.dp)
+                .align(Alignment.End),
+              text = "최근 갱신일: ${uiState.lastUpdatedDate ?: "확인 중"}",
+              style = SuwikiTheme.typography.body7,
+              color = Gray95,
             )
           }
-        }
-
-        LazyColumn(
-          modifier = Modifier
-            .fillMaxSize(),
-          contentPadding = PaddingValues(bottom = 24.dp),
-          state = listState,
-        ) {
-          items(
-            items = uiState.openLectureList,
-            key = { it.id },
-          ) { lectureEvaluation ->
-            with(lectureEvaluation) {
-              OpenLectureCard(
-                className = name,
-                professor = professorName,
-                cellInfo = originalCellList.toText(),
-                grade = "${grade}학년",
-                classType = type,
-                openMajor = major,
-                onClick = { onClickClassInfoCard(this) },
-                onClickAdd = { onClickCellAdd(this) },
+          if (uiState.openLectureList.isEmpty() && uiState.isLoading.not()) {
+            Column(
+              modifier = Modifier.fillMaxSize(),
+              horizontalAlignment = Alignment.CenterHorizontally,
+              verticalArrangement = Arrangement.Center,
+            ) {
+              Text(
+                text = stringResource(Res.string.open_lecture_screen_empty_result_title),
+                style = CchTheme.typography.bodyMd,
+                color = Gray600,
               )
+            }
+          }
+
+          LazyColumn(
+            modifier = Modifier
+              .fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 24.dp),
+            state = listState,
+          ) {
+            items(
+              items = uiState.openLectureList,
+              key = { it.id },
+            ) { lectureEvaluation ->
+              with(lectureEvaluation) {
+                OpenLectureCard(
+                  className = name,
+                  professor = professorName,
+                  cellInfo = originalCellList.toText(),
+                  grade = "${grade}학년",
+                  classType = type,
+                  openMajor = major,
+                  onClick = { onClickClassInfoCard(this) },
+                  isSelected = false,
+//                onClickAdd = { onClickCellAdd(this) },
+                )
+              }
             }
           }
         }
       }
+
+      ChukChukBasicButton(
+        modifier = Modifier
+          .fillMaxWidth()
+          .align(Alignment.BottomCenter)
+          .padding(start = 16.dp, end = 16.dp, bottom = 2.dp),
+        text = "선택한 강의 추가하기",
+        enable = true,
+        onClick = {  },
+      )
     }
   }
 
