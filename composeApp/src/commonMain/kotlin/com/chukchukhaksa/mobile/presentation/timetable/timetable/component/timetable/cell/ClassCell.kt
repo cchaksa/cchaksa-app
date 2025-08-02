@@ -62,10 +62,10 @@ fun ClassCell(
             .fillMaxWidth()
             .height(height)
             .background(Color(data.color.toHex()))
-            .padding(4.dp)
             .cchClickable {
-                onClick(data)
-            },
+              onClick(data)
+            }
+            .padding(4.dp),
     ) {
         Text(
             modifier = Modifier.padding(bottom = 2.dp),

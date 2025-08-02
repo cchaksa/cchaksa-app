@@ -38,7 +38,7 @@ private fun statusBarView() = remember {
 actual fun SetStatusBarColor() {
   val statusBar = statusBarView()
   SideEffect {
-    statusBar.backgroundColor = Color(0xFFfbfbfb).toUIColor()
+    statusBar.backgroundColor = Color(0xFFFFFFFF).toUIColor()
   }
 }
 

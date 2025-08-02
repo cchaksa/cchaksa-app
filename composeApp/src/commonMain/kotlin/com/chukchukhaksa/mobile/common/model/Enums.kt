@@ -1,5 +1,10 @@
 package com.chukchukhaksa.mobile.common.model
 
+// TODO
+/*
+enum 변수 값을 CellColor1, CellColor2 ... 으로 변경 필요
+시간표 색상이 변경되었을 때, enum 변수 값이 변경되게 된다면 DB에도 영향이 가는 구조.
+ */
 enum class TimetableCellColor {
   BROWN,
   BROWN_LIGHT,

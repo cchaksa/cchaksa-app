@@ -71,6 +71,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timet
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -279,6 +280,7 @@ fun CellEditorScreen(
                                 modifier = Modifier.weight(1f, false),
                                 verticalArrangement = Arrangement.spacedBy(12.dp),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                maxItemsInEachRow = 5,
                             ) {
                                 TimetableCellColor.entries.forEach {
                                     Box(
@@ -343,10 +345,10 @@ fun EditorScreenRow(
     }
 }
 
-//@Preview
-//@Composable
-//fun CellEditorScreenPreview() {
-//    SuwikiTheme {
-//        CellEditorScreen()
-//    }
-//}
+@Preview
+@Composable
+fun CellEditorScreenPreview() {
+    SuwikiTheme {
+        CellEditorScreen()
+    }
+}
