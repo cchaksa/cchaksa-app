@@ -24,7 +24,7 @@ import chukchukhaksa.composeapp.generated.resources.create_timetable_need_select
 import chukchukhaksa.composeapp.generated.resources.create_timetable_screen_placeholder
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.CchAppBarWithTitle
-import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
+import com.chukchukhaksa.mobile.common.designsystem.component.button.CchBasicButton
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchRegularTextField
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
@@ -106,7 +106,7 @@ fun TimetableEditorScreen(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                ChukChukBasicButton(
+                CchBasicButton(
                     modifier = Modifier
                         .consumeWindowInsets(WindowInsets.navigationBars)
                         .imePadding(),

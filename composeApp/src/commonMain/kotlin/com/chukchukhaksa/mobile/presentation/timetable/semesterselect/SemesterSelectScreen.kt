@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.CchAppBarWithTitle
-import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
+import com.chukchukhaksa.mobile.common.designsystem.component.button.CchBasicButton
 import com.chukchukhaksa.mobile.common.designsystem.component.container.CchSelectionContainer
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
@@ -87,7 +87,7 @@ fun SemesterSelectScreen(
           }
         }
       }
-      ChukChukBasicButton(
+      CchBasicButton(
         modifier = Modifier
           .fillMaxWidth()
           .align(Alignment.BottomCenter)
