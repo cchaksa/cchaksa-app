@@ -1,8 +1,6 @@
 package com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,15 +12,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
-import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.model.TimetableCellColor
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.common.ui.timetableCellColorHexMap
-import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.timetableBorderWidth
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.timetableHeightPerHour
 
 enum class TimetableCellType(val text: String) {
