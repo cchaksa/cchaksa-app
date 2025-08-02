@@ -6,12 +6,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,8 +19,7 @@ import chukchukhaksa.composeapp.generated.resources.timetable_screen_need_create
 import chukchukhaksa.composeapp.generated.resources.timetable_screen_select_type_cell_title
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.SuwikiSelectBottomSheet
-import com.chukchukhaksa.mobile.common.designsystem.component.tabbar.CchTabBar
-import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
+import com.chukchukhaksa.mobile.common.designsystem.component.tabbar.TimetableTabBar
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
@@ -127,15 +122,15 @@ fun TimetableScreen(
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            CchTabBar(
-                timetableScreenContent = uiState.timetableScreenContent ?: TimetableScreenContent.EMPTY_TIMETABLE,
+            TimetableTabBar(
+                timetableScreenContent = uiState.timetableScreen ?: TimetableScreen.EMPTY_TIMETABLE,
                 onClickHome = { onClickHome() },
                 onClickTimetable = { onClickTimetable() },
                 onClickMyPage = { onClickMyPage() }
             )
 
             AnimatedVisibility(
-                visible = uiState.timetableScreenContent == TimetableScreenContent.EMPTY_TIMETABLE,
+                visible = uiState.timetableScreen == TimetableScreen.EMPTY_TIMETABLE,
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
@@ -148,7 +143,7 @@ fun TimetableScreen(
             }
 
             AnimatedVisibility(
-                visible = uiState.timetableScreenContent == TimetableScreenContent.TIMETABLE,
+                visible = uiState.timetableScreen == TimetableScreen.TIMETABLE,
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {

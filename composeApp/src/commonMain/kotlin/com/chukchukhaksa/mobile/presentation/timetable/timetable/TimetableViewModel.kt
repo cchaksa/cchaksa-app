@@ -29,7 +29,7 @@ class TimetableViewModel(
                     copy(
                         timetable = timetable,
                         cellType = cellType,
-                        timetableScreenContent = if (timetable == null) TimetableScreenContent.EMPTY_TIMETABLE else TimetableScreenContent.TIMETABLE,
+                        timetableScreen = if (timetable == null) TimetableScreen.EMPTY_TIMETABLE else TimetableScreen.TIMETABLE,
                     )
                 }
             }
@@ -83,7 +83,7 @@ class TimetableViewModel(
     }
 
     fun showHomeScreen() {
-        mviStore.setState { copy(timetableScreenContent = TimetableScreenContent.HOME) }
+        mviStore.setState { copy(timetableScreen = TimetableScreen.HOME) }
     }
 
     fun navigateSemesterSelect() {

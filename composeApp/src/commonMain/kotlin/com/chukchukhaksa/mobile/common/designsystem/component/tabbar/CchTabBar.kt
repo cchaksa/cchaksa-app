@@ -1,10 +1,8 @@
 package com.chukchukhaksa.mobile.common.designsystem.component.tabbar
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -21,12 +19,12 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.suwikiClickable
-import com.chukchukhaksa.mobile.presentation.timetable.timetable.TimetableScreenContent
+import com.chukchukhaksa.mobile.presentation.timetable.timetable.TimetableScreen
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun CchTabBar(
-  timetableScreenContent: TimetableScreenContent,
+fun TimetableTabBar(
+  timetableScreenContent: TimetableScreen,
   onClickHome: () -> Unit,
   onClickTimetable: () -> Unit,
   onClickMyPage: () -> Unit,
@@ -36,17 +34,17 @@ fun CchTabBar(
       .fillMaxWidth()
       .padding(10.dp)
   ) {
-    CchTabBarItem(
+    TimetableTabBarItem(
       modifier = Modifier.padding(start = 14.dp, end = 24.dp, bottom = 2.dp),
       text = "홈",
-      isSelected = (timetableScreenContent == TimetableScreenContent.HOME),
+      isSelected = (timetableScreenContent == TimetableScreen.HOME),
       onClick = { onClickHome() }
     )
 
-    CchTabBarItem(
+    TimetableTabBarItem(
       modifier = Modifier.padding(bottom = 2.dp),
       text = "시간표",
-      isSelected = (timetableScreenContent == TimetableScreenContent.EMPTY_TIMETABLE || timetableScreenContent == TimetableScreenContent.TIMETABLE),
+      isSelected = (timetableScreenContent == TimetableScreen.EMPTY_TIMETABLE || timetableScreenContent == TimetableScreen.TIMETABLE),
       onClick = { onClickTimetable() }
     )
 
@@ -55,7 +53,7 @@ fun CchTabBar(
     Icon(
       modifier = Modifier
         .padding(top = 4.dp, bottom = 4.dp, end = 10.dp)
-        .clickable { onClickMyPage() },
+        .suwikiClickable { onClickMyPage() },
       painter = painterResource(Res.drawable.ic_tabbar_mypage),
       contentDescription = "",
       tint = Black100,
@@ -64,7 +62,7 @@ fun CchTabBar(
 }
 
 @Composable
-fun CchTabBarItem(
+fun TimetableTabBarItem(
   modifier: Modifier = Modifier,
   text: String,
   isSelected: Boolean,
