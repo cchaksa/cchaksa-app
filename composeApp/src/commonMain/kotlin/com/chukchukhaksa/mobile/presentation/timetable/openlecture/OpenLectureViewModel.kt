@@ -64,6 +64,67 @@ class OpenLectureViewModel(
         mviStore.postSideEffect(OpenLectureSideEffect.NavigateAddCustomTimetableCell)
     }
 
+    fun selectOpenLecture(lectureId: Long) {
+        val state = currentState
+        val newSelectedId = if (state.selectedOpenLectureId == lectureId) null else lectureId
+        mviStore.setState { copy(selectedOpenLectureId = newSelectedId) }
+        
+        selectedOpenLecture = if (newSelectedId != null) {
+            state.openLectureList.find { it.id == newSelectedId }
+        } else {
+            null
+        }
+    }
+
+    fun insertSelectedLectureToTimetable() = viewModelScope.launch {
+        val state = currentState
+        val selectedLecture = state.openLectureList.find { it.id == state.selectedOpenLectureId }
+        
+        if (selectedLecture == null) return@launch
+
+        val randomColor = TimetableCellColor.entries.shuffled().first()
+        
+        val timetableCellList = if (selectedLecture.originalCellList.isEmpty()) {
+            listOf(
+                TimetableCell(
+                    name = selectedLecture.name,
+                    professor = selectedLecture.professorName,
+                    location = "",
+                    day = TimetableDay.E_LEARNING,
+                    startPeriod = 0,
+                    endPeriod = 0,
+                    color = randomColor,
+                ),
+            )
+        } else {
+            selectedLecture.originalCellList.map { cell ->
+                TimetableCell(
+                    name = selectedLecture.name,
+                    professor = selectedLecture.professorName,
+                    location = cell.location,
+                    day = cell.day,
+                    startPeriod = cell.startPeriod,
+                    endPeriod = cell.endPeriod,
+                    color = randomColor,
+                )
+            }
+        }
+
+        insertTimetableCellUseCase(timetableCellList)
+            .onSuccess {
+                mviStore.setState { copy(selectedOpenLectureId = null) }
+                selectedOpenLecture = null
+                mviStore.postSideEffect(OpenLectureSideEffect.ShowSuccessAddCellToast)
+            }
+            .onFailure {
+                if (it is TimetableCellOverlapException) {
+                    mviStore.postSideEffect(OpenLectureSideEffect.ShowOverlapCellToast(it.message))
+                } else {
+                    mviStore.postSideEffect(OpenLectureSideEffect.HandleException(it))
+                }
+            }
+    }
+
     fun insertTimetable() = viewModelScope.launch {
         if (selectedOpenLecture == null) return@launch
         val state = currentState
