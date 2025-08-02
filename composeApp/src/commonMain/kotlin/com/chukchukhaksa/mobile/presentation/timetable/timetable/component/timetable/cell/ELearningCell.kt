@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
-import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.timetableBorderWidth
 import com.chukchukhaksa.mobile.common.ui.cchClickable
@@ -50,7 +50,7 @@ internal fun ELearningCell(
         .cchClickable {
           onClickClassCell(cell)
         }
-        .background(White)
+        .background(White100)
         .padding(vertical = 8.dp, horizontal = 20.dp),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.Start,

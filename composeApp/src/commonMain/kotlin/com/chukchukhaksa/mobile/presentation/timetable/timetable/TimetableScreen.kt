@@ -1,17 +1,10 @@
 package com.chukchukhaksa.mobile.presentation.timetable.timetable
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,8 +17,6 @@ import chukchukhaksa.composeapp.generated.resources.timetable_screen_need_create
 import chukchukhaksa.composeapp.generated.resources.timetable_screen_select_type_cell_title
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchSelectBottomSheet
-import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
-import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
@@ -35,6 +26,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.Timet
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.Timetable
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell.TimetableCellType
 import com.chukchukhaksa.mobile.common.designsystem.component.tabbar.TimetableTabBar
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -141,7 +133,7 @@ fun TimetableScreen(
               TimetableEmptyColumn(
                 modifier = Modifier
                   .fillMaxSize()
-                  .background(White),
+                  .background(White100),
                 onClickAdd = onClickAddTimetable,
               )
             }

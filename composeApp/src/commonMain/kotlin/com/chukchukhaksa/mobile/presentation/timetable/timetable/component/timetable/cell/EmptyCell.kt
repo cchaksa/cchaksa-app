@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
-import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
-import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.MINUTE60
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.timetableBorderWidth
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.timetableHeightPerHour
@@ -42,8 +42,8 @@ internal fun EmptyCell(
         modifier = modifier
             .fillMaxWidth()
             .height(timetableHeightPerHour * minute / MINUTE60)
-            .border(width = timetableBorderWidth, color = GrayF6, shape = radius)
-            .background(White)
+            .border(width = timetableBorderWidth, color = Gray200, shape = radius)
+            .background(White100)
             .padding(timetableBorderWidth),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
