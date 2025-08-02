@@ -17,9 +17,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
-import com.chukchukhaksa.mobile.common.designsystem.component.appbar.ChukChukAppBarWithTitle
+import com.chukchukhaksa.mobile.common.designsystem.component.appbar.CchAppBarWithTitle
 import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
-import com.chukchukhaksa.mobile.common.designsystem.component.container.ChukChukSelectionContainer
+import com.chukchukhaksa.mobile.common.designsystem.component.container.CchSelectionContainer
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
@@ -59,7 +59,7 @@ fun SemesterSelectScreen(
   SuwikiBackground {
     Box(modifier = Modifier.fillMaxSize()) {
       Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        ChukChukAppBarWithTitle(
+        CchAppBarWithTitle(
           title = "시간표 생성하기",
           onClickBackButton = { onClickBackButton() },
         )
@@ -78,7 +78,7 @@ fun SemesterSelectScreen(
           verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
           semesters.forEachIndexed { idx, semester ->
-            ChukChukSelectionContainer(
+            CchSelectionContainer(
               modifier = Modifier.fillMaxWidth(),
               text = semester,
               isSelected = idx == uiState.selectSemesterIndex,

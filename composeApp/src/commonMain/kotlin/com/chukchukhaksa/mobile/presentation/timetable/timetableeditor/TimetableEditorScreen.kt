@@ -22,9 +22,9 @@ import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.create_timetable_need_select_semester
 import chukchukhaksa.composeapp.generated.resources.create_timetable_screen_placeholder
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
-import com.chukchukhaksa.mobile.common.designsystem.component.appbar.ChukChukAppBarWithTitle
+import com.chukchukhaksa.mobile.common.designsystem.component.appbar.CchAppBarWithTitle
 import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
-import com.chukchukhaksa.mobile.common.designsystem.component.textfield.ChukChukRegularTextField
+import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchRegularTextField
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
@@ -75,7 +75,7 @@ fun TimetableEditorScreen(
                 .fillMaxSize()
                 .background(White),
         ) {
-            ChukChukAppBarWithTitle(
+            CchAppBarWithTitle(
               title = "시간표 생성하기",
               onClickBackButton = { onClickBack() },
             )
@@ -94,7 +94,7 @@ fun TimetableEditorScreen(
                   textAlign = TextAlign.Center,
                 )
 
-                ChukChukRegularTextField(
+                CchRegularTextField(
                     modifier = Modifier.padding(top = 196.dp, start = 4.dp, end = 4.dp),
                     value = uiState.name,
                     onValueChanged = onValueChangeTimetableName,

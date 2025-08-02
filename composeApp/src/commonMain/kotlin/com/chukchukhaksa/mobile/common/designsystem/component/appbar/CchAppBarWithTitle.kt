@@ -22,7 +22,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun ChukChukAppBarWithTitle(
+fun CchAppBarWithTitle(
   modifier: Modifier = Modifier,
   title: String,
   onClickBackButton: () -> Unit,

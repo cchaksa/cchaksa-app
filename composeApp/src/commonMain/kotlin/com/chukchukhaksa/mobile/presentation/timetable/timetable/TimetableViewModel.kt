@@ -29,7 +29,7 @@ class TimetableViewModel(
                     copy(
                         timetable = timetable,
                         cellType = cellType,
-                        showTimetableEmptyColumn = timetable == null,
+                        timetableScreen = if (timetable == null) TimetableScreen.EMPTY_TIMETABLE else TimetableScreen.TIMETABLE,
                     )
                 }
             }
@@ -80,6 +80,10 @@ class TimetableViewModel(
 
     fun hideEditCellBottomSheet() {
         mviStore.setState { copy(showEditCellBottomSheet = false) }
+    }
+
+    fun showHomeScreen() {
+        mviStore.setState { copy(timetableScreen = TimetableScreen.HOME) }
     }
 
     fun navigateSemesterSelect() {

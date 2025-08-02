@@ -1,8 +1,10 @@
 package com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.column
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.model.TimetableDay
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.MINUTE10
@@ -28,19 +30,22 @@ internal fun Int.isNotOnTime(): Boolean {
 
 @Composable
 internal fun ClassColumn(
-    modifier: Modifier = Modifier,
-    day: TimetableDay,
-    type: TimetableCellType = TimetableCellType.CLASSNAME_PROFESSOR_LOCATION,
-    cellList: List<TimetableCell>,
-    lastPeriod: Int,
-    onClickClassCell: (TimetableCell) -> Unit = { _ -> },
+  modifier: Modifier = Modifier,
+  day: TimetableDay,
+  type: TimetableCellType = TimetableCellType.CLASSNAME_PROFESSOR_LOCATION,
+  cellList: List<TimetableCell>,
+  lastPeriod: Int,
+  isHasELearning: Boolean = false,
+  onClickClassCell: (TimetableCell) -> Unit = { _ -> },
 ) {
     val sortedCellList = cellList.sortedBy { it.startPeriod }
     Column(
         modifier = modifier,
     ) {
         EmptyCell(
+            modifier = Modifier.height(30.dp),
             text = day.toText(),
+            isRightTopTimetable = day == TimetableDay.FRI
         )
 
         var prevEndTime = 9 * MINUTE60
@@ -51,12 +56,16 @@ internal fun ClassColumn(
             prevEndTime = endMinute
         }
 
-        FillEmptyTime(prevEndTime, lastPeriod.endPeriodToMinute())
+        FillEmptyTime(
+          emptyStartTime = prevEndTime,
+          emptyEndTime = lastPeriod.endPeriodToMinute(),
+          isRightBottomTimetable = (day == TimetableDay.FRI) && !isHasELearning
+        )
     }
 }
 
 @Composable
-fun FillEmptyTime(emptyStartTime: Int, emptyEndTime: Int) {
+fun FillEmptyTime(emptyStartTime: Int, emptyEndTime: Int, isRightBottomTimetable: Boolean = false) {
     var filledEmptyTime = emptyStartTime
 
     while (filledEmptyTime < emptyEndTime) {
@@ -79,6 +88,7 @@ fun FillEmptyTime(emptyStartTime: Int, emptyEndTime: Int) {
 
         EmptyCell(
             minute = insertEmptyTimeAmount,
+            isRightBottomTimetable = isRightBottomTimetable
         )
 
         filledEmptyTime += insertEmptyTimeAmount

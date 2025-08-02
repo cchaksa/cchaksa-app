@@ -20,7 +20,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Purple500
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 
 @Composable
-fun ChukChukSelectionContainer(
+fun CchSelectionContainer(
   modifier: Modifier = Modifier,
   text: String,
   isSelected: Boolean,

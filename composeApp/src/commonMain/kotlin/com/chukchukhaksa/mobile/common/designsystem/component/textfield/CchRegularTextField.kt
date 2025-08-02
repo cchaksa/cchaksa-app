@@ -27,7 +27,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Purple600
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 
 @Composable
-fun ChukChukRegularTextField(
+fun CchRegularTextField(
   modifier: Modifier = Modifier,
   value: String = "",
   onValueChanged: (String) -> Unit = {},
