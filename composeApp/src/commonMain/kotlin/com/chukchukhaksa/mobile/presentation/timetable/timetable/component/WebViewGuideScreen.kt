@@ -1,7 +1,6 @@
 package com.chukchukhaksa.mobile.presentation.timetable.timetable.component
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -18,13 +18,14 @@ import chukchukhaksa.composeapp.generated.resources.ic_cch_logo_ios
 import com.chukchukhaksa.mobile.common.designsystem.component.button.CchBasicButton
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray600
-import com.chukchukhaksa.mobile.common.kmp.openUrl
-import com.chukchukhaksa.mobile.common.provider.LocalAppContext
 import org.jetbrains.compose.resources.painterResource
+
+private const val CCHAKSA_URL = "https://www.cchaksa.com/"
 
 @Composable
 fun WebViewGuideScreen() {
-  val context = LocalAppContext.current
+  val uriHandler = LocalUriHandler.current
+
   Column(
     modifier = Modifier
       .fillMaxSize()
@@ -52,7 +53,7 @@ fun WebViewGuideScreen() {
       text = "척척학사 웹으로 이동하기",
       enable = true,
       textStyle = CchTheme.typography.bodyMdStrong,
-      onClick = { openUrl(context, "https://www.cchaksa.com/") }
+      onClick = { uriHandler.openUri(CCHAKSA_URL) }
     )
   }
 }
