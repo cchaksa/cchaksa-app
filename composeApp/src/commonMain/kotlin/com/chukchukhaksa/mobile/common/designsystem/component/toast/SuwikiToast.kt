@@ -18,13 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun SuwikiToast(
+fun CchToast(
   visible: Boolean,
   message: String,
 ) {
@@ -39,7 +42,7 @@ fun SuwikiToast(
         .padding(bottom = 70.dp),
       contentAlignment = Alignment.BottomCenter,
     ) {
-      SuwikiToastContent(
+      CchToastContent(
         modifier = Modifier.imePadding(),
         message = message,
       )
@@ -48,7 +51,7 @@ fun SuwikiToast(
 }
 
 @Composable
-private fun SuwikiToastContent(
+private fun CchToastContent(
   modifier: Modifier = Modifier,
   message: String,
 ) {
@@ -56,26 +59,26 @@ private fun SuwikiToastContent(
     modifier = modifier
       .wrapContentSize()
       .background(
-        color = Gray95,
-        shape = RoundedCornerShape(25.dp),
+        color = Black100.copy(alpha = 0.7f),
+        shape = RoundedCornerShape(10.dp),
       ),
     color = Color.Transparent,
   ) {
     Text(
       text = message,
       textAlign = TextAlign.Center,
-      style = SuwikiTheme.typography.body5,
-      color = White,
-      modifier = Modifier.padding(16.dp, 10.dp),
+      style = CchTheme.typography.bodyMd,
+      color = White100,
+      modifier = Modifier.padding(24.dp, 16.dp),
     )
   }
 }
 
 @Preview
 @Composable
-fun SuwikiToastPreview() {
-  SuwikiTheme {
-    SuwikiToastContent(
+fun CchToastPreview() {
+  CchTheme {
+    CchToastContent(
       message = "text",
     )
   }

@@ -14,7 +14,7 @@ import chukchukhaksa.composeapp.generated.resources.dialog_update_mandatory_body
 import chukchukhaksa.composeapp.generated.resources.dialog_update_mandatory_header
 import chukchukhaksa.composeapp.generated.resources.word_confirm
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.SuwikiDialog
-import com.chukchukhaksa.mobile.common.designsystem.component.toast.SuwikiToast
+import com.chukchukhaksa.mobile.common.designsystem.component.toast.CchToast
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.kmp.SetStatusBarColor
@@ -89,7 +89,7 @@ fun App(
                         )
                     }
 
-                    SuwikiToast(
+                    CchToast(
                         visible = uiState.toastVisible,
                         message = uiState.toastMessage,
                     )
