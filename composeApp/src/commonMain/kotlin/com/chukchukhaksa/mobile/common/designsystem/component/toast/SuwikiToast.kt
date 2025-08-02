@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
@@ -30,6 +31,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun CchToast(
   visible: Boolean,
   message: String,
+  bottomPadding: Dp = 70.dp,
 ) {
   AnimatedVisibility(
     visible = visible,
@@ -39,7 +41,7 @@ fun CchToast(
     Box(
       modifier = Modifier
         .fillMaxSize()
-        .padding(bottom = 70.dp),
+        .padding(bottom = bottomPadding),
       contentAlignment = Alignment.BottomCenter,
     ) {
       CchToastContent(

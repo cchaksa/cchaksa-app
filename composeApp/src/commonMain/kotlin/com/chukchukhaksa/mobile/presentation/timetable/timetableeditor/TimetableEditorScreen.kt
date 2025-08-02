@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -39,7 +40,7 @@ fun TimetableEditorRoute(
     navigateTimetable: () -> Unit,
     popBackStack: () -> Unit,
     handleException: (Throwable) -> Unit,
-    onShowToast: (String) -> Unit,
+    onShowToast: (String, Dp) -> Unit,
 ) {
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
@@ -48,6 +49,7 @@ fun TimetableEditorRoute(
             TimetableEditorSideEffect.PopBackStack -> popBackStack()
             TimetableEditorSideEffect.NeedSelectSemesterToast -> onShowToast(
                 getString(Res.string.create_timetable_need_select_semester),
+                70.dp,
             )
             TimetableEditorSideEffect.NavigateTimetable -> navigateTimetable()
         }

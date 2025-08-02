@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -45,7 +46,7 @@ fun OpenMajorBottomSheet(
   onDismissRequest: () -> Unit,
   onConfirm: (String?) -> Unit,
   handleException: (Throwable) -> Unit,
-  onShowToast: (String) -> Unit,
+  onShowToast: (String, Dp) -> Unit,
 ) {
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
 

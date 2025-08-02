@@ -6,12 +6,17 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -19,6 +24,7 @@ import chukchukhaksa.composeapp.generated.resources.timetable_screen_need_create
 import chukchukhaksa.composeapp.generated.resources.timetable_screen_select_type_cell_title
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchSelectBottomSheet
+import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
@@ -43,7 +49,7 @@ fun TimetableRoute(
   navigateOpenLecture: () -> Unit,
   navigateTimetableList: () -> Unit,
   handleException: (Throwable) -> Unit,
-  onShowToast: (String) -> Unit,
+  onShowToast: (String, Dp) -> Unit,
   navigateCellEditor: (CellEditorArgument) -> Unit,
   navigateSemesterSelect: () -> Unit,
 ) {
@@ -54,7 +60,7 @@ fun TimetableRoute(
     when (sideEffect) {
       is TimetableSideEffect.HandleException -> handleException(sideEffect.throwable)
       TimetableSideEffect.NavigateAddTimetableCell -> navigateOpenLecture()
-      TimetableSideEffect.ShowNeedCreateTimetableToast -> onShowToast(getString(Res.string.timetable_screen_need_create_timetable))
+      TimetableSideEffect.ShowNeedCreateTimetableToast -> onShowToast(getString(Res.string.timetable_screen_need_create_timetable), 70.dp)
       is TimetableSideEffect.NavigateCellEditor -> navigateCellEditor(sideEffect.argument)
       TimetableSideEffect.NavigateTimetableList -> navigateTimetableList()
       TimetableSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
