@@ -17,14 +17,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.Primary
+import com.chukchukhaksa.mobile.common.designsystem.theme.Purple600
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 
 @Composable
-fun SuwikiDialog(
+fun CchDialog(
     modifier: Modifier = Modifier,
     headerText: String,
     bodyText: String,
@@ -39,25 +43,24 @@ fun SuwikiDialog(
         content = {
             Column(
                 modifier = modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(White)
-                    .padding(top = 20.dp, bottom = 15.dp, start = 15.dp, end = 22.dp),
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(White100)
+                    .padding(top = 20.dp, bottom = 20.dp, start = 24.dp, end = 24.dp),
             ) {
                 Text(
                     text = headerText,
-                    style = SuwikiTheme.typography.header5,
+                    style = CchTheme.typography.bodyMdStrong,
                     color = Black,
                 )
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = bodyText,
-                    style = SuwikiTheme.typography.body5,
+                    style = CchTheme.typography.bodyMd,
                     color = Black,
                 )
-                Spacer(modifier = Modifier.height(37.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
+                    horizontalArrangement = Arrangement.Center,
                 ) {
                     if (dismissButtonText != null) {
                         Text(
@@ -66,12 +69,11 @@ fun SuwikiDialog(
                                 onClick = onClickDismiss
                             ),
                             text = dismissButtonText,
-                            style = SuwikiTheme.typography.body4,
-                            color = Gray95,
+                            style = CchTheme.typography.bodyLgStrong,
+                            color = Gray400,
                         )
+                      Spacer(modifier = Modifier.width(58.dp))
                     }
-
-                    Spacer(modifier = Modifier.width(30.dp))
 
                     Text(
                         modifier = Modifier.cchClickable(
@@ -79,8 +81,8 @@ fun SuwikiDialog(
                             onClick = onClickConfirm
                         ),
                         text = confirmButtonText,
-                        style = SuwikiTheme.typography.body4,
-                        color = Primary,
+                        style = CchTheme.typography.bodyLgStrong,
+                        color = Purple600,
                     )
                 }
             }
