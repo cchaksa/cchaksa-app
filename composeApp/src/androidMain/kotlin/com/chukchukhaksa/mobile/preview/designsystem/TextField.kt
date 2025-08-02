@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchSearchTextField
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.SuwikiRegularTextField
-import com.chukchukhaksa.mobile.common.designsystem.component.textfield.SuwikiSmallTextField
+import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchSmallTextField
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
@@ -71,14 +71,14 @@ fun SuwikiSmallTextFieldPreview() {
           .padding(vertical = 10.dp),
       verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-      SuwikiSmallTextField(
+      CchSmallTextField(
         placeholder = "플레이스 홀더",
         value = normalValue,
         onValueChange = { normalValue = it },
         onClickClearButton = { normalValue = "" },
       )
 
-      SuwikiSmallTextField(
+      CchSmallTextField(
         placeholder = "플레이스 홀더",
         value = normalValue,
         onValueChange = { normalValue = it },
