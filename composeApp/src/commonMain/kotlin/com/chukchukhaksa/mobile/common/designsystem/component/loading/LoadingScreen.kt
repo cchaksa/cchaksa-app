@@ -10,12 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.designsystem.theme.Primary
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
   Box(
-    modifier = modifier.fillMaxSize().suwikiClickable(rippleEnabled = false, onClick = {}),
+    modifier = modifier.fillMaxSize().cchClickable(rippleEnabled = false, onClick = {}),
     contentAlignment = Alignment.Center,
   ) {
     CircularProgressIndicator(

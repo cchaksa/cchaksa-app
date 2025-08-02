@@ -21,7 +21,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.Primary
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 
 @Composable
 fun SuwikiDialog(
@@ -61,7 +61,7 @@ fun SuwikiDialog(
                 ) {
                     if (dismissButtonText != null) {
                         Text(
-                            modifier = Modifier.suwikiClickable(
+                            modifier = Modifier.cchClickable(
                                 rippleEnabled = false,
                                 onClick = onClickDismiss
                             ),
@@ -74,7 +74,7 @@ fun SuwikiDialog(
                     Spacer(modifier = Modifier.width(30.dp))
 
                     Text(
-                        modifier = Modifier.suwikiClickable(
+                        modifier = Modifier.cchClickable(
                             rippleEnabled = false,
                             onClick = onClickConfirm
                         ),

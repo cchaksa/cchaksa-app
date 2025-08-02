@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -65,7 +64,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.model.TimetableCellColor
 import com.chukchukhaksa.mobile.common.model.TimetableDay
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.common.ui.timetableCellColorHexMap
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.toText
 import org.jetbrains.compose.resources.getString
@@ -287,7 +286,7 @@ fun CellEditorScreen(
                                             .aspectRatio(1f)
                                             .clip(CircleShape)
                                             .background(Color(timetableCellColorHexMap[it]!!))
-                                            .suwikiClickable(
+                                            .cchClickable(
                                                 rippleEnabled = false,
                                                 onClick = { onClickColorChip(it) },
                                             ),

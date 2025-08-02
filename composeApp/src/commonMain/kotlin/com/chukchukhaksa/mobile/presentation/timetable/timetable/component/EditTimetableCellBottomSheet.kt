@@ -18,7 +18,7 @@ import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.edit_timetable_cell_bottom_sheet_info
 import chukchukhaksa.composeapp.generated.resources.word_do_delete
 import chukchukhaksa.composeapp.generated.resources.word_do_edit
-import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.SuwikiBottomSheet
+import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchBottomSheet
 import com.chukchukhaksa.mobile.common.designsystem.component.button.SuwikiContainedLargeButton
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.model.TimetableCell
@@ -32,12 +32,10 @@ import org.jetbrains.compose.resources.stringResource
 fun EditTimetableCellBottomSheet(
     onDismissRequest: () -> Unit = {},
     cell: TimetableCell = TimetableCell(color = TimetableCellColor.GRAY_DARK),
-    isSheetOpen: Boolean = false,
     onClickDeleteButton: (TimetableCell) -> Unit = {},
     onClickEditButton: (TimetableCell) -> Unit = {},
 ) {
-    SuwikiBottomSheet(
-        isSheetOpen = isSheetOpen,
+    CchBottomSheet(
         onDismissRequest = onDismissRequest,
     ) {
         Column(

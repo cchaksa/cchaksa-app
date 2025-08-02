@@ -16,13 +16,15 @@ import org.jetbrains.compose.resources.stringResource
 data class OpenLectureState(
     val searchValue: String = "",
     val openLectureList: PersistentList<OpenLecture> = persistentListOf(),
-    val selectedOpenMajor: String = "전체",
+    val selectedOpenMajor: String? = null,
     val showSchoolLevelBottomSheet: Boolean = false,
+    val showOpenMajorBottomSheet: Boolean = false,
     val schoolLevel: SchoolLevel = SchoolLevel.ALL,
     val showSelectCellColorBottomSheet: Boolean = false,
     val selectedTimetableCellColor: TimetableCellColor = TimetableCellColor.BROWN,
     val isLoading: Boolean = false,
     val lastUpdatedDate: String? = null,
+    val selectedOpenLectureId: Long? = null,
 )
 
 @Composable
@@ -51,7 +53,6 @@ fun TimetableDay.toText() = when (this) {
 sealed interface OpenLectureSideEffect {
     data object ScrollToTop : OpenLectureSideEffect
     data object PopBackStack : OpenLectureSideEffect
-    data class NavigateOpenMajor(val selectedOpenMajor: String) : OpenLectureSideEffect
     data class NavigateCellEditor(val argument: CellEditorArgument) : OpenLectureSideEffect
     data object NavigateAddCustomTimetableCell : OpenLectureSideEffect
     data class HandleException(val throwable: Throwable) : OpenLectureSideEffect

@@ -1,6 +1,6 @@
-package com.chukchukhaksa.mobile.presentation.openmajor
+package com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor
 
-import com.chukchukhaksa.mobile.presentation.openmajor.model.OpenMajor
+import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor.model.OpenMajor
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -19,7 +19,5 @@ data class OpenMajorState(
 sealed interface OpenMajorSideEffect {
     data class HandleException(val throwable: Throwable) : OpenMajorSideEffect
     data object PopBackStack : OpenMajorSideEffect
-    data class PopBackStackWithArgument(val argument: String) : OpenMajorSideEffect
-
-    data object ShowNeedLoginToast : OpenMajorSideEffect
+    data class PopBackStackWithArgument(val argument: String?) : OpenMajorSideEffect
 }

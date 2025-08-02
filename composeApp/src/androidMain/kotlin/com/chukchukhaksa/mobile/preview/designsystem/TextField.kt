@@ -15,113 +15,116 @@ import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchSearchTextField
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.SuwikiRegularTextField
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.SuwikiSmallTextField
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 fun SuwikiRegularTextFieldPreview() {
-    SuwikiTheme {
-        var normalValue by remember {
-            mutableStateOf("")
-        }
-
-        var errorValue by remember {
-            mutableStateOf("")
-        }
-
-        Column(
-            modifier = Modifier.background(White),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            SuwikiRegularTextField(
-                label = "라벨",
-                placeholder = "플레이스 홀더",
-                value = normalValue,
-                onValueChange = { normalValue = it },
-                onClickClearButton = { normalValue = "" },
-                helperText = "도움말 메세지",
-            )
-
-            SuwikiRegularTextField(
-                label = "라벨",
-                placeholder = "플레이스 홀더",
-                value = errorValue,
-                onValueChange = { errorValue = it },
-                onClickClearButton = { errorValue = "" },
-                helperText = "도움말 메세지",
-                isError = true,
-            )
-        }
+  SuwikiTheme {
+    var normalValue by remember {
+      mutableStateOf("")
     }
+
+    var errorValue by remember {
+      mutableStateOf("")
+    }
+
+    Column(
+      modifier = Modifier.background(White),
+      verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+      SuwikiRegularTextField(
+        label = "라벨",
+        placeholder = "플레이스 홀더",
+        value = normalValue,
+        onValueChange = { normalValue = it },
+        onClickClearButton = { normalValue = "" },
+        helperText = "도움말 메세지",
+      )
+
+      SuwikiRegularTextField(
+        label = "라벨",
+        placeholder = "플레이스 홀더",
+        value = errorValue,
+        onValueChange = { errorValue = it },
+        onClickClearButton = { errorValue = "" },
+        helperText = "도움말 메세지",
+        isError = true,
+      )
+    }
+  }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 fun SuwikiSmallTextFieldPreview() {
-    SuwikiTheme {
-        var normalValue by remember {
-            mutableStateOf("")
-        }
-
-        Column(
-            modifier = Modifier
-                .background(White)
-                .padding(vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            SuwikiSmallTextField(
-                placeholder = "플레이스 홀더",
-                value = normalValue,
-                onValueChange = { normalValue = it },
-                onClickClearButton = { normalValue = "" },
-            )
-
-            SuwikiSmallTextField(
-                placeholder = "플레이스 홀더",
-                value = normalValue,
-                onValueChange = { normalValue = it },
-                onClickClearButton = { normalValue = "" },
-            )
-        }
+  SuwikiTheme {
+    var normalValue by remember {
+      mutableStateOf("")
     }
+
+    Column(
+      modifier = Modifier
+          .background(White)
+          .padding(vertical = 10.dp),
+      verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+      SuwikiSmallTextField(
+        placeholder = "플레이스 홀더",
+        value = normalValue,
+        onValueChange = { normalValue = it },
+        onClickClearButton = { normalValue = "" },
+      )
+
+      SuwikiSmallTextField(
+        placeholder = "플레이스 홀더",
+        value = normalValue,
+        onValueChange = { normalValue = it },
+        onClickClearButton = { normalValue = "" },
+      )
+    }
+  }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 fun CchSearchTextFieldPreview() {
-    CCHaksaTheme {
-        var beforeValue by remember { mutableStateOf("") }
-        var typingValue by remember { mutableStateOf("강의명") }
-        var afterValue by remember { mutableStateOf("강의명강의명강의명강의명강의명강의명강의명강의명") }
+  CchTheme {
+    var beforeValue by remember { mutableStateOf("") }
+    var typingValue by remember { mutableStateOf("강의명") }
+    var afterValue by remember { mutableStateOf("강의명강의명강의명강의명강의명강의명강의명강의명") }
 
-        Column(
-            modifier = Modifier
-                .background(White)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            // Before state
-            CchSearchTextField(
-                value = beforeValue,
-                onValueChange = { beforeValue = it },
-                placeholder = "강의명을 입력하세요"
-            )
+    Column(
+      modifier = Modifier
+          .background(White)
+          .padding(16.dp),
+      verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+      // Before state
+      CchSearchTextField(
+        value = beforeValue,
+        onValueChange = { beforeValue = it },
+        placeholder = "강의명을 입력하세요",
+        onSearchAction = {},
+      )
 
-            // Typing state
-            CchSearchTextField(
-                value = typingValue,
-                onValueChange = { typingValue = it },
-                placeholder = "강의명을 입력하세요"
-            )
+      // Typing state
+      CchSearchTextField(
+        value = typingValue,
+        onValueChange = { typingValue = it },
+        placeholder = "강의명을 입력하세요",
+        onSearchAction = {},
+      )
 
-            // After state
-            CchSearchTextField(
-                value = afterValue,
-                onValueChange = { afterValue = it },
-                placeholder = "강의명을 입력하세요"
-            )
-        }
+      // After state
+      CchSearchTextField(
+        value = afterValue,
+        onValueChange = { afterValue = it },
+        placeholder = "강의명을 입력하세요",
+        onSearchAction = {},
+      )
     }
+  }
 }

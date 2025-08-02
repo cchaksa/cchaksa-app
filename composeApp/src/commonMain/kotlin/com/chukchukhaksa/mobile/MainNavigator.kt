@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.chukchukhaksa.mobile.presentation.openmajor.navigation.navigateOpenMajor
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.TimetableRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
@@ -20,9 +19,6 @@ class MainNavigator(
 ) {
     val startDestination = TimetableRoute.route
 
-    fun navigateOpenMajor(selectedOpenMajor: String) {
-        navController.navigateOpenMajor(selectedOpenMajor)
-    }
 
     fun navigateCellEditor(argument: CellEditorArgument) {
         navController.navigateCellEditor(argument)

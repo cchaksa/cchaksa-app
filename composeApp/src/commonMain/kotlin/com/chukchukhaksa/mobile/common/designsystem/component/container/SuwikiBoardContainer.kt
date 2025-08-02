@@ -14,7 +14,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Black
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 
 @Composable
 fun SuwikiBoardContainer(
@@ -26,7 +26,7 @@ fun SuwikiBoardContainer(
   Column(
     modifier = modifier
       .fillMaxWidth()
-      .suwikiClickable(onClick = onClick)
+      .cchClickable(onClick = onClick)
       .background(White)
       .padding(24.dp, 15.dp),
   ) {

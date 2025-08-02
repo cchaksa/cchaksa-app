@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
  *
  * @return clickable 이 적용된 [Modifier]
  */
-fun Modifier.suwikiClickable(
+fun Modifier.cchClickable(
   rippleEnabled: Boolean = true,
   rippleColor: Color? = null,
   runIf: Boolean = true,

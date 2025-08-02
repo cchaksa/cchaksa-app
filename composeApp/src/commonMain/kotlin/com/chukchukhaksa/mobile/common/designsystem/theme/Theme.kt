@@ -23,7 +23,7 @@ fun SuwikiTheme(
 }
 
 @Composable
-fun CCHaksaTheme(
+fun CchTheme(
   content: @Composable () -> Unit,
 ) {
   CompositionLocalProvider(
@@ -45,7 +45,7 @@ object SuwikiTheme {
     get() = LocalTypography.current
 }
 
-object CCHaksaTheme {
+object CchTheme {
   val typography: CCHaksaTypography
     @Composable
     @ReadOnlyComposable

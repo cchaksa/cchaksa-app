@@ -24,6 +24,7 @@ import com.chukchukhaksa.mobile.common.ui.suwikiClickable
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.MINUTE60
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.timetableBorderWidth
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.timetableHeightPerHour
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.toText
 
 @Composable
@@ -50,7 +51,7 @@ internal fun ELearningCell(
         .fillMaxWidth()
         .clip(shape = radius)
         .border(width = timetableBorderWidth, color = GrayF6)
-        .suwikiClickable {
+        .cchClickable {
           onClickClassCell(cell)
         }
         .background(White)

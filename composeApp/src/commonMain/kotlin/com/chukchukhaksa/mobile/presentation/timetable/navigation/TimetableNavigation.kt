@@ -45,9 +45,7 @@ fun NavController.navigateTimetable() {
 
 fun NavGraphBuilder.timetableNavGraph(
     padding: PaddingValues,
-    argumentName: String,
     popBackStack: () -> Unit,
-    navigateOpenMajor: (String) -> Unit,
     navigateTimetableEditor: (TimetableEditorArgument) -> Unit,
     navigateTimetableList: () -> Unit,
     navigateOpenLecture: () -> Unit,
@@ -88,15 +86,12 @@ fun NavGraphBuilder.timetableNavGraph(
         )
     }
 
-    composable(route = TimetableRoute.openLectureRoute) { navBackStackEntry ->
-        val selectedOpenMajor = navBackStackEntry.savedStateHandle.get<String>(argumentName) ?: "전체"
-
+    composable(route = TimetableRoute.openLectureRoute) {
         OpenLectureRoute(
-            selectedOpenMajor = selectedOpenMajor,
+            selectedOpenMajor = null,
             popBackStack = popBackStack,
             handleException = handleException,
             onShowToast = onShowToast,
-            navigateOpenMajor = navigateOpenMajor,
             navigateCellEditor = navigateCellEditor,
         )
     }

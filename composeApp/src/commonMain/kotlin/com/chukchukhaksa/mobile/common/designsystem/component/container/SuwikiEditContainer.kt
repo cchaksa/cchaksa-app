@@ -24,7 +24,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Black
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -49,7 +49,7 @@ fun SuwikiEditContainer(
                     strokeWidth = strokeWidth,
                 )
             }
-            .suwikiClickable(onClick = onClick)
+            .cchClickable(onClick = onClick)
             .padding(24.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,

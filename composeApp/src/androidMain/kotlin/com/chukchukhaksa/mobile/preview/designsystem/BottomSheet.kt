@@ -9,25 +9,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.SuwikiBottomSheet
-import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
+import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchBottomSheet
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun SuwikiBottomSheetPreview() {
-    var isSheetOpen by rememberSaveable { mutableStateOf(false) }
+    var visible by rememberSaveable { mutableStateOf(false) }
 
     // 테스트용 버튼
-    Button(onClick = { isSheetOpen = true }) {
+    Button(onClick = { visible = true }) {
         Text("Bottom Sheet 열기")
     }
 
-    SuwikiTheme {
-        SuwikiBottomSheet(
-            isSheetOpen = isSheetOpen,
-            onDismissRequest = { isSheetOpen = !isSheetOpen },
-            content = {},
-        )
+  CchTheme {
+    if (visible) {
+      CchBottomSheet(
+        onDismissRequest = { visible = !visible },
+        content = {},
+      )
     }
+  }
 }

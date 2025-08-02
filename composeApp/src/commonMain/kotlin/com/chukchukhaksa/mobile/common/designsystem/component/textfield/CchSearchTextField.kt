@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -28,7 +29,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray600
@@ -91,10 +92,11 @@ object CchSearchTextFieldDefaults {
 fun CchSearchTextField(
   value: String,
   onValueChange: (String) -> Unit,
-  placeholder: String,
+  onSearchAction: () -> Unit,
   modifier: Modifier = Modifier,
+  placeholder: String? = null,
   enabled: Boolean = true,
-  textStyle: TextStyle = CCHaksaTheme.typography.bodyMd,
+  textStyle: TextStyle = CchTheme.typography.bodyMd,
   colors: CchSearchTextFieldColors = CchSearchTextFieldDefaults.colors(),
   interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
@@ -128,6 +130,7 @@ fun CchSearchTextField(
     textStyle = textStyle.copy(color = colors.textColor),
     cursorBrush = SolidColor(colors.cursorColor),
     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+    keyboardActions = KeyboardActions(onSearch = { onSearchAction() }),
     interactionSource = interactionSource,
     decorationBox = { innerTextField ->
       Row(
@@ -142,7 +145,7 @@ fun CchSearchTextField(
         Box(
           modifier = Modifier.weight(1f),
         ) {
-          if (value.isEmpty()) {
+          if (value.isEmpty() && placeholder != null) {
             Text(
               text = placeholder,
               style = textStyle,

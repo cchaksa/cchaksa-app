@@ -1,9 +1,5 @@
 package com.chukchukhaksa.mobile
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
@@ -19,13 +15,10 @@ import chukchukhaksa.composeapp.generated.resources.dialog_update_mandatory_head
 import chukchukhaksa.composeapp.generated.resources.word_confirm
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.SuwikiDialog
 import com.chukchukhaksa.mobile.common.designsystem.component.toast.SuwikiToast
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.kmp.SetStatusBarColor
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import com.chukchukhaksa.mobile.presentation.openmajor.navigation.OpenMajorRoute
-import com.chukchukhaksa.mobile.presentation.openmajor.navigation.openMajorNavGraph
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.timetableNavGraph
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinContext
@@ -38,7 +31,7 @@ fun App(
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
     SetStatusBarColor()
-    CCHaksaTheme {
+    CchTheme {
         KoinContext {
             val uiState = viewModel.mviStore.uiState.collectAsState().value
             val uriHandler = LocalUriHandler.current
@@ -61,29 +54,15 @@ fun App(
                         navController = navigator.navController,
                         startDestination = navigator.startDestination,
                     ) {
-                        openMajorNavGraph(
-                            popBackStack = navigator::popBackStackIfNotHome,
-                            popBackStackWithArgument = { openMajor ->
-                                navigator.navController.previousBackStackEntry?.savedStateHandle?.set(
-                                    OpenMajorRoute.ARGUMENT_NAME,
-                                    openMajor,
-                                )
-                                navigator.popBackStackIfNotHome()
-                            },
-                            handleException = viewModel::handleException,
-                            onShowToast = viewModel::onShowToast,
-                        )
 
                         timetableNavGraph(
                             padding = innerPadding,
-                            argumentName = OpenMajorRoute.ARGUMENT_NAME,
                             popBackStack = navigator::popBackStackIfNotHome,
                             navigateTimetableEditor = navigator::navigateTimetableEditor,
                             navigateTimetableList = navigator::navigateTimetableList,
                             navigateOpenLecture = navigator::navigateOpenLecture,
                             handleException = viewModel::handleException,
                             onShowToast = viewModel::onShowToast,
-                            navigateOpenMajor = navigator::navigateOpenMajor,
                             navigateCellEditor = navigator::navigateCellEditor,
                             navigateSemesterSelect = navigator::navigateSemesterSelect,
                             navigateTimetable = navigator::navigatetimetable,
