@@ -31,7 +31,6 @@ fun CchRegularTextField(
   modifier: Modifier = Modifier,
   value: String = "",
   onValueChanged: (String) -> Unit = {},
-  onClearButtonClicked: () -> Unit = {},
   placeholder: String = "",
 ) {
   val (borderColor, textColor, textStyle) = if(value.isEmpty()) {
@@ -68,7 +67,6 @@ fun CchRegularTextField(
           innerTextField()
         }
         Spacer(modifier = Modifier.width(8.dp))
-        TextFieldClearButton(onClick = onClearButtonClicked)
       }
     },
   )

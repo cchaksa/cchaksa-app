@@ -100,7 +100,6 @@ fun TimetableEditorScreen(
                     modifier = Modifier.padding(top = 196.dp, start = 4.dp, end = 4.dp),
                     value = uiState.name,
                     onValueChanged = onValueChangeTimetableName,
-                    onClearButtonClicked = onClickTextFieldClearButton,
                     placeholder = stringResource(Res.string.create_timetable_screen_placeholder),
                 )
 

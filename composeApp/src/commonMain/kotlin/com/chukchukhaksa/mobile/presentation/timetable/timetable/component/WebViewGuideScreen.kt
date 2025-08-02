@@ -29,7 +29,7 @@ fun WebViewGuideScreen() {
   Column(
     modifier = Modifier
       .fillMaxSize()
-      .padding(top = 178.dp, start = 46.dp, end = 46.dp),
+      .padding(top = 178.dp, start = 20.dp, end = 20.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     Image(
