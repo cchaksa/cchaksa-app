@@ -59,7 +59,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.SuwikiAppBarWithTextButton
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchBottomSheet
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchSelectBottomSheet
-import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
+import com.chukchukhaksa.mobile.common.designsystem.component.button.CchBasicButton
 import com.chukchukhaksa.mobile.common.designsystem.component.button.SuwikiContainedLargeButton
 import com.chukchukhaksa.mobile.common.designsystem.component.loading.LoadingScreen
 import com.chukchukhaksa.mobile.common.designsystem.component.searchbar.SuwikiSearchBar
