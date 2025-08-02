@@ -2,6 +2,7 @@ package com.chukchukhaksa.mobile.presentation.timetable.timetable.component.time
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,9 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.model.TimetableCellColor
 import com.chukchukhaksa.mobile.common.ui.cchClickable
@@ -59,32 +62,32 @@ fun ClassCell(
         modifier = modifier
             .fillMaxWidth()
             .height(height)
-            .border(width = timetableBorderWidth, color = GrayF6)
-            .padding(timetableBorderWidth)
             .background(Color(data.color.toHex()))
+            .padding(4.dp)
             .cchClickable {
                 onClick(data)
             },
     ) {
         Text(
-            style = SuwikiTheme.typography.caption3,
+          modifier = Modifier.padding(bottom = 2.dp),
+            style = CchTheme.typography.bodyXsStrong,
             text = data.name,
-            color = White,
+            color = White100,
         )
 
         if (showProfessor) {
             Text(
-                style = SuwikiTheme.typography.caption6,
+                style = CchTheme.typography.bodyXxs,
                 text = data.professor,
-                color = White,
+                color = White100,
             )
         }
 
         if (showLocation) {
             Text(
-                style = SuwikiTheme.typography.caption6,
+                style = CchTheme.typography.bodyXxs,
                 text = data.location,
-                color = White,
+                color = White100,
             )
         }
     }

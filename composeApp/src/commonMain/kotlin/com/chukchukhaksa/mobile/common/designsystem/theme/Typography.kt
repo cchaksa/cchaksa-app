@@ -217,9 +217,17 @@ fun CCHaksaTypography(): CCHaksaTypography {
       fontWeight = FontWeight.Medium,
       fontSize = 14.sp,
     ),
+    bodyXsStrong = suitStyle.copy(
+      fontWeight = FontWeight.ExtraBold,
+      fontSize = 12.sp,
+    ),
     bodyXs = suitStyle.copy(
       fontWeight = FontWeight.Normal,
       fontSize = 12.sp,
+    ),
+    bodyXxs = suitStyle.copy(
+      fontWeight = FontWeight.Normal,
+      fontSize = 10.sp,
     ),
   )
 }
@@ -236,7 +244,9 @@ data class CCHaksaTypography(
   val bodyMd: TextStyle,
   val bodySmStrong: TextStyle,
   val bodySm: TextStyle,
+  val bodyXsStrong: TextStyle,
   val bodyXs: TextStyle,
+  val bodyXxs: TextStyle,
 )
 
 data class SuwikiTypography(
@@ -303,6 +313,8 @@ val LocalCCHaksaTypography = staticCompositionLocalOf {
     bodyMd = TextStyle.Default,
     bodySmStrong = TextStyle.Default,
     bodySm = TextStyle.Default,
+    bodyXsStrong = TextStyle.Default,
     bodyXs = TextStyle.Default,
+    bodyXxs = TextStyle.Default,
   )
 }
