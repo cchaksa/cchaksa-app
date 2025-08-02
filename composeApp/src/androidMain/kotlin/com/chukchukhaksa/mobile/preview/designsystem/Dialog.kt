@@ -2,14 +2,14 @@ package com.chukchukhaksa.mobile.preview.designsystem
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.chukchukhaksa.mobile.common.designsystem.component.dialog.SuwikiDialog
+import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 
 @Preview
 @Composable
 fun DialogPreview() {
     SuwikiTheme {
-        SuwikiDialog(
+        CchDialog(
             headerText = "Header text",
             bodyText = "Body text",
             confirmButtonText = "Action 2",
