@@ -24,6 +24,7 @@ data class OpenLectureState(
     val selectedTimetableCellColor: TimetableCellColor = TimetableCellColor.BROWN,
     val isLoading: Boolean = false,
     val lastUpdatedDate: String? = null,
+    val selectedOpenLectureId: Long? = null,
 )
 
 @Composable

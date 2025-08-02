@@ -148,6 +148,8 @@ fun OpenLectureRoute(
     onClickSearchButton = viewModel::searchOpenLecture,
     onValueChangeSearch = viewModel::updateSearchValue,
     onClickCellAdd = viewModel::showSelectColorBottomSheet,
+    onSelectOpenLecture = viewModel::selectOpenLecture,
+    onClickAddSelectedLecture = viewModel::insertSelectedLectureToTimetable,
     onClickApply = {
       viewModel.hideSelectColorBottomSheet()
       viewModel.insertTimetable()
@@ -175,6 +177,7 @@ fun OpenLectureScreen(
   onClickSearchButton: (String) -> Unit = {},
   onValueChangeSearch: (String) -> Unit = {},
   onClickCellAdd: (OpenLecture) -> Unit = {},
+  onSelectOpenLecture: (Long) -> Unit = {},
   onClickApply: () -> Unit = {},
   onDismissColorSelectBottomSheet: () -> Unit = {},
   onClickColorChip: (TimetableCellColor) -> Unit = {},
@@ -184,6 +187,7 @@ fun OpenLectureScreen(
   onConfirmOpenMajor: (String?) -> Unit = {},
   handleException: (Throwable) -> Unit = {},
   onShowToast: (String) -> Unit = {},
+  onClickAddSelectedLecture: () -> Unit = {},
 ) {
   SuwikiBackground {
     Box {
@@ -295,8 +299,8 @@ fun OpenLectureScreen(
                   grade = "${grade}학년",
                   classType = type,
                   openMajor = major,
-                  onClick = { onClickClassInfoCard(this) },
-                  isSelected = false,
+                  onClick = { onSelectOpenLecture(this.id) },
+                  isSelected = uiState.selectedOpenLectureId == this.id,
 //                onClickAdd = { onClickCellAdd(this) },
                 )
               }
@@ -311,8 +315,8 @@ fun OpenLectureScreen(
           .align(Alignment.BottomCenter)
           .padding(start = 16.dp, end = 16.dp, bottom = 2.dp),
         text = "선택한 강의 추가하기",
-        enable = true,
-        onClick = {  },
+        enable = uiState.selectedOpenLectureId != null,
+        onClick = onClickAddSelectedLecture,
       )
     }
   }
