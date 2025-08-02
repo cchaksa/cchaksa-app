@@ -1,6 +1,7 @@
 package com.chukchukhaksa.mobile.presentation.timetable.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -53,7 +54,7 @@ fun NavGraphBuilder.timetableNavGraph(
     navigateSemesterSelect: () -> Unit,
     navigateTimetable:() -> Unit,
     handleException: (Throwable) -> Unit,
-    onShowToast: (String) -> Unit,
+    onShowToast: (String, Dp) -> Unit,
 ) {
     composable(route = TimetableRoute.route) {
         TimetableRoute(

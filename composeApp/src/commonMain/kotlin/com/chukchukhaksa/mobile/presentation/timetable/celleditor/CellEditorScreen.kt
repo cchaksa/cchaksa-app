@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -77,19 +78,19 @@ fun CellEditorRoute(
     viewModel: CellEditorViewModel = koinViewModel(),
     popBackStack: () -> Unit,
     handleException: (Throwable) -> Unit,
-    onShowToast: (String) -> Unit,
+    onShowToast: (String, Dp) -> Unit,
 ) {
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
             is CellEditorSideEffect.HandleException -> handleException(sideEffect.throwable)
             CellEditorSideEffect.PopBackStack -> popBackStack()
-            is CellEditorSideEffect.ShowToast -> onShowToast(sideEffect.msg)
-            CellEditorSideEffect.ShowAddSuccessCellToast -> onShowToast(getString(Res.string.open_lecture_success_add_cell_toast))
-            CellEditorSideEffect.ShowNeedLectureNameToast -> onShowToast(getString(Res.string.add_cell_screen_need_lecture_name))
-            CellEditorSideEffect.ShowNeedLocationToast -> onShowToast(getString(Res.string.add_cell_screen_need_location))
-            CellEditorSideEffect.ShowNeedProfessorNameToast -> onShowToast(getString(Res.string.add_cell_screen_need_professor_name))
-            CellEditorSideEffect.ShowEditSuccessCellToast -> onShowToast(getString(Res.string.open_lecture_success_edit_cell_toast))
+            is CellEditorSideEffect.ShowToast -> onShowToast(sideEffect.msg, 70.dp)
+            CellEditorSideEffect.ShowAddSuccessCellToast -> onShowToast(getString(Res.string.open_lecture_success_add_cell_toast), 70.dp)
+            CellEditorSideEffect.ShowNeedLectureNameToast -> onShowToast(getString(Res.string.add_cell_screen_need_lecture_name), 70.dp)
+            CellEditorSideEffect.ShowNeedLocationToast -> onShowToast(getString(Res.string.add_cell_screen_need_location), 70.dp)
+            CellEditorSideEffect.ShowNeedProfessorNameToast -> onShowToast(getString(Res.string.add_cell_screen_need_professor_name), 70.dp)
+            CellEditorSideEffect.ShowEditSuccessCellToast -> onShowToast(getString(Res.string.open_lecture_success_edit_cell_toast), 70.dp)
         }
     }
     CellEditorScreen(

@@ -1,5 +1,6 @@
 package com.chukchukhaksa.mobile.presentation.timetable.openlecture
 
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +12,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -33,29 +36,42 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.add_timetable_cell_search_bar_placeholder
+import chukchukhaksa.composeapp.generated.resources.add_timetable_screen_add_lecture
 import chukchukhaksa.composeapp.generated.resources.ic_align_checked
 import chukchukhaksa.composeapp.generated.resources.ic_arrow
 import chukchukhaksa.composeapp.generated.resources.ic_arrow_sm
+import chukchukhaksa.composeapp.generated.resources.ic_dropdown_arrow_down
 import chukchukhaksa.composeapp.generated.resources.ic_plus_s
+import chukchukhaksa.composeapp.generated.resources.ic_textfield_clear
+import chukchukhaksa.composeapp.generated.resources.open_lecture_screen_empty_result_description
 import chukchukhaksa.composeapp.generated.resources.open_lecture_screen_empty_result_title
 import chukchukhaksa.composeapp.generated.resources.open_lecture_success_add_cell_toast
 import chukchukhaksa.composeapp.generated.resources.word_apply
+import chukchukhaksa.composeapp.generated.resources.word_open_major
+import chukchukhaksa.composeapp.generated.resources.word_school_level
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
+import com.chukchukhaksa.mobile.common.designsystem.component.appbar.SuwikiAppBarWithTextButton
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchBottomSheet
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchSelectBottomSheet
-import com.chukchukhaksa.mobile.common.designsystem.component.button.CchBasicButton
+import com.chukchukhaksa.mobile.common.designsystem.component.button.ChukChukBasicButton
 import com.chukchukhaksa.mobile.common.designsystem.component.button.SuwikiContainedLargeButton
 import com.chukchukhaksa.mobile.common.designsystem.component.loading.LoadingScreen
+import com.chukchukhaksa.mobile.common.designsystem.component.searchbar.SuwikiSearchBar
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchSearchTextField
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray600
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray6A
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
+import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
+import com.chukchukhaksa.mobile.common.designsystem.theme.Primary
 import com.chukchukhaksa.mobile.common.designsystem.theme.Purple100
 import com.chukchukhaksa.mobile.common.designsystem.theme.Purple600
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
@@ -71,6 +87,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.botto
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.openlecture.component.OpenLectureCard
 import com.chukchukhaksa.mobile.presentation.timetable.openlecture.model.SchoolLevel
+import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.semesterList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
@@ -84,7 +101,7 @@ fun OpenLectureRoute(
   selectedOpenMajor: String?,
   popBackStack: () -> Unit,
   handleException: (Throwable) -> Unit,
-  onShowToast: (String) -> Unit,
+  onShowToast: (String, Dp) -> Unit,
   navigateCellEditor: (CellEditorArgument) -> Unit,
 ) {
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
@@ -104,8 +121,8 @@ fun OpenLectureRoute(
         listState.animateScrollToItem(0)
       }
 
-      is OpenLectureSideEffect.ShowOverlapCellToast -> onShowToast(sideEffect.msg)
-      OpenLectureSideEffect.ShowSuccessAddCellToast -> onShowToast(getString(Res.string.open_lecture_success_add_cell_toast))
+      is OpenLectureSideEffect.ShowOverlapCellToast -> onShowToast(sideEffect.msg, 100.dp)
+      OpenLectureSideEffect.ShowSuccessAddCellToast -> onShowToast(getString(Res.string.open_lecture_success_add_cell_toast), 100.dp)
       is OpenLectureSideEffect.NavigateCellEditor -> navigateCellEditor(sideEffect.argument)
     }
   }
@@ -170,7 +187,7 @@ fun OpenLectureScreen(
   onDismissOpenMajorBottomSheet: () -> Unit = {},
   onConfirmOpenMajor: (String?) -> Unit = {},
   handleException: (Throwable) -> Unit = {},
-  onShowToast: (String) -> Unit = {},
+  onShowToast: (String, Dp) -> Unit = { _, _ -> },
   onClickAddSelectedLecture: () -> Unit = {},
 ) {
   SuwikiBackground {

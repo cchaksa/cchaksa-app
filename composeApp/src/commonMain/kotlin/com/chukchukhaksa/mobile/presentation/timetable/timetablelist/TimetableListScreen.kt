@@ -25,7 +25,7 @@ import chukchukhaksa.composeapp.generated.resources.word_confirm
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.SuwikiAppBarWithTextButton
 import com.chukchukhaksa.mobile.common.designsystem.component.container.SuwikiEditContainer
-import com.chukchukhaksa.mobile.common.designsystem.component.dialog.SuwikiDialog
+import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
@@ -118,7 +118,7 @@ fun TimetableListScreen(
         }
 
         if (uiState.showDeleteDialog) {
-            SuwikiDialog(
+            CchDialog(
                 headerText = stringResource(Res.string.delete_timetable_dialog_title),
                 bodyText = stringResource(Res.string.delete_timetable_dialog_body),
                 confirmButtonText = stringResource(Res.string.word_confirm),

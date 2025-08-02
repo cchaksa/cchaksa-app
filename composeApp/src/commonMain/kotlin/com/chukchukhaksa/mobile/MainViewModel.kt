@@ -1,5 +1,7 @@
 package com.chukchukhaksa.mobile
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chukchukhaksa.mobile.common.extension.record
@@ -49,10 +51,10 @@ class MainViewModel(
         }
     }
 
-    fun onShowToast(msg: String) {
+    fun onShowToast(msg: String, bottomPadding: Dp = 70.dp) {
         viewModelScope.launch {
             mutex.withLock {
-                mviStore.setState { copy(toastMessage = msg, toastVisible = true) }
+                mviStore.setState { copy(toastMessage = msg, toastVisible = true, toastBottomPadding = bottomPadding) }
                 delay(SHOW_TOAST_LENGTH)
                 mviStore.setState { copy(toastVisible = false) }
             }

@@ -13,8 +13,8 @@ import chukchukhaksa.composeapp.generated.resources.dialog_network_header
 import chukchukhaksa.composeapp.generated.resources.dialog_update_mandatory_body
 import chukchukhaksa.composeapp.generated.resources.dialog_update_mandatory_header
 import chukchukhaksa.composeapp.generated.resources.word_confirm
-import com.chukchukhaksa.mobile.common.designsystem.component.dialog.SuwikiDialog
-import com.chukchukhaksa.mobile.common.designsystem.component.toast.SuwikiToast
+import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
+import com.chukchukhaksa.mobile.common.designsystem.component.toast.CchToast
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.kmp.SetStatusBarColor
@@ -70,7 +70,7 @@ fun App(
                     }
 
                     if (uiState.showNetworkErrorDialog) {
-                        SuwikiDialog(
+                        CchDialog(
                             headerText = stringResource(Res.string.dialog_network_header),
                             bodyText = stringResource(Res.string.dialog_network_body),
                             confirmButtonText = stringResource(Res.string.word_confirm),
@@ -80,7 +80,7 @@ fun App(
                     }
 
                     if (uiState.showForceUpdateDialog) {
-                        SuwikiDialog(
+                        CchDialog(
                             headerText = stringResource(Res.string.dialog_update_mandatory_header),
                             bodyText = stringResource(Res.string.dialog_update_mandatory_body),
                             confirmButtonText = stringResource(Res.string.word_confirm),
@@ -89,9 +89,10 @@ fun App(
                         )
                     }
 
-                    SuwikiToast(
+                    CchToast(
                         visible = uiState.toastVisible,
                         message = uiState.toastMessage,
+                        bottomPadding = uiState.toastBottomPadding,
                     )
                 },
             )
