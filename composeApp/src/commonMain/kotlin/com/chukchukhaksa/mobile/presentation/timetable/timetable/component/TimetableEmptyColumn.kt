@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.ic_cch_logo_ios
+import chukchukhaksa.composeapp.generated.resources.ic_time_illust
 import chukchukhaksa.composeapp.generated.resources.timetable_screen_create_timetable
 import chukchukhaksa.composeapp.generated.resources.timetable_screen_create_timetable_button
 import com.chukchukhaksa.mobile.common.designsystem.component.button.CchBasicButton
@@ -36,30 +37,29 @@ fun TimetableEmptyColumn(
 ) {
   Column(
     modifier = modifier
-      .padding(top = 8.dp, bottom = 2.dp, start = 20.dp, end = 20.dp)
+      .padding(bottom = 10.dp, start = 20.dp, end = 20.dp)
       .fillMaxSize()
       .border(width = timetableBorderWidth, color = Gray200, shape = RoundedCornerShape(12.dp))
-      .padding(horizontal = 73.dp),
+      .padding(horizontal = 71.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     Image(
       modifier = Modifier
-//        .size(100.dp)
-        .padding(top = 190.dp, bottom = 14.dp),
-      painter = painterResource(Res.drawable.ic_cch_logo_ios),
+        .padding(top = 218.dp),
+      painter = painterResource(Res.drawable.ic_time_illust),
       contentDescription = "cch logo",
     )
 
     Text(
-      modifier = Modifier.padding(bottom = 40.dp),
-      text = "아직 만들어진 시간표가 없어요",
+      modifier = Modifier.padding(bottom = 20.dp),
+      text = "아직 만들어진 시간표가 없어요!",
       color = Gray600,
       style = CchTheme.typography.bodyMd,
       textAlign = TextAlign.Center,
     )
 
     CchBasicButton(
-      modifier = Modifier.padding(horizontal = 20.dp),
+      modifier = Modifier.padding(horizontal = 22.dp),
       text = "시간표 생성하기",
       enable = true,
       textStyle = CchTheme.typography.bodyMdStrong,
