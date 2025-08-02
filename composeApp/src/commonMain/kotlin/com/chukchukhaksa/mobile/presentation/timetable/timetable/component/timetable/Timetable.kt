@@ -41,6 +41,8 @@ fun Timetable(
     // TODO 리컴포지션 최적화 필요
     val cellGroupedByDay = timetable.cellList.groupBy { it.day }
     val eLearningCellList =  cellGroupedByDay.filter { it.key in listOf(TimetableDay.SAT, TimetableDay.E_LEARNING) }
+    val timeWeight = 0.06f
+    val classWeight = (1 - timeWeight) / TimetableDay.entries.filterNot { it == TimetableDay.SAT || it == TimetableDay.E_LEARNING }.size
 
     Column(
         modifier = modifier
@@ -51,7 +53,7 @@ fun Timetable(
     ) {
         Row {
             TimeColumn(
-                modifier = Modifier.weight(0.06f),
+                modifier = Modifier.weight(timeWeight),
                 maxPeriod = maxPeriod,
                 isHasELearning = eLearningCellList.isNotEmpty(),
             )
@@ -61,7 +63,7 @@ fun Timetable(
                 .filter { it !in listOf(TimetableDay.SAT, TimetableDay.E_LEARNING) }
                 .forEach { day ->
                     ClassColumn(
-                        modifier = Modifier.weight(0.188f),
+                        modifier = Modifier.weight(classWeight),
                         type = type,
                         day = day,
                         cellList = cellGroupedByDay[day] ?: emptyList(),
