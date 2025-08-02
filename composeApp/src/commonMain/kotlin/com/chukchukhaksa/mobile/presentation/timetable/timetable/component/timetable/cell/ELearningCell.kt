@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -15,15 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.model.TimetableCell
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
-import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.MINUTE60
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.timetableBorderWidth
-import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.timetableHeightPerHour
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.toText
 
@@ -63,7 +59,7 @@ internal fun ELearningCell(
         text = text,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        style = CCHaksaTheme.typography.bodyXs,
+        style = CchTheme.typography.bodyXs,
         color = Gray400,
       )
     }

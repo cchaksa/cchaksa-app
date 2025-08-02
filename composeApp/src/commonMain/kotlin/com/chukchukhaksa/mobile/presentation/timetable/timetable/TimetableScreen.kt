@@ -19,7 +19,6 @@ import chukchukhaksa.composeapp.generated.resources.timetable_screen_need_create
 import chukchukhaksa.composeapp.generated.resources.timetable_screen_select_type_cell_title
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchSelectBottomSheet
-import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
@@ -29,6 +28,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.Timet
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.TimetableEmptyColumn
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.Timetable
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell.TimetableCellType
+import com.chukchukhaksa.mobile.common.designsystem.component.tabbar.TimetableTabBar
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource

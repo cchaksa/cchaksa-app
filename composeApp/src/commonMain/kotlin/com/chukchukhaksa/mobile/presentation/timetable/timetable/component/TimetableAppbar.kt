@@ -20,12 +20,9 @@ import chukchukhaksa.composeapp.generated.resources.ic_timetable_add
 import chukchukhaksa.composeapp.generated.resources.ic_timetable_hamburger
 import chukchukhaksa.composeapp.generated.resources.ic_timetable_setting
 import chukchukhaksa.composeapp.generated.resources.word_timetable
-import com.chukchukhaksa.mobile.common.designsystem.theme.Black
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Purple600
-import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -46,7 +43,7 @@ fun TimetableAppbar(
   ) {
     Text(
       text = semester ?: "",
-      style = CCHaksaTheme.typography.bodySm,
+      style = CchTheme.typography.bodySm,
       color = Purple600,
     )
     Row(
@@ -63,7 +60,7 @@ fun TimetableAppbar(
           modifier = Modifier.weight(1f),
           overflow = TextOverflow.Ellipsis,
           text = name ?: stringResource(Res.string.word_timetable),
-          style = CCHaksaTheme.typography.bodyLgStrong,
+          style = CchTheme.typography.bodyLgStrong,
           color = Black100,
           maxLines = 1,
         )

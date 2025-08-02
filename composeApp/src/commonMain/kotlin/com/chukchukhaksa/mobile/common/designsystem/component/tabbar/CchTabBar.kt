@@ -15,10 +15,10 @@ import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.ic_tabbar_dot
 import chukchukhaksa.composeapp.generated.resources.ic_tabbar_mypage
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
-import com.chukchukhaksa.mobile.common.designsystem.theme.CCHaksaTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
-import com.chukchukhaksa.mobile.common.ui.suwikiClickable
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.TimetableScreen
 import org.jetbrains.compose.resources.painterResource
 
@@ -53,7 +53,7 @@ fun TimetableTabBar(
     Icon(
       modifier = Modifier
         .padding(top = 4.dp, bottom = 4.dp, end = 10.dp)
-        .suwikiClickable { onClickMyPage() },
+        .cchClickable { onClickMyPage() },
       painter = painterResource(Res.drawable.ic_tabbar_mypage),
       contentDescription = "",
       tint = Black100,
@@ -71,7 +71,7 @@ fun TimetableTabBarItem(
   val textColor = if (isSelected) Black100 else Gray400
 
   Column(
-    modifier = modifier.suwikiClickable { onClick() },
+    modifier = modifier.cchClickable { onClick() },
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     Icon(
@@ -81,7 +81,7 @@ fun TimetableTabBarItem(
     )
     Text(
       text = text,
-      style = CCHaksaTheme.typography.bodyMdStrong,
+      style = CchTheme.typography.bodyMdStrong,
       color = textColor,
     )
   }
