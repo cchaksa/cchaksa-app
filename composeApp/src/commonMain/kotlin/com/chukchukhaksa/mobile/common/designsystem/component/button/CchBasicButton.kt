@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
@@ -18,12 +19,14 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray300
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 
 @Composable
-fun ChukChukBasicButton(
+fun CchBasicButton(
   modifier: Modifier = Modifier,
   text: String,
   enable: Boolean,
+  textStyle: TextStyle = CchTheme.typography.bodyLgStrong,
   onClick: () -> Unit,
 ) {
   val (containerBackground, textColor) = if(enable) {
@@ -32,7 +35,7 @@ fun ChukChukBasicButton(
     Pair(Gray300, Gray400)
   }
   val clickableModifier = if (enable) {
-    Modifier.clickable(onClick = onClick)
+    Modifier.cchClickable { onClick() }
   } else {
     Modifier
   }
@@ -51,7 +54,7 @@ fun ChukChukBasicButton(
           .wrapContentHeight(),
         text = text,
         color = textColor,
-        style = CchTheme.typography.bodyLgStrong,
+        style = textStyle,
         textAlign = TextAlign.Center,
       )
   }

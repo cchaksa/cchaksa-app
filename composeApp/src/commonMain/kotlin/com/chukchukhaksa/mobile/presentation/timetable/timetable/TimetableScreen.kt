@@ -35,6 +35,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import com.chukchukhaksa.mobile.widget.sendWidgetUpdateCommand
 import com.chukchukhaksa.mobile.common.provider.LocalAppContext
+import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.WebViewGuideScreen
 
 @Composable
 fun TimetableRoute(
@@ -130,24 +131,16 @@ fun TimetableScreen(
                 onClickMyPage = { onClickMyPage() }
             )
 
-            AnimatedVisibility(
-                visible = uiState.timetableScreen == TimetableScreen.EMPTY_TIMETABLE,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                TimetableEmptyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(White),
-                    onClickAdd = onClickAddTimetable,
-                )
+            if(uiState.timetableScreen == TimetableScreen.EMPTY_TIMETABLE) {
+              TimetableEmptyColumn(
+                modifier = Modifier
+                  .fillMaxSize()
+                  .background(White),
+                onClickAdd = onClickAddTimetable,
+              )
             }
 
-            AnimatedVisibility(
-                visible = uiState.timetableScreen == TimetableScreen.TIMETABLE,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
+            if(uiState.timetableScreen == TimetableScreen.TIMETABLE) {
               Column {
                 TimetableAppbar(
                   modifier = Modifier.padding(top = 8.dp, bottom = 12.dp, start = 20.dp, end = 20.dp),
@@ -163,6 +156,10 @@ fun TimetableScreen(
                   onClickTimetableCell = onClickTimetableCell,
                 )
               }
+            }
+
+            if(uiState.timetableScreen == TimetableScreen.HOME) {
+              WebViewGuideScreen()
             }
         }
     }
