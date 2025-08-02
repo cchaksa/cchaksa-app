@@ -50,14 +50,14 @@ fun TimetableTabBar(
 
     Spacer(modifier = Modifier.weight(1f))
 
-    Icon(
-      modifier = Modifier
-        .padding(top = 4.dp, bottom = 4.dp, end = 10.dp)
-        .cchClickable { onClickMyPage() },
-      painter = painterResource(Res.drawable.ic_tabbar_mypage),
-      contentDescription = "",
-      tint = Black100,
-    )
+//    Icon(
+//      modifier = Modifier
+//        .padding(top = 4.dp, bottom = 4.dp, end = 10.dp)
+//        .cchClickable { onClickMyPage() },
+//      painter = painterResource(Res.drawable.ic_tabbar_mypage),
+//      contentDescription = "",
+//      tint = Black100,
+//    )
   }
 }
 

@@ -12,6 +12,6 @@ actual fun SetStatusBarColor(){
   val sysUiController = rememberSystemUiController()
 
   SideEffect {
-    sysUiController.setSystemBarsColor(color = Color(0xFFfbfbfb))
+    sysUiController.setSystemBarsColor(color = Color(0xFFFFFFFF))
   }
 }
