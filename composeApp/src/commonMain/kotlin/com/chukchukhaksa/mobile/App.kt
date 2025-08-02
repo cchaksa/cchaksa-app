@@ -92,6 +92,7 @@ fun App(
                     CchToast(
                         visible = uiState.toastVisible,
                         message = uiState.toastMessage,
+                        bottomPadding = uiState.toastBottomPadding,
                     )
                 },
             )

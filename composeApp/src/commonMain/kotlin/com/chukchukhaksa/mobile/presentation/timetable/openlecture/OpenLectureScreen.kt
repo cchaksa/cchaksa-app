@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -100,7 +101,7 @@ fun OpenLectureRoute(
   selectedOpenMajor: String?,
   popBackStack: () -> Unit,
   handleException: (Throwable) -> Unit,
-  onShowToast: (String) -> Unit,
+  onShowToast: (String, Dp) -> Unit,
   navigateCellEditor: (CellEditorArgument) -> Unit,
 ) {
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
@@ -120,8 +121,8 @@ fun OpenLectureRoute(
         listState.animateScrollToItem(0)
       }
 
-      is OpenLectureSideEffect.ShowOverlapCellToast -> onShowToast(sideEffect.msg)
-      OpenLectureSideEffect.ShowSuccessAddCellToast -> onShowToast(getString(Res.string.open_lecture_success_add_cell_toast))
+      is OpenLectureSideEffect.ShowOverlapCellToast -> onShowToast(sideEffect.msg, 100.dp)
+      OpenLectureSideEffect.ShowSuccessAddCellToast -> onShowToast(getString(Res.string.open_lecture_success_add_cell_toast), 100.dp)
       is OpenLectureSideEffect.NavigateCellEditor -> navigateCellEditor(sideEffect.argument)
     }
   }
@@ -186,7 +187,7 @@ fun OpenLectureScreen(
   onDismissOpenMajorBottomSheet: () -> Unit = {},
   onConfirmOpenMajor: (String?) -> Unit = {},
   handleException: (Throwable) -> Unit = {},
-  onShowToast: (String) -> Unit = {},
+  onShowToast: (String, Dp) -> Unit = { _, _ -> },
   onClickAddSelectedLecture: () -> Unit = {},
 ) {
   SuwikiBackground {
