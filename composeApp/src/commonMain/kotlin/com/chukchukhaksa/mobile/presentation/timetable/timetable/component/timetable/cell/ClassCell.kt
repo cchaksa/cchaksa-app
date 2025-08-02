@@ -18,6 +18,9 @@ import com.chukchukhaksa.mobile.common.model.TimetableCellColor
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.common.ui.timetableCellColorHexMap
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.timetableHeightPerHour
+import androidx.compose.ui.text.style.TextOverflow
+
+private const val CLASS_CELL_ONE_HEIGHT = 50
 
 enum class TimetableCellType(val text: String) {
     CLASSNAME("수업명"),
@@ -51,6 +54,8 @@ fun ClassCell(
     }
 
     val height = (data.endPeriod - data.startPeriod + 1) * timetableHeightPerHour - 8.dp
+    val isShortClass = height <= (CLASS_CELL_ONE_HEIGHT * 2).dp
+    val classTitleMaxLine = if ((showProfessor || showLocation) && isShortClass) 1 else 2
 
     Column(
         modifier = modifier
@@ -63,10 +68,12 @@ fun ClassCell(
             },
     ) {
         Text(
-          modifier = Modifier.padding(bottom = 2.dp),
+            modifier = Modifier.padding(bottom = 2.dp),
             style = CchTheme.typography.bodyXsStrong,
             text = data.name,
             color = White100,
+            maxLines = classTitleMaxLine,
+            overflow = TextOverflow.Ellipsis,
         )
 
         if (showProfessor) {

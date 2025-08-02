@@ -3,7 +3,7 @@ package com.chukchukhaksa.mobile.presentation.timetable.timetable.component.time
 import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.model.TimetableDay
 
-internal val timetableHeightPerHour = 48.dp
+internal val timetableHeightPerHour = 50.dp
 
 internal val timetableBorderWidth = 0.5.dp
 
