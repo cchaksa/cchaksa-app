@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.chukchukhaksa.mobile.common.designsystem.component.container.SuwikiBoardContainer
 import com.chukchukhaksa.mobile.common.designsystem.component.container.CchEditContainer
-import com.chukchukhaksa.mobile.common.designsystem.component.container.SuwikiSelectionContainer
+import com.chukchukhaksa.mobile.common.designsystem.component.container.CchSelectionButton
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 
 @Composable
@@ -39,6 +39,6 @@ fun TimetableEditContainerPreview() {
 @Composable
 fun SuwikiSelectionContainerPreview() {
     SuwikiTheme {
-        SuwikiSelectionContainer(title = "title")
+        CchSelectionButton(title = "title")
     }
 }

@@ -59,6 +59,7 @@ fun App(
                             padding = innerPadding,
                             popBackStack = navigator::popBackStackIfNotHome,
                             navigateTimetableNameInput = navigator::navigateTimetableNameInput,
+                            navigateTimetableEditor = navigator::navigateTimetableEditor,
                             navigateTimetableList = navigator::navigateTimetableList,
                             navigateOpenLecture = navigator::navigateOpenLecture,
                             handleException = viewModel::handleException,

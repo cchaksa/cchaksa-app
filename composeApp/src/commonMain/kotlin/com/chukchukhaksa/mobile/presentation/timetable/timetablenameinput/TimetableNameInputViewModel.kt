@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 
-class TimetableEditorViewModel(
+class TimetableNameInputViewModel(
     private val insertTimetableUseCase: InsertTimetableUseCase,
     private val updateTimetableUseCase: UpdateTimetableUseCase,
     savedStateHandle: SavedStateHandle,
@@ -32,11 +32,6 @@ class TimetableEditorViewModel(
 
     fun upsertTimetable() = viewModelScope.launch {
         val state = mviStore.uiState.value
-
-        if (state.semester == null) {
-            mviStore.postSideEffect(TimetableNameInputSideEffect.NeedSelectSemesterToast)
-            return@launch
-        }
 
         val useCase = if (isEditMode) {
             updateTimetableUseCase(

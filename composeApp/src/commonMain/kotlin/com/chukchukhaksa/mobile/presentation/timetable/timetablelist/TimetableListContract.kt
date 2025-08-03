@@ -12,8 +12,8 @@ data class TimetableListState(
 
 sealed interface TimetableListSideEffect {
     data class HandleException(val throwable: Throwable) : TimetableListSideEffect
-    data class NavigateTimetableNameInput(val argument: TimetableEditorArgument) :
-        TimetableListSideEffect
+    data class NavigateTimetableEditor(val argument: TimetableEditorArgument) :
+    TimetableListSideEffect
 
     data object NavigateSemesterSelect : TimetableListSideEffect
     data object PopBackStack : TimetableListSideEffect

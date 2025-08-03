@@ -40,7 +40,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun TimetableListRoute(
     viewModel: TimetableListViewModel = koinViewModel(),
     popBackStack: () -> Unit,
-    navigateTimetableNameInput: (TimetableEditorArgument) -> Unit,
+    navigateTimetableEditor: (TimetableEditorArgument) -> Unit,
     navigateSemesterSelect: () -> Unit,
     handleException: (Throwable) -> Unit,
     onShowToast: (String, Dp) -> Unit,
@@ -49,7 +49,7 @@ fun TimetableListRoute(
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
             is TimetableListSideEffect.HandleException -> handleException(sideEffect.throwable)
-            is TimetableListSideEffect.NavigateTimetableNameInput -> navigateTimetableNameInput(sideEffect.argument)
+            is TimetableListSideEffect.NavigateTimetableEditor -> navigateTimetableEditor(sideEffect.argument)
             TimetableListSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
             TimetableListSideEffect.PopBackStack -> popBackStack()
             TimetableListSideEffect.ShowNeedTimetableDeleteToast -> onShowToast("시간표가 삭제되었습니다.", 46.dp)
@@ -64,7 +64,7 @@ fun TimetableListRoute(
         uiState = uiState,
         onClickBack = viewModel::popBackStack,
         onClickAddTextButton = viewModel::navigateSemesterSelect,
-        onClickTimetableEditButton = viewModel::navigateTimetableNameInput,
+        onClickTimetableEditButton = viewModel::navigateTimetableEditor,
         onClickTimetableDeleteButton = viewModel::showDeleteDialog,
         onDismissDeleteDialogRequest = viewModel::hideDeleteDialog,
         onClickDeleteDialogConfirm = viewModel::deleteTimetable,

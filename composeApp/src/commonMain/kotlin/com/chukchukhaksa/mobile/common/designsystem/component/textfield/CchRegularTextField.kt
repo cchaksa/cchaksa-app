@@ -30,8 +30,9 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 fun CchRegularTextField(
   modifier: Modifier = Modifier,
   value: String = "",
-  onValueChanged: (String) -> Unit = {},
   placeholder: String = "",
+  onValueChanged: (String) -> Unit = {},
+  onClickClearButton: () -> Unit = {}
 ) {
   val (borderColor, textColor, textStyle) = if(value.isEmpty()) {
     Triple(Gray200, Gray400, CchTheme.typography.bodyLg)

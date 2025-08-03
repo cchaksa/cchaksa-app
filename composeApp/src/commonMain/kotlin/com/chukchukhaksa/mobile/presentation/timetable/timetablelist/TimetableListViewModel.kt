@@ -56,8 +56,8 @@ class TimetableListViewModel(
         mviStore.postSideEffect(TimetableListSideEffect.PopBackStack)
     }
 
-    fun navigateTimetableNameInput(timetable: Timetable) {
-        mviStore.postSideEffect(TimetableListSideEffect.NavigateTimetableNameInput(timetable.toTimetableEditorArgument()))
+    fun navigateTimetableEditor(timetable: Timetable) {
+      mviStore.postSideEffect(TimetableListSideEffect.NavigateTimetableEditor(timetable.toTimetableEditorArgument()))
     }
 
     fun navigateSemesterSelect() {

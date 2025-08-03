@@ -16,10 +16,15 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.TimetableRoute
 import com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput.TimetableNameInputRoute
 import com.chukchukhaksa.mobile.presentation.timetable.timetablelist.TimetableListRoute
 import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.SemesterSelectRoute
+import com.chukchukhaksa.mobile.presentation.timetable.timetableeditor.TimetableEditorRoute
 import kotlinx.serialization.json.Json
 
 fun NavController.navigateTimetableNameInput(argument: TimetableEditorArgument = TimetableEditorArgument()) {
     navigate(TimetableRoute.timetableNameInputRoute(Json.encodeToUri(argument)))
+}
+
+fun NavController.navigateTimetableEditor(argument: TimetableEditorArgument = TimetableEditorArgument()) {
+  navigate(TimetableRoute.timetableEditorRoute(Json.encodeToUri(argument)))
 }
 
 fun NavController.navigateTimetableList() {
@@ -48,6 +53,7 @@ fun NavGraphBuilder.timetableNavGraph(
     padding: PaddingValues,
     popBackStack: () -> Unit,
     navigateTimetableNameInput: (TimetableEditorArgument) -> Unit,
+    navigateTimetableEditor: (TimetableEditorArgument) -> Unit,
     navigateTimetableList: () -> Unit,
     navigateOpenLecture: () -> Unit,
     navigateCellEditor: (CellEditorArgument) -> Unit,
@@ -87,6 +93,24 @@ fun NavGraphBuilder.timetableNavGraph(
         )
     }
 
+    composable(
+      route = TimetableRoute.timetableEditorRoute(
+        "{${TimetableRoute.TIMETABLE_EDITOR_ARGUMENT}}",
+      ),
+      arguments = listOf(
+        navArgument(TimetableRoute.TIMETABLE_EDITOR_ARGUMENT) {
+          type = NavType.StringType
+          nullable = true
+        },
+      ),
+    ) {
+      TimetableEditorRoute(
+        popBackStack = popBackStack,
+        handleException = handleException,
+        onShowToast = onShowToast,
+      )
+    }
+
     composable(route = TimetableRoute.openLectureRoute) {
         OpenLectureRoute(
             selectedOpenMajor = null,
@@ -119,7 +143,7 @@ fun NavGraphBuilder.timetableNavGraph(
         TimetableListRoute(
             handleException = handleException,
             popBackStack = popBackStack,
-            navigateTimetableNameInput = navigateTimetableNameInput,
+            navigateTimetableEditor = navigateTimetableEditor,
             navigateSemesterSelect = navigateSemesterSelect,
             onShowToast = onShowToast,
         )
@@ -144,5 +168,6 @@ object TimetableRoute {
     const val TIMETABLE_EDITOR_ARGUMENT = "timetable-editor-argument"
 
     fun timetableNameInputRoute(timetableEditor: String) = "$route/name-input/$timetableEditor"
+    fun timetableEditorRoute(timetableEditor: String) = "$route/editor/$timetableEditor"
     fun cellEditorRoute(cellEditor: String) = "cell-editor/$cellEditor"
 }

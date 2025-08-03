@@ -7,15 +7,14 @@ import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.Semester
 
 data class TimetableNameInputState(
     val name: String = "",
-    val selectedSemesterPosition: Int? = null,
+    val semester: Semester = Semester("", "")
 ) {
-    val semester = selectedSemesterPosition?.let { semesterList.getOrNull(it) }
     val buttonEnabled = name.isNotEmpty()
 }
 
 internal fun TimetableEditorArgument.toState() = TimetableNameInputState(
     name = name,
-    selectedSemesterPosition = semesterList.indexOf(Semester(year, semester)),
+    semester = Semester(year, semester),
 )
 
 sealed interface TimetableNameInputSideEffect {
