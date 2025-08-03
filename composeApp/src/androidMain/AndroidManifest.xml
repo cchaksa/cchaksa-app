@@ -4,9 +4,9 @@
   <application
     android:name=".ChukChukHaksaApplication"
     android:allowBackup="true"
-    android:icon="@mipmap/ic_wisu_logo"
+    android:icon="@mipmap/ic_cchaksa_logo"
     android:label="@string/app_name"
-    android:roundIcon="@mipmap/ic_wisu_logo"
+    android:roundIcon="@mipmap/ic_cchaksa_logo"
     android:supportsRtl="true"
     android:theme="@style/Theme.ChukChukHaksa">
     <activity
