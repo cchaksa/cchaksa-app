@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.presentation.timetable.timetableeditor
+package com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -9,30 +9,35 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
+import chukchukhaksa.composeapp.generated.resources.create_timetable_need_select_semester
 import chukchukhaksa.composeapp.generated.resources.create_timetable_screen_placeholder
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.CchAppBarWithTitle
-import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchSelectBottomSheet
 import com.chukchukhaksa.mobile.common.designsystem.component.button.CchBasicButton
-import com.chukchukhaksa.mobile.common.designsystem.component.container.CchSelectionButton
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchRegularTextField
+import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.semesterList
-import kotlinx.collections.immutable.toPersistentList
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun TimetableEditorRoute(
-  viewModel: TimetableEditorViewModel = koinViewModel(),
+fun TimetableNameInputRoute(
+  viewModel: TimetableNameInputViewModel = koinViewModel(),
+  navigateTimetable: () -> Unit,
   popBackStack: () -> Unit,
   handleException: (Throwable) -> Unit,
   onShowToast: (String, Dp) -> Unit,
@@ -40,36 +45,31 @@ fun TimetableEditorRoute(
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
-            is TimetableEditorSideEffect.HandleException -> handleException(sideEffect.throwable)
-            TimetableEditorSideEffect.PopBackStack -> popBackStack()
-            TimetableEditorSideEffect.ShowEditSaveToast -> onShowToast("변경사항이 저장되었습니다.", 111.dp)
+            is TimetableNameInputSideEffect.HandleException -> handleException(sideEffect.throwable)
+            TimetableNameInputSideEffect.PopBackStack -> popBackStack()
+            TimetableNameInputSideEffect.NeedSelectSemesterToast -> onShowToast(
+                getString(Res.string.create_timetable_need_select_semester),
+                70.dp,
+            )
+            TimetableNameInputSideEffect.NavigateTimetable -> navigateTimetable()
         }
     }
-    TimetableEditorScreen(
+    TimetableNameInputScreen(
         uiState = uiState,
         onValueChangeTimetableName = viewModel::updateName,
         onClickBack = viewModel::popBackStack,
         onClickCompleteButton = viewModel::upsertTimetable,
-        onClickSelectionContainer = viewModel::showSemesterBottomSheet,
-        hideSemesterBottomSheet = viewModel::hideSemesterBottomSheet,
-        onClickSemesterItem = { position ->
-          viewModel.hideSemesterBottomSheet()
-          viewModel.updateSemesterPosition(position)
-        },
         onClickTextFieldClearButton = { viewModel.updateName("") },
     )
 }
 
 @Composable
-fun TimetableEditorScreen(
-  uiState: TimetableEditorState = TimetableEditorState(),
+fun TimetableNameInputScreen(
+  uiState: TimetableNameInputState = TimetableNameInputState(),
   onValueChangeTimetableName: (String) -> Unit = {},
   onClickTextFieldClearButton: () -> Unit = {},
   onClickBack: () -> Unit = {},
   onClickCompleteButton: () -> Unit = {},
-  onClickSelectionContainer: () -> Unit = {},
-  hideSemesterBottomSheet: () -> Unit = {},
-  onClickSemesterItem: (Int) -> Unit = {},
 ) {
     SuwikiBackground {
         Column(
@@ -84,19 +84,24 @@ fun TimetableEditorScreen(
             )
 
             Column(
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                CchSelectionButton(
-                  modifier = Modifier.padding(horizontal = 4.dp),
-                  title = uiState.semester?.toText() ?: "수강학기 선택",
-                  onClick = onClickSelectionContainer,
+                Text(
+                  modifier = Modifier
+                    .width(240.dp)
+                    .padding(top = 8.dp),
+                  text = "선택한 학기의 시간표 이름을 정해주세요",
+                  style = CchTheme.typography.titleLg,
+                  color = Black100,
+                  textAlign = TextAlign.Center,
                 )
 
                 CchRegularTextField(
-                    modifier = Modifier.padding(top = 12.dp, start = 4.dp, end = 4.dp),
+                    modifier = Modifier.padding(top = 196.dp, start = 4.dp, end = 4.dp),
                     value = uiState.name,
                     placeholder = stringResource(Res.string.create_timetable_screen_placeholder),
-                    isActive = uiState.name.isNotEmpty() && uiState.name != uiState.preName,
+                    isActive = uiState.name.isNotEmpty(),
                     onValueChanged = onValueChangeTimetableName,
                     onClickClearButton = onClickTextFieldClearButton,
                 )
@@ -107,20 +112,12 @@ fun TimetableEditorScreen(
                     modifier = Modifier
                         .consumeWindowInsets(WindowInsets.navigationBars)
                         .imePadding(),
-                    text = "변경사항 저장하기",
+                    text = "시간표 생성하기",
                     enable = uiState.buttonEnabled,
                     onClick = onClickCompleteButton,
                 )
             }
         }
-    }
-    if (uiState.isSheetOpenSemester) {
-        CchSelectBottomSheet(
-          onDismissRequest = hideSemesterBottomSheet,
-          onClickItem = { onClickSemesterItem(it) },
-          itemList = semesterList.map { it.toText() }.toPersistentList(),
-          selectedPosition = uiState.selectedSemesterPosition,
-        )
     }
 }
 

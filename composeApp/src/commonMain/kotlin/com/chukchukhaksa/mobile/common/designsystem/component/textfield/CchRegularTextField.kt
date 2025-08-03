@@ -30,10 +30,12 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 fun CchRegularTextField(
   modifier: Modifier = Modifier,
   value: String = "",
-  onValueChanged: (String) -> Unit = {},
   placeholder: String = "",
+  isActive: Boolean = false,
+  onValueChanged: (String) -> Unit = {},
+  onClickClearButton: () -> Unit = {}
 ) {
-  val (borderColor, textColor, textStyle) = if(value.isEmpty()) {
+  val (borderColor, textColor, textStyle) = if(!isActive) {
     Triple(Gray200, Gray400, CchTheme.typography.bodyLg)
   } else {
     Triple(Purple600, Black100, CchTheme.typography.bodyLgStrong)
@@ -66,7 +68,9 @@ fun CchRegularTextField(
           }
           innerTextField()
         }
-        Spacer(modifier = Modifier.width(8.dp))
+        if (isActive) {
+          TextFieldClearButton(onClick = onClickClearButton)
+        }
       }
     },
   )

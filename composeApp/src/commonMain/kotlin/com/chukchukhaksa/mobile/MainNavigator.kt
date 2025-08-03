@@ -12,6 +12,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateOpenLe
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateSemesterSelect
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateTimetable
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateTimetableEditor
+import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateTimetableNameInput
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateTimetableList
 
 class MainNavigator(
@@ -24,8 +25,12 @@ class MainNavigator(
         navController.navigateCellEditor(argument)
     }
 
+    fun navigateTimetableNameInput(argument: TimetableEditorArgument = TimetableEditorArgument()) {
+        navController.navigateTimetableNameInput(argument)
+    }
+
     fun navigateTimetableEditor(argument: TimetableEditorArgument = TimetableEditorArgument()) {
-        navController.navigateTimetableEditor(argument)
+      navController.navigateTimetableEditor(argument)
     }
 
     fun navigateTimetableList() {
@@ -40,7 +45,7 @@ class MainNavigator(
         navController.navigateOpenLecture()
     }
 
-    fun navigatetimetable() {
+    fun navigateTimetable() {
         navController.navigateTimetable()
     }
 

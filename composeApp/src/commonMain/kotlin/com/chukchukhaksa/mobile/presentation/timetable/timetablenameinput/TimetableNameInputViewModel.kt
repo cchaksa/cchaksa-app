@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.presentation.timetable.timetableeditor
+package com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 
-class TimetableEditorViewModel(
+class TimetableNameInputViewModel(
     private val insertTimetableUseCase: InsertTimetableUseCase,
     private val updateTimetableUseCase: UpdateTimetableUseCase,
     savedStateHandle: SavedStateHandle,
@@ -22,21 +22,9 @@ class TimetableEditorViewModel(
     private val argument = savedStateHandle.get<String>(TimetableRoute.TIMETABLE_EDITOR_ARGUMENT)!!
     private val timetableEditorArgument = Json.decodeFromUri<TimetableEditorArgument>(argument)
     private val isEditMode = timetableEditorArgument.isEditMode
-    val mviStore: MviStore<TimetableEditorState, TimetableEditorSideEffect> = mviStore(
+    val mviStore: MviStore<TimetableNameInputState, TimetableNameInputSideEffect> = mviStore(
         timetableEditorArgument.toState(),
     )
-
-    fun showSemesterBottomSheet() {
-      mviStore.setState { copy(isSheetOpenSemester = true) }
-    }
-
-    fun hideSemesterBottomSheet() {
-      mviStore.setState { copy(isSheetOpenSemester = false) }
-    }
-
-    fun updateSemesterPosition(position: Int) {
-      mviStore.setState { copy(selectedSemesterPosition = position) }
-    }
 
     fun updateName(name: String) {
         mviStore.setState { copy(name = name) }
@@ -44,10 +32,6 @@ class TimetableEditorViewModel(
 
     fun upsertTimetable() = viewModelScope.launch {
         val state = mviStore.uiState.value
-
-        if (state.semester == null) {
-            return@launch
-        }
 
         val useCase = if (isEditMode) {
             updateTimetableUseCase(
@@ -70,14 +54,13 @@ class TimetableEditorViewModel(
 
         useCase
             .onSuccess {
-//              mviStore.postSideEffect(TimetableEditorSideEffect.PopBackStack)
-              mviStore.postSideEffect(TimetableEditorSideEffect.ShowEditSaveToast)
+                mviStore.postSideEffect(TimetableNameInputSideEffect.NavigateTimetable)
             }.onFailure {
-                mviStore.postSideEffect(TimetableEditorSideEffect.HandleException(it))
+                mviStore.postSideEffect(TimetableNameInputSideEffect.HandleException(it))
             }
     }
 
     fun popBackStack() {
-        mviStore.postSideEffect(TimetableEditorSideEffect.PopBackStack)
+        mviStore.postSideEffect(TimetableNameInputSideEffect.PopBackStack)
     }
 }

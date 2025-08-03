@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
-import chukchukhaksa.composeapp.generated.resources.add_cell_screen_need_professor_name
 import chukchukhaksa.composeapp.generated.resources.delete_timetable_dialog_body
 import chukchukhaksa.composeapp.generated.resources.delete_timetable_dialog_title
 import chukchukhaksa.composeapp.generated.resources.timetable_list_screen_empty_timetable
@@ -33,9 +32,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.model.Timetable
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorSideEffect
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 

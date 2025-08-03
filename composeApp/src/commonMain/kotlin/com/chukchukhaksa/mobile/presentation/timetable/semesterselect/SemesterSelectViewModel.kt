@@ -16,9 +16,9 @@ class SemesterSelectViewModel : ViewModel() {
 
     fun updateSelectSemester(semester: Semester?) = mviStore.setState { copy(selectSemester = semester) }
 
-    fun navigateTimetableEditor(semester: Semester?) {
+    fun navigateTimetableNameInput(semester: Semester?) {
       if (semester != null) {
-        mviStore.postSideEffect(SemesterSelectSideEffect.NavigateTimetableEditor(semester.toTimetableEditorArgument()))
+        mviStore.postSideEffect(SemesterSelectSideEffect.NavigateTimetableNameInput(semester.toTimetableEditorArgument()))
       }
     }
 

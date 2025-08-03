@@ -174,6 +174,7 @@ fun CellEditorScreen(
                   value = uiState.lectureName,
                   onValueChanged = onValueChangeLectureName,
                   placeholder = stringResource(Res.string.add_cell_screen_input_lecture_name),
+                  isActive = uiState.lectureName.isNotEmpty()
                 )
               }
 
@@ -194,6 +195,7 @@ fun CellEditorScreen(
                   value = uiState.professorName,
                   onValueChanged = onValueChangeProfessorName,
                   placeholder = stringResource(Res.string.add_cell_screen_input_professor_name),
+                  isActive = uiState.professorName.isNotEmpty(),
                 )
               }
 
