@@ -103,7 +103,9 @@ fun TimetableListScreen(
                 )
             }
 
-            LazyColumn {
+            LazyColumn(
+              modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp)
+            ) {
                 items(items = uiState.timetableList, key = { it.createTime }) { timetable ->
                     CchEditContainer(
                         name = timetable.name,
