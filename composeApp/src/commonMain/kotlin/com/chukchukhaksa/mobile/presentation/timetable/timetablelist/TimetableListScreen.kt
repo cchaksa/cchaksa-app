@@ -23,7 +23,7 @@ import chukchukhaksa.composeapp.generated.resources.word_cancel
 import chukchukhaksa.composeapp.generated.resources.word_confirm
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.CchAppBarWithTitle
-import com.chukchukhaksa.mobile.common.designsystem.component.container.SuwikiEditContainer
+import com.chukchukhaksa.mobile.common.designsystem.component.container.CchEditContainer
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
@@ -105,7 +105,7 @@ fun TimetableListScreen(
 
             LazyColumn {
                 items(items = uiState.timetableList, key = { it.createTime }) { timetable ->
-                    SuwikiEditContainer(
+                    CchEditContainer(
                         name = timetable.name,
                         semester = "${timetable.year}-${timetable.semester}",
                         onClickEditButton = { onClickTimetableEditButton(timetable) },

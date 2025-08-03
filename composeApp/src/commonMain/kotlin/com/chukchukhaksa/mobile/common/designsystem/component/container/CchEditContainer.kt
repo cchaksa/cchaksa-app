@@ -1,34 +1,37 @@
 package com.chukchukhaksa.mobile.common.designsystem.component.container
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.word_delete
 import chukchukhaksa.composeapp.generated.resources.word_edit
-import com.chukchukhaksa.mobile.common.designsystem.component.badge.BadgeColor
-import com.chukchukhaksa.mobile.common.designsystem.component.badge.SuwikiBadge
+import com.chukchukhaksa.mobile.common.designsystem.component.badge.CchBadge
+import com.chukchukhaksa.mobile.common.designsystem.component.button.CchSmallButton
 import com.chukchukhaksa.mobile.common.designsystem.component.button.SuwikiContainedSmallButton
-import com.chukchukhaksa.mobile.common.designsystem.theme.Black
-import com.chukchukhaksa.mobile.common.designsystem.theme.GrayF6
-import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
+import com.chukchukhaksa.mobile.common.designsystem.theme.Purple600
+import com.chukchukhaksa.mobile.common.designsystem.theme.Red400
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun SuwikiEditContainer(
+fun CchEditContainer(
     modifier: Modifier = Modifier,
     name: String,
     semester: String,
@@ -39,18 +42,11 @@ fun SuwikiEditContainer(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(White)
-            .drawBehind {
-                val strokeWidth = 1.dp.toPx()
-                drawLine(
-                    color = GrayF6,
-                    start = Offset(0f, size.height - strokeWidth),
-                    end = Offset(size.width, size.height - strokeWidth),
-                    strokeWidth = strokeWidth,
-                )
-            }
+            .clip(RoundedCornerShape(16.dp))
+            .border(width = 1.dp, color = Gray200, shape = RoundedCornerShape(16.dp))
+            .background(White100)
             .cchClickable(onClick = onClick)
-            .padding(24.dp),
+            .padding(vertical = 21.dp, horizontal = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -59,7 +55,7 @@ fun SuwikiEditContainer(
                 .weight(1f, false)
                 .wrapContentHeight()
                 .padding(end = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -67,23 +63,25 @@ fun SuwikiEditContainer(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 text = name,
-                style = SuwikiTheme.typography.header6,
-                color = Black,
+                style = CchTheme.typography.bodyLgStrong,
+                color = Black100,
             )
 
-            SuwikiBadge(color = BadgeColor.Gray, text = semester)
+            CchBadge(text = semester)
         }
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            SuwikiContainedSmallButton(
+            CchSmallButton(
                 text = stringResource(resource = Res.string.word_edit),
+                textColor = Purple600,
                 onClick = onClickEditButton,
             )
-            SuwikiContainedSmallButton(
-                text = stringResource(resource = Res.string.word_delete),
-                onClick = onClickDeleteButton,
+            CchSmallButton(
+              text = stringResource(resource = Res.string.word_delete),
+              textColor = Red400,
+              onClick = onClickDeleteButton,
             )
         }
     }
