@@ -67,6 +67,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchSearc
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray600
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray6A
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
@@ -220,6 +221,14 @@ fun OpenLectureScreen(
           )
         }
 
+        Text(
+          modifier = Modifier
+            .padding(start = 20.dp),
+          text = "최근 갱신일: ${uiState.lastUpdatedDate ?: "확인 중"}",
+          style = CchTheme.typography.bodySm,
+          color = Gray400,
+        )
+
         Column(
           modifier = Modifier
             .weight(1f),
@@ -258,15 +267,6 @@ fun OpenLectureScreen(
                 onClick = onClickCustomAdd,
               )
             }
-
-            Text(
-              modifier = Modifier
-                .padding(top = 10.dp, end = 20.dp)
-                .align(Alignment.End),
-              text = "최근 갱신일: ${uiState.lastUpdatedDate ?: "확인 중"}",
-              style = SuwikiTheme.typography.body7,
-              color = Gray95,
-            )
           }
           if (uiState.openLectureList.isEmpty() && uiState.isLoading.not()) {
             Column(
@@ -285,7 +285,7 @@ fun OpenLectureScreen(
           LazyColumn(
             modifier = Modifier
               .fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 24.dp),
+            contentPadding = PaddingValues(bottom = 100.dp),
             state = listState,
           ) {
             items(
