@@ -91,6 +91,7 @@ fun TimetableListScreen(
         ) {
             CchAppBarWithTitle(
               title = "시간표 목록",
+              isShowAddButton = true,
               onClickBackButton = { onClickBack() },
               onClickAdd = onClickAddTextButton,
             )

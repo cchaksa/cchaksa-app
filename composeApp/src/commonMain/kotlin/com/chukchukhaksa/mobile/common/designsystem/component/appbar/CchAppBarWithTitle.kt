@@ -30,6 +30,7 @@ import org.jetbrains.compose.resources.painterResource
 fun CchAppBarWithTitle(
   modifier: Modifier = Modifier,
   title: String,
+  isShowAddButton: Boolean = false,
   onClickBackButton: () -> Unit,
   onClickAdd: () -> Unit = {},
 ) {
@@ -57,7 +58,7 @@ fun CchAppBarWithTitle(
         style = CchTheme.typography.bodyMdStrong,
       )
     }
-    if (onClickAdd != {}) {
+    if (isShowAddButton) {
       Icon(
         modifier = Modifier
           .clip(CircleShape)
