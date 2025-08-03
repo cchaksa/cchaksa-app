@@ -86,9 +86,11 @@ fun FillEmptyTime(emptyStartTime: Int, emptyEndTime: Int, isRightBottomTimetable
             }
         }
 
+        val isLastEmptyCell = filledEmptyTime + insertEmptyTimeAmount >= emptyEndTime
+
         EmptyCell(
             minute = insertEmptyTimeAmount,
-            isRightBottomTimetable = isRightBottomTimetable
+            isRightBottomTimetable = isRightBottomTimetable && isLastEmptyCell
         )
 
         filledEmptyTime += insertEmptyTimeAmount

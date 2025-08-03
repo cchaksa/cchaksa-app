@@ -109,16 +109,16 @@ private fun OpenMajorBottomSheetContent(
 
     Spacer(Modifier.height(8.dp))
 
-    if (uiState.showAllOpenMajorEmptySearchResultScreen) {
-      EmptyText(stringResource(Res.string.open_major_empty_search_result))
-    } else {
+//    if (uiState.showAllOpenMajorEmptySearchResultScreen) {
+//      EmptyText(stringResource(Res.string.open_major_empty_search_result))
+//    } else {
       OpenMajorLazyColumn(
         listState = allOpenMajorListState,
         openMajorList = uiState.filteredAllOpenMajorList,
         searchValue = uiState.searchValue,
         onClickOpenMajorContainer = onClickOpenMajorContainer,
       )
-    }
+//    }
   }
 
   if (uiState.isLoading) {
