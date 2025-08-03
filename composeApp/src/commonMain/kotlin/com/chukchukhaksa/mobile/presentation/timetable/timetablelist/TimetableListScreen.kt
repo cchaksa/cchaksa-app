@@ -19,16 +19,15 @@ import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.delete_timetable_dialog_body
 import chukchukhaksa.composeapp.generated.resources.delete_timetable_dialog_title
 import chukchukhaksa.composeapp.generated.resources.timetable_list_screen_empty_timetable
-import chukchukhaksa.composeapp.generated.resources.word_add
 import chukchukhaksa.composeapp.generated.resources.word_cancel
 import chukchukhaksa.composeapp.generated.resources.word_confirm
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
-import com.chukchukhaksa.mobile.common.designsystem.component.appbar.SuwikiAppBarWithTextButton
+import com.chukchukhaksa.mobile.common.designsystem.component.appbar.CchAppBarWithTitle
 import com.chukchukhaksa.mobile.common.designsystem.component.container.SuwikiEditContainer
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.model.Timetable
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
@@ -84,13 +83,13 @@ fun TimetableListScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(White),
+                .background(White100),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SuwikiAppBarWithTextButton(
-                buttonText = stringResource(resource = Res.string.word_add),
-                onClickBack = onClickBack,
-                onClickTextButton = onClickAddTextButton,
+            CchAppBarWithTitle(
+              title = "시간표 목록",
+              onClickBackButton = { onClickBack() },
+              onClickAdd = onClickAddTextButton,
             )
 
             if (uiState.timetableList.isEmpty()) {
