@@ -31,10 +31,11 @@ fun CchRegularTextField(
   modifier: Modifier = Modifier,
   value: String = "",
   placeholder: String = "",
+  isActive: Boolean = false,
   onValueChanged: (String) -> Unit = {},
   onClickClearButton: () -> Unit = {}
 ) {
-  val (borderColor, textColor, textStyle) = if(value.isEmpty()) {
+  val (borderColor, textColor, textStyle) = if(!isActive) {
     Triple(Gray200, Gray400, CchTheme.typography.bodyLg)
   } else {
     Triple(Purple600, Black100, CchTheme.typography.bodyLgStrong)
@@ -67,7 +68,7 @@ fun CchRegularTextField(
           }
           innerTextField()
         }
-        if (value.isNotEmpty()) {
+        if (isActive) {
           TextFieldClearButton(onClick = onClickClearButton)
         }
       }

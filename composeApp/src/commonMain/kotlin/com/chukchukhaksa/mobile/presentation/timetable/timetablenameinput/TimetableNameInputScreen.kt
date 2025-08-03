@@ -101,6 +101,7 @@ fun TimetableNameInputScreen(
                     modifier = Modifier.padding(top = 196.dp, start = 4.dp, end = 4.dp),
                     value = uiState.name,
                     placeholder = stringResource(Res.string.create_timetable_screen_placeholder),
+                    isActive = uiState.name.isNotEmpty(),
                     onValueChanged = onValueChangeTimetableName,
                     onClickClearButton = onClickTextFieldClearButton,
                 )
