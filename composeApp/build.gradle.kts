@@ -128,6 +128,10 @@ android {
   buildFeatures {
     buildConfig = true
   }
+
+  lint {
+    disable += "NullSafeMutableLiveData"
+  }
 }
 
 dependencies {

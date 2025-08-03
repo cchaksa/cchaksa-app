@@ -1,6 +1,8 @@
 package com.chukchukhaksa.mobile
 
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -93,7 +95,7 @@ fun App(
                     CchToast(
                         visible = uiState.toastVisible,
                         message = uiState.toastMessage,
-                        bottomPadding = uiState.toastBottomPadding,
+                        bottomPadding = uiState.toastBottomPadding + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
                     )
                 },
             )
