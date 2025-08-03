@@ -110,8 +110,7 @@ fun TimetableNameInputScreen(
 
                 CchBasicButton(
                     modifier = Modifier
-                        .consumeWindowInsets(WindowInsets.navigationBars)
-                        .imePadding(),
+                        .consumeWindowInsets(WindowInsets.navigationBars),
                     text = "시간표 생성하기",
                     enable = uiState.buttonEnabled,
                     onClick = onClickCompleteButton,

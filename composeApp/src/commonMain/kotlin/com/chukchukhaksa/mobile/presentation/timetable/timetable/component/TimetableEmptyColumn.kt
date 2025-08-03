@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,8 +31,7 @@ fun TimetableEmptyColumn(
     modifier = modifier
       .padding(bottom = 10.dp, start = 20.dp, end = 20.dp)
       .fillMaxSize()
-      .border(width = timetableBorderWidth, color = Gray200, shape = RoundedCornerShape(12.dp))
-      .padding(horizontal = 71.dp),
+      .border(width = timetableBorderWidth, color = Gray200, shape = RoundedCornerShape(12.dp)),
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     Image(
@@ -50,7 +50,7 @@ fun TimetableEmptyColumn(
     )
 
     CchBasicButton(
-      modifier = Modifier.padding(horizontal = 22.dp),
+      modifier = Modifier.width(148.dp),
       text = "시간표 생성하기",
       enable = true,
       textStyle = CchTheme.typography.bodyMdStrong,

@@ -42,7 +42,10 @@ fun TimetableEditorRoute(
         when (sideEffect) {
             is TimetableEditorSideEffect.HandleException -> handleException(sideEffect.throwable)
             TimetableEditorSideEffect.PopBackStack -> popBackStack()
-            TimetableEditorSideEffect.ShowEditSaveToast -> onShowToast("변경사항이 저장되었습니다.", 111.dp)
+            TimetableEditorSideEffect.ShowEditSaveToast -> {
+              onShowToast("변경사항이 저장되었습니다.", 111.dp)
+              popBackStack()
+            }
         }
     }
     TimetableEditorScreen(

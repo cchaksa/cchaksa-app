@@ -27,6 +27,8 @@ import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.CchAppBarWithTitle
 import com.chukchukhaksa.mobile.common.designsystem.component.container.CchEditContainer
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray600
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
@@ -105,8 +107,8 @@ fun TimetableListScreen(
                         .padding(top = 150.dp),
                     textAlign = TextAlign.Center,
                     text = stringResource(Res.string.timetable_list_screen_empty_timetable),
-                    style = SuwikiTheme.typography.header4,
-                    color = Gray95,
+                    style = CchTheme.typography.bodyMd,
+                    color = Gray600,
                 )
             }
 
