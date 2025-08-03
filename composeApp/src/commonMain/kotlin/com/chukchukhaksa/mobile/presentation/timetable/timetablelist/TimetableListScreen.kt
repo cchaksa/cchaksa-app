@@ -1,6 +1,7 @@
 package com.chukchukhaksa.mobile.presentation.timetable.timetablelist
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,25 +14,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
+import chukchukhaksa.composeapp.generated.resources.add_cell_screen_need_professor_name
 import chukchukhaksa.composeapp.generated.resources.delete_timetable_dialog_body
 import chukchukhaksa.composeapp.generated.resources.delete_timetable_dialog_title
 import chukchukhaksa.composeapp.generated.resources.timetable_list_screen_empty_timetable
-import chukchukhaksa.composeapp.generated.resources.word_add
 import chukchukhaksa.composeapp.generated.resources.word_cancel
 import chukchukhaksa.composeapp.generated.resources.word_confirm
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
-import com.chukchukhaksa.mobile.common.designsystem.component.appbar.SuwikiAppBarWithTextButton
-import com.chukchukhaksa.mobile.common.designsystem.component.container.SuwikiEditContainer
+import com.chukchukhaksa.mobile.common.designsystem.component.appbar.CchAppBarWithTitle
+import com.chukchukhaksa.mobile.common.designsystem.component.container.CchEditContainer
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.model.Timetable
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
+import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorSideEffect
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -40,14 +44,18 @@ fun TimetableListRoute(
     viewModel: TimetableListViewModel = koinViewModel(),
     popBackStack: () -> Unit,
     navigateTimetableEditor: (TimetableEditorArgument) -> Unit,
+    navigateSemesterSelect: () -> Unit,
     handleException: (Throwable) -> Unit,
+    onShowToast: (String, Dp) -> Unit,
 ) {
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
             is TimetableListSideEffect.HandleException -> handleException(sideEffect.throwable)
             is TimetableListSideEffect.NavigateTimetableEditor -> navigateTimetableEditor(sideEffect.argument)
+            TimetableListSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
             TimetableListSideEffect.PopBackStack -> popBackStack()
+            TimetableListSideEffect.ShowNeedTimetableDeleteToast -> onShowToast("시간표가 삭제되었습니다.", 46.dp)
         }
     }
 
@@ -58,7 +66,7 @@ fun TimetableListRoute(
     TimetableListScreen(
         uiState = uiState,
         onClickBack = viewModel::popBackStack,
-        onClickAddTextButton = { viewModel.navigateTimetableEditor(Timetable()) },
+        onClickAddTextButton = viewModel::navigateSemesterSelect,
         onClickTimetableEditButton = viewModel::navigateTimetableEditor,
         onClickTimetableDeleteButton = viewModel::showDeleteDialog,
         onDismissDeleteDialogRequest = viewModel::hideDeleteDialog,
@@ -84,13 +92,14 @@ fun TimetableListScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(White),
+                .background(White100),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SuwikiAppBarWithTextButton(
-                buttonText = stringResource(resource = Res.string.word_add),
-                onClickBack = onClickBack,
-                onClickTextButton = onClickAddTextButton,
+            CchAppBarWithTitle(
+              title = "시간표 목록",
+              isShowAddButton = true,
+              onClickBackButton = { onClickBack() },
+              onClickAdd = onClickAddTextButton,
             )
 
             if (uiState.timetableList.isEmpty()) {
@@ -104,9 +113,12 @@ fun TimetableListScreen(
                 )
             }
 
-            LazyColumn {
+            LazyColumn(
+              modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
+              verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
                 items(items = uiState.timetableList, key = { it.createTime }) { timetable ->
-                    SuwikiEditContainer(
+                    CchEditContainer(
                         name = timetable.name,
                         semester = "${timetable.year}-${timetable.semester}",
                         onClickEditButton = { onClickTimetableEditButton(timetable) },

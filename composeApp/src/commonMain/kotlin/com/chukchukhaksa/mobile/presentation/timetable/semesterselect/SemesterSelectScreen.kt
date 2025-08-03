@@ -61,6 +61,7 @@ fun SemesterSelectScreen(
       Column(horizontalAlignment = Alignment.CenterHorizontally) {
         CchAppBarWithTitle(
           title = "시간표 생성하기",
+          isShowAddButton = false,
           onClickBackButton = { onClickBackButton() },
         )
 

@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.chukchukhaksa.mobile.common.designsystem.component.container.SuwikiBoardContainer
-import com.chukchukhaksa.mobile.common.designsystem.component.container.SuwikiEditContainer
+import com.chukchukhaksa.mobile.common.designsystem.component.container.CchEditContainer
 import com.chukchukhaksa.mobile.common.designsystem.component.container.SuwikiSelectionContainer
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 
@@ -27,7 +27,7 @@ fun SuwikiNoticeContainerPreview() {
 fun TimetableEditContainerPreview() {
     SuwikiTheme {
         Column {
-            SuwikiEditContainer(
+            CchEditContainer(
                 name = "시간표시간표시간표시간표시간표시간표시간표시간표",
                 semester = "1",
             )

@@ -78,7 +78,8 @@ fun TimetableEditorScreen(
                 .background(White),
         ) {
             CchAppBarWithTitle(
-              title = "시간표 생성하기",
+              title = "${uiState.semester?.year}년 ${uiState.semester?.semester}학기",
+              isShowAddButton = false,
               onClickBackButton = { onClickBack() },
             )
 
