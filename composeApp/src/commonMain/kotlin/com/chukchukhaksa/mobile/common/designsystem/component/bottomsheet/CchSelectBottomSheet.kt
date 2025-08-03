@@ -74,7 +74,7 @@ fun CchSelectBottomSheetContent(
         text = bottomSheetTitle,
         style = CchTheme.typography.bodySm,
         color = Gray400,
-        modifier = Modifier.padding(bottom = 4.dp),
+        modifier = Modifier.padding(bottom = 4.dp, start = 20.dp, end = 20.dp),
       )
     }
 
