@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.presentation.timetable.timetableeditor
+package com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -35,7 +35,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun TimetableEditorRoute(
+fun TimetableNameInputRoute(
     viewModel: TimetableEditorViewModel = koinViewModel(),
     navigateTimetable: () -> Unit,
     popBackStack: () -> Unit,
@@ -45,16 +45,16 @@ fun TimetableEditorRoute(
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
-            is TimetableEditorSideEffect.HandleException -> handleException(sideEffect.throwable)
-            TimetableEditorSideEffect.PopBackStack -> popBackStack()
-            TimetableEditorSideEffect.NeedSelectSemesterToast -> onShowToast(
+            is TimetableNameInputSideEffect.HandleException -> handleException(sideEffect.throwable)
+            TimetableNameInputSideEffect.PopBackStack -> popBackStack()
+            TimetableNameInputSideEffect.NeedSelectSemesterToast -> onShowToast(
                 getString(Res.string.create_timetable_need_select_semester),
                 70.dp,
             )
-            TimetableEditorSideEffect.NavigateTimetable -> navigateTimetable()
+            TimetableNameInputSideEffect.NavigateTimetable -> navigateTimetable()
         }
     }
-    TimetableEditorScreen(
+    TimetableNameInputScreen(
         uiState = uiState,
         onValueChangeTimetableName = viewModel::updateName,
         onClickBack = viewModel::popBackStack,
@@ -64,12 +64,12 @@ fun TimetableEditorRoute(
 }
 
 @Composable
-fun TimetableEditorScreen(
-    uiState: TimetableEditorState = TimetableEditorState(),
-    onValueChangeTimetableName: (String) -> Unit = {},
-    onClickTextFieldClearButton: () -> Unit = {},
-    onClickBack: () -> Unit = {},
-    onClickCompleteButton: () -> Unit = {},
+fun TimetableNameInputScreen(
+  uiState: TimetableNameInputState = TimetableNameInputState(),
+  onValueChangeTimetableName: (String) -> Unit = {},
+  onClickTextFieldClearButton: () -> Unit = {},
+  onClickBack: () -> Unit = {},
+  onClickCompleteButton: () -> Unit = {},
 ) {
     SuwikiBackground {
         Column(

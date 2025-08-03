@@ -14,7 +14,7 @@ data class SemesterSelectState(
 )
 
 sealed interface SemesterSelectSideEffect {
-  data class NavigateTimetableEditor(val semester: TimetableEditorArgument): SemesterSelectSideEffect
+  data class NavigateTimetableNameInput(val semester: TimetableEditorArgument): SemesterSelectSideEffect
 }
 
 val semesterList: PersistentList<Semester> = run {

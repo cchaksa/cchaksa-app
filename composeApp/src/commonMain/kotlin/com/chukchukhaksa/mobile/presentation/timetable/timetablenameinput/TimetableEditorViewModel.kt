@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.presentation.timetable.timetableeditor
+package com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -22,7 +22,7 @@ class TimetableEditorViewModel(
     private val argument = savedStateHandle.get<String>(TimetableRoute.TIMETABLE_EDITOR_ARGUMENT)!!
     private val timetableEditorArgument = Json.decodeFromUri<TimetableEditorArgument>(argument)
     private val isEditMode = timetableEditorArgument.isEditMode
-    val mviStore: MviStore<TimetableEditorState, TimetableEditorSideEffect> = mviStore(
+    val mviStore: MviStore<TimetableNameInputState, TimetableNameInputSideEffect> = mviStore(
         timetableEditorArgument.toState(),
     )
 
@@ -34,7 +34,7 @@ class TimetableEditorViewModel(
         val state = mviStore.uiState.value
 
         if (state.semester == null) {
-            mviStore.postSideEffect(TimetableEditorSideEffect.NeedSelectSemesterToast)
+            mviStore.postSideEffect(TimetableNameInputSideEffect.NeedSelectSemesterToast)
             return@launch
         }
 
@@ -59,13 +59,13 @@ class TimetableEditorViewModel(
 
         useCase
             .onSuccess {
-                mviStore.postSideEffect(TimetableEditorSideEffect.NavigateTimetable)
+                mviStore.postSideEffect(TimetableNameInputSideEffect.NavigateTimetable)
             }.onFailure {
-                mviStore.postSideEffect(TimetableEditorSideEffect.HandleException(it))
+                mviStore.postSideEffect(TimetableNameInputSideEffect.HandleException(it))
             }
     }
 
     fun popBackStack() {
-        mviStore.postSideEffect(TimetableEditorSideEffect.PopBackStack)
+        mviStore.postSideEffect(TimetableNameInputSideEffect.PopBackStack)
     }
 }

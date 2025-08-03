@@ -1,11 +1,11 @@
-package com.chukchukhaksa.mobile.presentation.timetable.timetableeditor
+package com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput
 
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.semesterList
 import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.Semester
 
 
-data class TimetableEditorState(
+data class TimetableNameInputState(
     val name: String = "",
     val selectedSemesterPosition: Int? = null,
 ) {
@@ -13,14 +13,14 @@ data class TimetableEditorState(
     val buttonEnabled = name.isNotEmpty()
 }
 
-internal fun TimetableEditorArgument.toState() = TimetableEditorState(
+internal fun TimetableEditorArgument.toState() = TimetableNameInputState(
     name = name,
     selectedSemesterPosition = semesterList.indexOf(Semester(year, semester)),
 )
 
-sealed interface TimetableEditorSideEffect {
-    data object NavigateTimetable : TimetableEditorSideEffect
-    data object PopBackStack : TimetableEditorSideEffect
-    data object NeedSelectSemesterToast : TimetableEditorSideEffect
-    data class HandleException(val throwable: Throwable) : TimetableEditorSideEffect
+sealed interface TimetableNameInputSideEffect {
+    data object NavigateTimetable : TimetableNameInputSideEffect
+    data object PopBackStack : TimetableNameInputSideEffect
+    data object NeedSelectSemesterToast : TimetableNameInputSideEffect
+    data class HandleException(val throwable: Throwable) : TimetableNameInputSideEffect
 }

@@ -12,7 +12,7 @@ data class TimetableListState(
 
 sealed interface TimetableListSideEffect {
     data class HandleException(val throwable: Throwable) : TimetableListSideEffect
-    data class NavigateTimetableEditor(val argument: TimetableEditorArgument) :
+    data class NavigateTimetableNameInput(val argument: TimetableEditorArgument) :
         TimetableListSideEffect
 
     data object NavigateSemesterSelect : TimetableListSideEffect

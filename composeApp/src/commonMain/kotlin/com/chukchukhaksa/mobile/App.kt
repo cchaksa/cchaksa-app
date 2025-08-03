@@ -58,14 +58,14 @@ fun App(
                         timetableNavGraph(
                             padding = innerPadding,
                             popBackStack = navigator::popBackStackIfNotHome,
-                            navigateTimetableEditor = navigator::navigateTimetableEditor,
+                            navigateTimetableNameInput = navigator::navigateTimetableNameInput,
                             navigateTimetableList = navigator::navigateTimetableList,
                             navigateOpenLecture = navigator::navigateOpenLecture,
                             handleException = viewModel::handleException,
                             onShowToast = viewModel::onShowToast,
                             navigateCellEditor = navigator::navigateCellEditor,
                             navigateSemesterSelect = navigator::navigateSemesterSelect,
-                            navigateTimetable = navigator::navigatetimetable,
+                            navigateTimetable = navigator::navigateTimetable,
                         )
                     }
 

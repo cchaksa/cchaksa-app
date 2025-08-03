@@ -30,19 +30,19 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SemesterSelectRoute(
   viewModel: SemesterSelectViewModel = koinViewModel(),
   popBackStack: () -> Unit = {},
-  navigateTimetableEditor: (TimetableEditorArgument) -> Unit,
+  navigateTimetableNameInput: (TimetableEditorArgument) -> Unit,
 ) {
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
   viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
     when (sideEffect) {
-      is SemesterSelectSideEffect.NavigateTimetableEditor -> navigateTimetableEditor(sideEffect.semester)
+      is SemesterSelectSideEffect.NavigateTimetableNameInput -> navigateTimetableNameInput(sideEffect.semester)
     }
   }
   SemesterSelectScreen(
     uiState = uiState,
     onClickBackButton = popBackStack,
     onClickSemester = viewModel::updateSelectedSemesterIndex,
-    onClickNextButton = viewModel::navigateTimetableEditor,
+    onClickNextButton = viewModel::navigateTimetableNameInput,
   )
 }
 

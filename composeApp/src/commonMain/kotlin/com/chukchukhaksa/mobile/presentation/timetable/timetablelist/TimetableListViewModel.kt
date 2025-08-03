@@ -8,7 +8,6 @@ import com.chukchukhaksa.mobile.common.ui.mviStore
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.GetAllTimetableUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.SetMainTimetableCreateTime
-import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorSideEffect
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.toTimetableEditorArgument
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
@@ -57,8 +56,8 @@ class TimetableListViewModel(
         mviStore.postSideEffect(TimetableListSideEffect.PopBackStack)
     }
 
-    fun navigateTimetableEditor(timetable: Timetable) {
-        mviStore.postSideEffect(TimetableListSideEffect.NavigateTimetableEditor(timetable.toTimetableEditorArgument()))
+    fun navigateTimetableNameInput(timetable: Timetable) {
+        mviStore.postSideEffect(TimetableListSideEffect.NavigateTimetableNameInput(timetable.toTimetableEditorArgument()))
     }
 
     fun navigateSemesterSelect() {
