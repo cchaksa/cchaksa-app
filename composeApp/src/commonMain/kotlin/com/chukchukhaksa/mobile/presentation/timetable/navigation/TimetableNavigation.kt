@@ -121,6 +121,7 @@ fun NavGraphBuilder.timetableNavGraph(
             popBackStack = popBackStack,
             navigateTimetableEditor = navigateTimetableEditor,
             navigateSemesterSelect = navigateSemesterSelect,
+            onShowToast = onShowToast,
         )
     }
 

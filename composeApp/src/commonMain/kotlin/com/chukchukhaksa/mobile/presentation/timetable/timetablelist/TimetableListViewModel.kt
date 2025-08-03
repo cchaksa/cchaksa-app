@@ -8,6 +8,7 @@ import com.chukchukhaksa.mobile.common.ui.mviStore
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.GetAllTimetableUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.SetMainTimetableCreateTime
+import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorSideEffect
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.toTimetableEditorArgument
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
@@ -44,6 +45,7 @@ class TimetableListViewModel(
                             .toPersistentList()
                     )
                 }
+                mviStore.postSideEffect(TimetableListSideEffect.ShowNeedTimetableDeleteToast)
             }
             .onFailure {
                 mviStore.postSideEffect(TimetableListSideEffect.HandleException(it))

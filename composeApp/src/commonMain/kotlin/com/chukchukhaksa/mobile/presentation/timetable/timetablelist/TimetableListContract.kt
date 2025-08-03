@@ -17,4 +17,5 @@ sealed interface TimetableListSideEffect {
 
     data object NavigateSemesterSelect : TimetableListSideEffect
     data object PopBackStack : TimetableListSideEffect
+    data object ShowNeedTimetableDeleteToast : TimetableListSideEffect
 }

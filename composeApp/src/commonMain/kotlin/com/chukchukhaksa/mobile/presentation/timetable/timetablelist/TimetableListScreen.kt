@@ -14,9 +14,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
+import chukchukhaksa.composeapp.generated.resources.add_cell_screen_need_professor_name
 import chukchukhaksa.composeapp.generated.resources.delete_timetable_dialog_body
 import chukchukhaksa.composeapp.generated.resources.delete_timetable_dialog_title
 import chukchukhaksa.composeapp.generated.resources.timetable_list_screen_empty_timetable
@@ -31,7 +33,9 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.model.Timetable
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
+import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorSideEffect
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -42,6 +46,7 @@ fun TimetableListRoute(
     navigateTimetableEditor: (TimetableEditorArgument) -> Unit,
     navigateSemesterSelect: () -> Unit,
     handleException: (Throwable) -> Unit,
+    onShowToast: (String, Dp) -> Unit,
 ) {
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
@@ -50,6 +55,7 @@ fun TimetableListRoute(
             is TimetableListSideEffect.NavigateTimetableEditor -> navigateTimetableEditor(sideEffect.argument)
             TimetableListSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
             TimetableListSideEffect.PopBackStack -> popBackStack()
+            TimetableListSideEffect.ShowNeedTimetableDeleteToast -> onShowToast("시간표가 삭제되었습니다.", 46.dp)
         }
     }
 
