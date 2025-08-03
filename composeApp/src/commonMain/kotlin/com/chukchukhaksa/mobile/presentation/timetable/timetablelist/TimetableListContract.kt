@@ -15,5 +15,6 @@ sealed interface TimetableListSideEffect {
     data class NavigateTimetableEditor(val argument: TimetableEditorArgument) :
         TimetableListSideEffect
 
+    data object NavigateSemesterSelect : TimetableListSideEffect
     data object PopBackStack : TimetableListSideEffect
 }

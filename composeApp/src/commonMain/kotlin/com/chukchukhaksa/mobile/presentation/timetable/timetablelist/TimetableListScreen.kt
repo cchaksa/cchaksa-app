@@ -1,6 +1,7 @@
 package com.chukchukhaksa.mobile.presentation.timetable.timetablelist
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,6 +40,7 @@ fun TimetableListRoute(
     viewModel: TimetableListViewModel = koinViewModel(),
     popBackStack: () -> Unit,
     navigateTimetableEditor: (TimetableEditorArgument) -> Unit,
+    navigateSemesterSelect: () -> Unit,
     handleException: (Throwable) -> Unit,
 ) {
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
@@ -46,6 +48,7 @@ fun TimetableListRoute(
         when (sideEffect) {
             is TimetableListSideEffect.HandleException -> handleException(sideEffect.throwable)
             is TimetableListSideEffect.NavigateTimetableEditor -> navigateTimetableEditor(sideEffect.argument)
+            TimetableListSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
             TimetableListSideEffect.PopBackStack -> popBackStack()
         }
     }
@@ -57,7 +60,7 @@ fun TimetableListRoute(
     TimetableListScreen(
         uiState = uiState,
         onClickBack = viewModel::popBackStack,
-        onClickAddTextButton = { viewModel.navigateTimetableEditor(Timetable()) },
+        onClickAddTextButton = viewModel::navigateSemesterSelect,
         onClickTimetableEditButton = viewModel::navigateTimetableEditor,
         onClickTimetableDeleteButton = viewModel::showDeleteDialog,
         onDismissDeleteDialogRequest = viewModel::hideDeleteDialog,
@@ -104,7 +107,8 @@ fun TimetableListScreen(
             }
 
             LazyColumn(
-              modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp)
+              modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
+              verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 items(items = uiState.timetableList, key = { it.createTime }) { timetable ->
                     CchEditContainer(

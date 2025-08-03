@@ -59,6 +59,10 @@ class TimetableListViewModel(
         mviStore.postSideEffect(TimetableListSideEffect.NavigateTimetableEditor(timetable.toTimetableEditorArgument()))
     }
 
+    fun navigateSemesterSelect() {
+      mviStore.postSideEffect(TimetableListSideEffect.NavigateSemesterSelect)
+    }
+
     fun showDeleteDialog(timetable: Timetable) {
         toDeleteTimetable = timetable
         mviStore.setState { copy(showDeleteDialog = true) }
