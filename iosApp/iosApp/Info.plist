@@ -6,5 +6,7 @@
 	<true/>
 	<key>CFBundleDisplayName</key>
 	<string>척척학사</string>
+	<key>CFBundleName</key>
+	<string>척척학사</string>
 </dict>
 </plist>
