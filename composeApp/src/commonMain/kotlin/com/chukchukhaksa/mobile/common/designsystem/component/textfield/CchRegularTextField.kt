@@ -68,9 +68,9 @@ fun CchRegularTextField(
           }
           innerTextField()
         }
-        if (isActive) {
-          TextFieldClearButton(onClick = onClickClearButton)
-        }
+//        if (isActive) {
+//          TextFieldClearButton(onClick = onClickClearButton)
+//        }
       }
     },
   )

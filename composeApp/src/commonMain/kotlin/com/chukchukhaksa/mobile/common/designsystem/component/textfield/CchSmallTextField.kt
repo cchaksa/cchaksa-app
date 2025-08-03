@@ -104,11 +104,11 @@ fun CchSmallTextField(
         }
 
         if (value.isNotEmpty() && showClearButton) {
-          TextFieldClearButton(
-            modifier = Modifier
-              .size(21.dp),
-            onClick = onClickClearButton,
-          )
+//          TextFieldClearButton(
+//            modifier = Modifier
+//              .size(21.dp),
+//            onClick = onClickClearButton,
+//          )
         }
       }
     },
