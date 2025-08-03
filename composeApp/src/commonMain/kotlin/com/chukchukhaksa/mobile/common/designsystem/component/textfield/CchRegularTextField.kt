@@ -67,7 +67,9 @@ fun CchRegularTextField(
           }
           innerTextField()
         }
-        Spacer(modifier = Modifier.width(8.dp))
+        if (value.isNotEmpty()) {
+          TextFieldClearButton(onClick = onClickClearButton)
+        }
       }
     },
   )
