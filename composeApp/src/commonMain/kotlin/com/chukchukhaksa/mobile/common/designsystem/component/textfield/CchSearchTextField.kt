@@ -2,6 +2,7 @@ package com.chukchukhaksa.mobile.common.designsystem.component.textfield
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
@@ -40,6 +41,7 @@ import org.jetbrains.compose.resources.painterResource
 import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.ic_search
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 
 enum class CchSearchTextFieldState {
   Before,
@@ -160,7 +162,9 @@ fun CchSearchTextField(
         Icon(
           painter = painterResource(Res.drawable.ic_search),
           contentDescription = null,
-          modifier = Modifier.size(24.dp),
+          modifier = Modifier
+            .size(24.dp)
+            .cchClickable(rippleEnabled = false) { onSearchAction() },
           tint = iconColor,
         )
       }
