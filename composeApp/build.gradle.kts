@@ -102,8 +102,8 @@ android {
     applicationId = "com.kunize.uswtimetable"
     minSdk = libs.versions.android.minSdk.get().toInt()
     targetSdk = libs.versions.android.targetSdk.get().toInt()
-    versionCode = 50
-    versionName = "3.0.0"
+    versionCode = 51
+    versionName = "3.0.1"
   }
   packaging {
     resources {
