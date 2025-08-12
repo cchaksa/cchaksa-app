@@ -11,42 +11,44 @@ import com.chukchukhaksa.mobile.local.database.openmajor.database.OpenMajorDatab
 import org.koin.dsl.module
 
 val databaseModule =
-    module {
-        includes(
-            timetableDatabaseModule,
-            openMajorDatabaseModule,
-            openLectureDatabaseModule,
-        )
-    }
+  module {
+    includes(
+      timetableDatabaseModule,
+      openMajorDatabaseModule,
+      openLectureDatabaseModule,
+    )
+  }
 
 val timetableDatabaseModule = module {
-    single {
-        get<TimetableDatabaseFactory>()
-            .create()
-            .addMigrations(TIMETABLE_MIGRATION_1_2)
-            .fallbackToDestructiveMigration(true)
-            .setDriver(BundledSQLiteDriver())
-            .build()
-    }
-    single { get<TimetableDatabase>().timetableDao() }
+  single {
+    get<TimetableDatabaseFactory>()
+      .create()
+      .addMigrations(TIMETABLE_MIGRATION_1_2)
+      .fallbackToDestructiveMigration(true)
+      .setDriver(BundledSQLiteDriver())
+      .build()
+  }
+  single { get<TimetableDatabase>().timetableDao() }
 }
 
 val openMajorDatabaseModule = module {
-    single {
-        get<OpenMajorDatabaseFactory>()
-            .create()
-            .setDriver(BundledSQLiteDriver())
-            .build()
-    }
-    single { get<OpenMajorDatabase>().openMajorDao() }
+  single {
+    get<OpenMajorDatabaseFactory>()
+      .create()
+      .fallbackToDestructiveMigration(true)
+      .setDriver(BundledSQLiteDriver())
+      .build()
+  }
+  single { get<OpenMajorDatabase>().openMajorDao() }
 }
 
 val openLectureDatabaseModule = module {
-    single {
-        get<OpenLectureDatabaseFactory>()
-            .create()
-            .setDriver(BundledSQLiteDriver())
-            .build()
-    }
-    single { get<OpenLectureDatabase>().openLectureDao() }
+  single {
+    get<OpenLectureDatabaseFactory>()
+      .create()
+      .fallbackToDestructiveMigration(true)
+      .setDriver(BundledSQLiteDriver())
+      .build()
+  }
+  single { get<OpenLectureDatabase>().openLectureDao() }
 }
