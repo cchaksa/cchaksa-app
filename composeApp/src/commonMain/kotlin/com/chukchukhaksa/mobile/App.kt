@@ -19,9 +19,15 @@ import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.component.toast.CchToast
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.kmp.Platform.*
 import com.chukchukhaksa.mobile.common.kmp.SetStatusBarColor
+import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.timetableNavGraph
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.analytics.FirebaseAnalytics
+import dev.gitlive.firebase.analytics.analytics
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
@@ -45,6 +51,18 @@ fun App(
 
             LaunchedEffect(key1 = Unit) {
                 viewModel.checkNeedForceUpdate()
+
+                delay(1000)
+              val name = when (getPlatform()) {
+                Android -> "android_startup"
+                IOS -> "ios_startup"
+              }
+                Firebase.analytics.logEvent(
+                    name = name,
+                    parameters = mapOf(
+                        "platform" to getPlatform().name
+                    )
+                )
             }
 
             Scaffold(
