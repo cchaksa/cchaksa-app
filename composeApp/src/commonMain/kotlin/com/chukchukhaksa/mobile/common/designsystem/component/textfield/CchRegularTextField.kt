@@ -24,6 +24,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.Purple600
+import com.chukchukhaksa.mobile.common.designsystem.theme.Red300
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 
 @Composable
@@ -32,13 +33,14 @@ fun CchRegularTextField(
   value: String = "",
   placeholder: String = "",
   isActive: Boolean = false,
+  isError: Boolean = false,
   onValueChanged: (String) -> Unit = {},
   onClickClearButton: () -> Unit = {}
 ) {
   val (borderColor, textColor, textStyle) = if(!isActive) {
     Triple(Gray200, Gray400, CchTheme.typography.bodyLg)
   } else {
-    Triple(Purple600, Black100, CchTheme.typography.bodyLgStrong)
+    Triple(if (isError) Red300 else Purple600, Black100, CchTheme.typography.bodyLgStrong)
   }
   BasicTextField(
     value = value,
