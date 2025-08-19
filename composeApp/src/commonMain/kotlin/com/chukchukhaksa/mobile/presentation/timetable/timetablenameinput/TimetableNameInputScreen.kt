@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
@@ -28,6 +29,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.button.CchBasicBut
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchRegularTextField
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.Red300
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import org.jetbrains.compose.resources.getString
@@ -102,9 +104,22 @@ fun TimetableNameInputScreen(
                     value = uiState.name,
                     placeholder = stringResource(Res.string.create_timetable_screen_placeholder),
                     isActive = uiState.name.isNotEmpty(),
+                    isError = uiState.name.length > 20,
                     onValueChanged = onValueChangeTimetableName,
                     onClickClearButton = onClickTextFieldClearButton,
                 )
+
+                if (uiState.name.length > 20) {
+                  Text(
+                    modifier = Modifier
+                      .padding(top = 12.dp, start = 4.dp, end = 4.dp)
+                      .fillMaxWidth(),
+                    text = "시간표 이름은 최대 20자까지 설정 가능합니다.",
+                    textAlign = TextAlign.Start,
+                    style = CchTheme.typography.bodyMd,
+                    color = Red300,
+                  )
+                }
 
                 Spacer(modifier = Modifier.weight(1f))
 

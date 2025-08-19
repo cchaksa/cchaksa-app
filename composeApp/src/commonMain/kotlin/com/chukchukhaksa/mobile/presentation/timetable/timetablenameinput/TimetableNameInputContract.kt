@@ -9,7 +9,7 @@ data class TimetableNameInputState(
     val name: String = "",
     val semester: Semester = Semester("", "")
 ) {
-    val buttonEnabled = name.isNotEmpty()
+    val buttonEnabled = name.isNotEmpty() && name.length <= 20
 }
 
 internal fun TimetableEditorArgument.toState() = TimetableNameInputState(
