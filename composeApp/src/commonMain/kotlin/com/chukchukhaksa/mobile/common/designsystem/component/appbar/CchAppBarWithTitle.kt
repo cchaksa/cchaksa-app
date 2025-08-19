@@ -43,12 +43,14 @@ fun CchAppBarWithTitle(
     Row(
       modifier = Modifier
         .wrapContentWidth()
-        .height(24.dp)
-        .clickable { onClickBackButton() },
+        .height(24.dp),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
       Image(
+        modifier = Modifier
+          .clip(CircleShape)
+          .cchClickable(onClick = onClickBackButton),
         painter = painterResource(resource = Res.drawable.ic_appbar_arrow_left_chukchuk),
         contentDescription = "",
       )
