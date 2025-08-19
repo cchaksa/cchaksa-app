@@ -104,9 +104,9 @@ fun TimetableListScreen(
             if (uiState.timetableList.isEmpty()) {
                 Text(
                     modifier = Modifier
-                        .padding(top = 150.dp),
+                        .padding(top = 324.dp),
                     textAlign = TextAlign.Center,
-                    text = stringResource(Res.string.timetable_list_screen_empty_timetable),
+                    text = "등록된 시간표가 없어요!",
                     style = CchTheme.typography.bodyMd,
                     color = Gray600,
                 )
