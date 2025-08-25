@@ -13,7 +13,7 @@ data class TimetableEditorState(
     val selectedSemesterPosition: Int? = null,
 ) {
     val semester = selectedSemesterPosition?.let { semesterList.getOrNull(it) }
-    val buttonEnabled = (name.isNotEmpty() && preName != name || preSelectedSemesterPosition != selectedSemesterPosition)
+    val buttonEnabled = ((name.isNotEmpty() && name.length <= 20) && (preName != name || preSelectedSemesterPosition != selectedSemesterPosition))
 }
 
 internal fun TimetableEditorArgument.toState() = TimetableEditorState(
