@@ -29,6 +29,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchRegul
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Red300
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.extension.checkOverTimetableNameLimit
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.semesterList
 import kotlinx.collections.immutable.toPersistentList
@@ -105,7 +106,7 @@ fun TimetableEditorScreen(
                     value = uiState.name,
                     placeholder = stringResource(Res.string.create_timetable_screen_placeholder),
                     isActive = uiState.name.isNotEmpty() && uiState.name != uiState.preName,
-                    isError = uiState.name.length > 20,
+                    isError = checkOverTimetableNameLimit(uiState.name),
                     onValueChanged = onValueChangeTimetableName,
                     onClickClearButton = onClickTextFieldClearButton,
                 )

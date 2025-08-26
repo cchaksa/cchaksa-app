@@ -1,7 +1,7 @@
 package com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput
 
+import com.chukchukhaksa.mobile.common.extension.checkTimetableNameRule
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
-import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.semesterList
 import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.Semester
 
 
@@ -9,7 +9,7 @@ data class TimetableNameInputState(
     val name: String = "",
     val semester: Semester = Semester("", "")
 ) {
-    val buttonEnabled = name.isNotEmpty() && name.length <= 20
+    val buttonEnabled = checkTimetableNameRule(name)
 }
 
 internal fun TimetableEditorArgument.toState() = TimetableNameInputState(

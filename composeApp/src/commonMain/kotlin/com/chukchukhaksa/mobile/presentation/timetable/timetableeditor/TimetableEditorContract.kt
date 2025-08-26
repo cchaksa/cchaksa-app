@@ -3,6 +3,7 @@ package com.chukchukhaksa.mobile.presentation.timetable.timetableeditor
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.semesterList
 import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.Semester
+import com.chukchukhaksa.mobile.common.extension.checkTimetableNameRule
 
 
 data class TimetableEditorState(
@@ -13,7 +14,7 @@ data class TimetableEditorState(
     val selectedSemesterPosition: Int? = null,
 ) {
     val semester = selectedSemesterPosition?.let { semesterList.getOrNull(it) }
-    val buttonEnabled = ((name.isNotEmpty() && name.length <= 20) && (preName != name || preSelectedSemesterPosition != selectedSemesterPosition))
+    val buttonEnabled = ((checkTimetableNameRule(name)) && (preName != name || preSelectedSemesterPosition != selectedSemesterPosition))
 }
 
 internal fun TimetableEditorArgument.toState() = TimetableEditorState(
