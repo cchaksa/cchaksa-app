@@ -31,6 +31,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Red300
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.extension.checkOverTimetableNameLimit
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -104,7 +105,7 @@ fun TimetableNameInputScreen(
                     value = uiState.name,
                     placeholder = stringResource(Res.string.create_timetable_screen_placeholder),
                     isActive = uiState.name.isNotEmpty(),
-                    isError = uiState.name.length > 20,
+                    isError = checkOverTimetableNameLimit(uiState.name),
                     onValueChanged = onValueChangeTimetableName,
                     onClickClearButton = onClickTextFieldClearButton,
                 )
