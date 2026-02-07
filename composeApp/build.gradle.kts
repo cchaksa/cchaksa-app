@@ -80,8 +80,6 @@ kotlin {
       implementation(libs.kmp.firebase.crashlytics)
       implementation(libs.kmp.firebase.analytics)
       implementation(libs.napier)
-
-      implementation(libs.accompanist.systemuicontroller)
     }
     commonTest.dependencies {
       implementation(libs.kotlin.test)
