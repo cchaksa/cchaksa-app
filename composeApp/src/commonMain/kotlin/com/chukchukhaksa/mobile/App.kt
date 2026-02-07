@@ -20,7 +20,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.toast.CchToast
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.kmp.Platform.*
-import com.chukchukhaksa.mobile.common.kmp.SetStatusBarColor
+
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.timetableNavGraph
@@ -38,7 +38,6 @@ fun App(
     viewModel: MainViewModel = koinViewModel(),
     navigator: MainNavigator = rememberMainNavigator(),
 ) {
-    SetStatusBarColor()
     CchTheme {
         KoinContext {
             val uiState = viewModel.mviStore.uiState.collectAsState().value
