@@ -2,6 +2,7 @@ package com.chukchukhaksa.mobile.common.designsystem.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.MutableWindowInsets
 import androidx.compose.foundation.layout.WindowInsets
@@ -42,7 +43,6 @@ fun SuwikiBackground(
             .onConsumedWindowInsetsChanged { consumedWindowInsets ->
                 safeInsets.insets = contentWindowInsets.exclude(consumedWindowInsets)
             }
-            .padding(safeInsets.insets.asPaddingValues())
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
@@ -50,6 +50,12 @@ fun SuwikiBackground(
                 focusManager.clearFocus()
             },
     ) {
-        content()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(safeInsets.insets.asPaddingValues())
+        ) {
+            content()
+        }
     }
 }

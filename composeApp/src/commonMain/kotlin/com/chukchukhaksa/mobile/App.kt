@@ -1,5 +1,9 @@
 package com.chukchukhaksa.mobile
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
@@ -8,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.dialog_network_body
@@ -20,7 +25,6 @@ import com.chukchukhaksa.mobile.common.designsystem.component.toast.CchToast
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.kmp.Platform.*
-
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.timetableNavGraph
@@ -69,11 +73,7 @@ fun App(
                 contentWindowInsets = WindowInsets(0.dp),
                 modifier = modifier,
                 content = { innerPadding ->
-                    NavHost(
-                        navController = navigator.navController,
-                        startDestination = navigator.startDestination,
-                    ) {
-
+                    val navGraphBuilder: NavGraphBuilder.() -> Unit = {
                         timetableNavGraph(
                             padding = innerPadding,
                             popBackStack = navigator::popBackStackIfNotHome,
@@ -86,6 +86,24 @@ fun App(
                             navigateCellEditor = navigator::navigateCellEditor,
                             navigateSemesterSelect = navigator::navigateSemesterSelect,
                             navigateTimetable = navigator::navigateTimetable,
+                        )
+                    }
+
+                    when (getPlatform()) {
+                        Android -> NavHost(
+                            navController = navigator.navController,
+                            startDestination = navigator.startDestination,
+                            enterTransition = { slideInHorizontally(tween(350, easing = FastOutSlowInEasing)) { it } },
+                            exitTransition = { slideOutHorizontally(tween(350, easing = FastOutSlowInEasing)) { -it / 3 } },
+                            popEnterTransition = { slideInHorizontally(tween(350, easing = FastOutSlowInEasing)) { -it / 3 } },
+                            popExitTransition = { slideOutHorizontally(tween(350, easing = FastOutSlowInEasing)) { it } },
+                            builder = navGraphBuilder,
+                        )
+
+                        IOS -> NavHost(
+                            navController = navigator.navController,
+                            startDestination = navigator.startDestination,
+                            builder = navGraphBuilder,
                         )
                     }
 

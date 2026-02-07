@@ -1,8 +1,8 @@
 [versions]
-agp = "8.7.3"
-android-compileSdk = "35"
+agp = "8.10.1"
+android-compileSdk = "36"
 android-minSdk = "28"
-android-targetSdk = "35"
+android-targetSdk = "36"
 androidx-activity = "1.10.1"
 androidx-appcompat = "1.7.0"
 androidx-constraintlayout = "2.2.1"
@@ -19,7 +19,7 @@ kotlinx-coroutines = "1.10.1"
 kotlinx-immutable = "0.3.8"
 kotlinx-serialization = "1.8.1"
 kotlinx-datetime = "0.7.1"
-jetbrains-androidx-navigation = "2.9.0-beta02"
+jetbrains-androidx-navigation = "2.9.1"
 koin = "4.1.0-Beta10"
 androidx-room = "2.7.1"
 ksp = "2.2.21-2.0.4"
@@ -32,7 +32,7 @@ desugar-jdk-libs = "2.1.5"
 napier = "2.7.1"
 
 glance = "1.1.1"
-composeRuntime = "1.6.10"
+composeRuntime = "1.10.0"
 
 
 [libraries]
