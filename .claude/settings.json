@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "TOOL_INPUT=$(cat); if echo \"$TOOL_INPUT\" | grep -q 'google-services.json'; then echo 'BLOCK: google-services.json은 민감한 파일이므로 접근할 수 없습니다.' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
