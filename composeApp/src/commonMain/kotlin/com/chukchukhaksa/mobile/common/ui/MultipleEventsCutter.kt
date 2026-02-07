@@ -1,6 +1,6 @@
 package com.chukchukhaksa.mobile.common.ui
 
-import kotlinx.datetime.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * 클릭이 지연될 시간을 정의하는 변수
@@ -17,8 +17,9 @@ internal fun MultipleEventsCutter.Companion.get(): MultipleEventsCutter =
   MultipleEventsCutterImpl()
 
 private class MultipleEventsCutterImpl : MultipleEventsCutter {
+  @OptIn(ExperimentalTime::class)
   private val now: Long
-    get() = Clock.System.now().toEpochMilliseconds()
+    get() = kotlin.time.Clock.System.now().toEpochMilliseconds()
 
   private var lastEventTimeMs: Long = 0
 

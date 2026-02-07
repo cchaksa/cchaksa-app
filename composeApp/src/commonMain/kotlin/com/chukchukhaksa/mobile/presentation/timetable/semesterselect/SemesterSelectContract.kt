@@ -3,9 +3,10 @@ package com.chukchukhaksa.mobile.presentation.timetable.semesterselect
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 data class SemesterSelectState(
   val selectSemesterIndex: Int? = null,
@@ -17,6 +18,7 @@ sealed interface SemesterSelectSideEffect {
   data class NavigateTimetableNameInput(val semester: TimetableEditorArgument): SemesterSelectSideEffect
 }
 
+@OptIn(ExperimentalTime::class)
 val semesterList: PersistentList<Semester> = run {
   val currentYear = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
   val semesterList = mutableListOf<Semester>()
