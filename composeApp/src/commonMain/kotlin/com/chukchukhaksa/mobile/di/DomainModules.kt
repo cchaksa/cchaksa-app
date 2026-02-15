@@ -1,5 +1,6 @@
 package com.chukchukhaksa.mobile.di
 
+import com.chukchukhaksa.mobile.domain.auth.usecase.AppleLoginUseCase
 import com.chukchukhaksa.mobile.domain.config.usecase.CheckNeedForceUpdateUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableUseCase
@@ -40,4 +41,7 @@ val domainModule = module {
     factory { UpdateOpenLectureIfNeedUseCase(get())}
 
     factory { CheckNeedForceUpdateUseCase(get())}
+
+    // Auth use cases
+    factory { AppleLoginUseCase(get()) }
 }
