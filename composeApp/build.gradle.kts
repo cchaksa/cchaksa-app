@@ -50,6 +50,8 @@ kotlin {
       implementation(libs.glance.material3)
       implementation(libs.compose.runtime)
     }
+    iosMain.dependencies {
+    }
     commonMain.dependencies {
       implementation(compose.runtime)
       implementation(compose.foundation)
