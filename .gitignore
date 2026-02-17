@@ -46,3 +46,4 @@ build/
 app/.idea/
 /composeApp/google-services.json
 /iosApp/iosApp/GoogleService-Info.plist
+/iosApp/Configuration/Config.xcconfig
