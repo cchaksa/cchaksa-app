@@ -32,8 +32,9 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Purple600
 import com.chukchukhaksa.mobile.common.kmp.Platform
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.cchClickable
+import com.chukchukhaksa.mobile.common.provider.LocalAppContext
 import com.chukchukhaksa.mobile.domain.auth.usecase.AppleLoginUseCase
-import io.github.aakira.napier.Napier
+import com.chukchukhaksa.mobile.domain.auth.usecase.KakaoLoginUseCase
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -83,6 +84,9 @@ fun WebViewGuideScreen() {
           Spacer(modifier = Modifier.height(16.dp))
           AppleLoginButton()
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        KakaoLoginButton()
       }
 
       Text(
@@ -113,20 +117,33 @@ private fun AppleLoginButton(
     enable = !isLoading,
     textStyle = CchTheme.typography.bodyMdStrong,
     onClick = {
-      Napier.d(tag = "AppleLogin") { ">>> 버튼 클릭됨" }
       scope.launch {
-        Napier.d(tag = "AppleLogin") { ">>> 코루틴 시작" }
         isLoading = true
         appleLoginUseCase()
-          .onSuccess { result ->
-            Napier.d(tag = "AppleLogin") { ">>> 성공 - identityToken: ${result.identityToken.take(5)}..." }
-            Napier.d(tag = "AppleLogin") { ">>> authorizationCode: ${result.authorizationCode.take(5)}..." }
-          }
-          .onFailure { error ->
-            Napier.e(tag = "AppleLogin", throwable = error) { ">>> 실패: ${error.message}" }
-          }
         isLoading = false
-        Napier.d(tag = "AppleLogin") { ">>> 코루틴 종료" }
+      }
+    },
+  )
+}
+
+@Composable
+private fun KakaoLoginButton(
+  kakaoLoginUseCase: KakaoLoginUseCase = koinInject(),
+) {
+  val context = LocalAppContext.current
+  val scope = rememberCoroutineScope()
+  var isLoading by remember { mutableStateOf(false) }
+
+  CchBasicButton(
+    modifier = Modifier.padding(horizontal = 38.dp),
+    text = if (isLoading) "로그인 중..." else "카카오로 로그인",
+    enable = !isLoading,
+    textStyle = CchTheme.typography.bodyMdStrong,
+    onClick = {
+      scope.launch {
+        isLoading = true
+        kakaoLoginUseCase(context)
+        isLoading = false
       }
     },
   )

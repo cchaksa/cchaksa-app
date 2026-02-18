@@ -1,4 +1,12 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
+val localProperties = Properties().apply {
+  val localPropertiesFile = rootProject.file("local.properties")
+  if (localPropertiesFile.exists()) {
+    load(localPropertiesFile.inputStream())
+  }
+}
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
@@ -49,6 +57,7 @@ kotlin {
       implementation(libs.glance.appwidget)
       implementation(libs.glance.material3)
       implementation(libs.compose.runtime)
+      implementation(libs.kakao.sdk.v2.user)
     }
     iosMain.dependencies {
     }
@@ -82,6 +91,7 @@ kotlin {
       implementation(libs.kmp.firebase.crashlytics)
       implementation(libs.kmp.firebase.analytics)
       implementation(libs.napier)
+      implementation(libs.kinappbrowser)
     }
     commonTest.dependencies {
       implementation(libs.kotlin.test)
@@ -104,6 +114,9 @@ android {
     targetSdk = libs.versions.android.targetSdk.get().toInt()
     versionCode = 51
     versionName = "3.0.1"
+
+    buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"${localProperties["KAKAO_NATIVE_APP_KEY"] ?: ""}\"")
+    manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = localProperties["KAKAO_NATIVE_APP_KEY"] ?: ""
   }
   packaging {
     resources {

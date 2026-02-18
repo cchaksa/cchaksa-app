@@ -1,6 +1,7 @@
 package com.chukchukhaksa.mobile.di
 
 import com.chukchukhaksa.mobile.domain.auth.usecase.AppleLoginUseCase
+import com.chukchukhaksa.mobile.domain.auth.usecase.KakaoLoginUseCase
 import com.chukchukhaksa.mobile.domain.config.usecase.CheckNeedForceUpdateUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableUseCase
@@ -44,4 +45,5 @@ val domainModule = module {
 
     // Auth use cases
     factory { AppleLoginUseCase(get()) }
+    factory { KakaoLoginUseCase(get()) }
 }
