@@ -33,6 +33,7 @@ napier = "2.7.1"
 
 glance = "1.1.1"
 composeRuntime = "1.10.0"
+ktor = "3.3.1"
 kakao-sdk = "2.20.6"
 kinappbrowser = "1.0.0"
 
@@ -86,6 +87,13 @@ napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 
 glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
+
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 
 kakao-sdk-v2-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao-sdk" }
 

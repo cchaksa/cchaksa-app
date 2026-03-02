@@ -58,8 +58,10 @@ kotlin {
       implementation(libs.glance.material3)
       implementation(libs.compose.runtime)
       implementation(libs.kakao.sdk.v2.user)
+      implementation(libs.ktor.client.okhttp)
     }
     iosMain.dependencies {
+      implementation(libs.ktor.client.darwin)
     }
     commonMain.dependencies {
       implementation(compose.runtime)
@@ -92,6 +94,11 @@ kotlin {
       implementation(libs.kmp.firebase.analytics)
       implementation(libs.napier)
       implementation(libs.kinappbrowser)
+
+      implementation(libs.ktor.client.core)
+      implementation(libs.ktor.client.content.negotiation)
+      implementation(libs.ktor.serialization.kotlinx.json)
+      implementation(libs.ktor.client.logging)
     }
     commonTest.dependencies {
       implementation(libs.kotlin.test)
