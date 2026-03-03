@@ -48,8 +48,8 @@ class Sha256Test {
     }
 
     @Test
-    fun uuidFormat() {
-        // UUID 형식 문자열 (실제 카카오 로그인에서 사용되는 nonce 형태)
+    fun simpleString() {
+        // 간단한 문자열 해싱 테스트
         assertEquals(
             "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae",
             sha256Hex("foo"),

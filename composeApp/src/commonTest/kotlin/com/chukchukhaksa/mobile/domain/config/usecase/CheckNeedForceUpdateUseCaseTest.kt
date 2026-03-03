@@ -4,7 +4,9 @@ import com.chukchukhaksa.mobile.common.kmp.Platform
 import com.chukchukhaksa.mobile.domain.config.repository.AppConfigRepository
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class CheckNeedForceUpdateUseCaseTest {
@@ -31,6 +33,7 @@ class CheckNeedForceUpdateUseCaseTest {
         val result = useCase(Platform.Android, "1.5.0").getOrThrow()
 
         assertTrue(result.needForceUpdate)
+        assertEquals(mockRepository.googleStoreUrl, result.storeUrl)
     }
 
     @Test
@@ -40,6 +43,7 @@ class CheckNeedForceUpdateUseCaseTest {
         val result = useCase(Platform.Android, "2.0.0").getOrThrow()
 
         assertFalse(result.needForceUpdate)
+        assertNull(result.storeUrl)
     }
 
     @Test
@@ -58,6 +62,7 @@ class CheckNeedForceUpdateUseCaseTest {
         val result = useCase(Platform.IOS, "2.0.0").getOrThrow()
 
         assertTrue(result.needForceUpdate)
+        assertEquals(mockRepository.appleStoreUrl, result.storeUrl)
     }
 
     @Test
@@ -67,6 +72,7 @@ class CheckNeedForceUpdateUseCaseTest {
         val result = useCase(Platform.Android, "1.0.0").getOrThrow()
 
         assertTrue(result.needForceUpdate)
+        assertEquals(mockRepository.googleStoreUrl, result.storeUrl)
     }
 
     @Test
@@ -76,6 +82,7 @@ class CheckNeedForceUpdateUseCaseTest {
         val result = useCase(Platform.Android, "1.0.0").getOrThrow()
 
         assertTrue(result.needForceUpdate)
+        assertEquals(mockRepository.googleStoreUrl, result.storeUrl)
     }
 
     @Test
@@ -103,6 +110,7 @@ class CheckNeedForceUpdateUseCaseTest {
         val result = useCase(Platform.Android, "1.9.9").getOrThrow()
 
         assertTrue(result.needForceUpdate)
+        assertEquals(mockRepository.googleStoreUrl, result.storeUrl)
     }
 
     @Test
@@ -112,6 +120,7 @@ class CheckNeedForceUpdateUseCaseTest {
         val result = useCase(Platform.Android, "1.4.9").getOrThrow()
 
         assertTrue(result.needForceUpdate)
+        assertEquals(mockRepository.googleStoreUrl, result.storeUrl)
     }
 
     @Test
