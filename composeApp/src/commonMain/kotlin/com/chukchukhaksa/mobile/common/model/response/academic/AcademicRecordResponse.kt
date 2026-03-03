@@ -1,5 +1,11 @@
 package com.chukchukhaksa.mobile.common.model.response.academic
 
+import com.chukchukhaksa.mobile.common.model.academic.AcademicRecord
+import com.chukchukhaksa.mobile.common.model.academic.AcademicRecordCourses
+import com.chukchukhaksa.mobile.common.model.academic.Liberal
+import com.chukchukhaksa.mobile.common.model.academic.Major
+import com.chukchukhaksa.mobile.common.model.academic.SemesterGrade
+
 data class AcademicRecordResponse(
     val data: AcademicRecordResponseData,
     val message: String,
@@ -7,17 +13,27 @@ data class AcademicRecordResponse(
 )
 
 data class AcademicRecordResponseData(
-  val courses: AcademicRecordCourses,
-  val semesterGrade: SemesterGrade
-)
+  val courses: AcademicRecordCoursesData,
+  val semesterGrade: SemesterGradeData
+) {
+  fun toAcademicRecord() = AcademicRecord(
+    courses = courses.toAcademicRecordCourses(),
+    semesterGrade = semesterGrade.toSemesterGrade()
+  )
+}
 
-data class AcademicRecordCourses(
-  val liberal: List<Liberal>,
-  val major: List<Major>
-)
+data class AcademicRecordCoursesData(
+  val liberal: List<LiberalData>,
+  val major: List<MajorData>
+) {
+  fun toAcademicRecordCourses() = AcademicRecordCourses(
+    liberal = liberal.map { it.toLiberal() },
+    major = major.map { it.toMajor() }
+  )
+}
 
 
-data class SemesterGrade(
+data class SemesterGradeData(
   val attemptedCredits: Int,
   val classRank: Int,
   val earnedCredits: Int,
@@ -26,9 +42,20 @@ data class SemesterGrade(
   val semesterGpa: Double,
   val totalStudents: Int,
   val year: Int
-)
+) {
+  fun toSemesterGrade() = SemesterGrade(
+    attemptedCredits = attemptedCredits,
+    classRank = classRank,
+    earnedCredits = earnedCredits,
+    percentile = percentile,
+    semester = semester,
+    semesterGpa = semesterGpa,
+    totalStudents = totalStudents,
+    year = year,
+  )
+}
 
-data class Major(
+data class MajorData(
   val areaType: String,
   val courseCode: String,
   val courseName: String,
@@ -43,9 +70,26 @@ data class Major(
   val score: Int,
   val semester: Int,
   val year: Int
-)
+) {
+  fun toMajor() = Major(
+    areaType = areaType,
+    courseCode = courseCode,
+    courseName = courseName,
+    credits = credits,
+    grade = grade,
+    id = id,
+    isOnline = isOnline,
+    isRetake = isRetake,
+    isRetakeDelete = isRetakeDelete,
+    originalScore = originalScore,
+    professor = professor,
+    score = score,
+    semester = semester,
+    year = year,
+  )
+}
 
-data class Liberal(
+data class LiberalData(
   val areaType: String,
   val courseCode: String,
   val courseName: String,
@@ -60,4 +104,21 @@ data class Liberal(
   val score: Int,
   val semester: Int,
   val year: Int
-)
+) {
+  fun toLiberal() = Liberal(
+    areaType = areaType,
+    courseCode = courseCode,
+    courseName = courseName,
+    credits = credits,
+    grade = grade,
+    id = id,
+    isOnline = isOnline,
+    isRetake = isRetake,
+    isRetakeDelete = isRetakeDelete,
+    originalScore = originalScore,
+    professor = professor,
+    score = score,
+    semester = semester,
+    year = year,
+  )
+}

@@ -1,12 +1,14 @@
 package com.chukchukhaksa.mobile.common.model.response.profile
 
+import com.chukchukhaksa.mobile.common.model.profile.Profile
+
 data class ProfileResponse(
   val success: Boolean,
-  val data: Profile,
+  val data: ProfileResponseData,
   val message: String,
 )
 
-data class Profile(
+data class ProfileResponseData(
   val name: String,
   val studentCode: String,
   val departmentName: String,
@@ -17,4 +19,14 @@ data class Profile(
   val lastUpdatedAt: String,
   val lastSyncedAt : String,
   val reconnectionRequired: Boolean
-)
+) {
+  fun toProfile() = Profile(
+    name = name,
+    studentCode = studentCode,
+    departmentName = departmentName,
+    majorName = majorName,
+    gradeLevel = gradeLevel,
+    currentSemester = currentSemester,
+    status = status
+  )
+}
