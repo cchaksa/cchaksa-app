@@ -1,5 +1,6 @@
 package com.chukchukhaksa.mobile.di
 
+import com.chukchukhaksa.mobile.data.auth.di.authRepositoryModule
 import com.chukchukhaksa.mobile.data.config.di.appConfigRepositoryModule
 import com.chukchukhaksa.mobile.data.openlecture.di.openLectureRepositoryModule
 import com.chukchukhaksa.mobile.data.openmajor.di.openMajorRepositoryModule
@@ -40,6 +41,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             httpClientModule,
             remoteAppConfigDataSourceModule,
             appConfigRepositoryModule,
+            authRepositoryModule,
         )
     }
 }

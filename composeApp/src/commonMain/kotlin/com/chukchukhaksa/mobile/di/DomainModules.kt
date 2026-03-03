@@ -45,5 +45,5 @@ val domainModule = module {
 
     // Auth use cases
     factory { AppleLoginUseCase(get()) }
-    factory { KakaoLoginUseCase(get()) }
+    factory { KakaoLoginUseCase(get(), get()) }
 }

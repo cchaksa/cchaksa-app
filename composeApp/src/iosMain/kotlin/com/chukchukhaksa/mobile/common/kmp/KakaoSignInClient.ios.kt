@@ -12,25 +12,29 @@ actual class KakaoSignInClient(
     private val bridge: KakaoLoginBridge,
 ) {
     actual suspend fun signIn(context: Any?): KakaoSignInResult {
-        val nonce = NSUUID().UUIDString()
+        val rawNonce = NSUUID().UUIDString()
+        val hashedNonce = sha256Hex(rawNonce)
 
         return if (bridge.isKakaoTalkAvailable()) {
             try {
-                signInWithKakaoTalk(nonce)
+                signInWithKakaoTalk(rawNonce = rawNonce, hashedNonce = hashedNonce)
             } catch (e: KakaoTalkCancelledException) {
-                signInWithInAppBrowser(nonce)
+                signInWithInAppBrowser(rawNonce = rawNonce, hashedNonce = hashedNonce)
             }
         } else {
-            signInWithInAppBrowser(nonce)
+            signInWithInAppBrowser(rawNonce = rawNonce, hashedNonce = hashedNonce)
         }
     }
 
-    private suspend fun signInWithKakaoTalk(nonce: String): KakaoSignInResult {
+    private suspend fun signInWithKakaoTalk(
+        rawNonce: String,
+        hashedNonce: String,
+    ): KakaoSignInResult {
         return suspendCancellableCoroutine { continuation ->
             bridge.loginWithKakaoTalk(
-                nonce = nonce,
+                nonce = hashedNonce,
                 onSuccess = { idToken ->
-                    continuation.resume(KakaoSignInResult(idToken = idToken, nonce = nonce))
+                    continuation.resume(KakaoSignInResult(idToken = idToken, nonce = rawNonce))
                 },
                 onFailure = { error ->
                     continuation.resumeWithException(error)
@@ -39,8 +43,11 @@ actual class KakaoSignInClient(
         }
     }
 
-    private suspend fun signInWithInAppBrowser(nonce: String): KakaoSignInResult {
-        val oauthInfo = bridge.buildOAuthUrl(nonce)
+    private suspend fun signInWithInAppBrowser(
+        rawNonce: String,
+        hashedNonce: String,
+    ): KakaoSignInResult {
+        val oauthInfo = bridge.buildOAuthUrl(hashedNonce)
         val deferred = KakaoOAuthRedirectHandler.prepare()
 
         try {
@@ -52,7 +59,7 @@ actual class KakaoSignInClient(
                 KInAppBrowser.close()
             }
 
-            return exchangeCodeForToken(code, oauthInfo.codeVerifier, nonce)
+            return exchangeCodeForToken(code, oauthInfo.codeVerifier, rawNonce)
         } catch (e: Exception) {
             KakaoOAuthRedirectHandler.cancel()
             withContext(Dispatchers.Main) {
@@ -65,14 +72,14 @@ actual class KakaoSignInClient(
     private suspend fun exchangeCodeForToken(
         code: String,
         codeVerifier: String,
-        nonce: String,
+        rawNonce: String,
     ): KakaoSignInResult {
         return suspendCancellableCoroutine { continuation ->
             bridge.exchangeCodeForToken(
                 code = code,
                 codeVerifier = codeVerifier,
                 onSuccess = { idToken ->
-                    continuation.resume(KakaoSignInResult(idToken = idToken, nonce = nonce))
+                    continuation.resume(KakaoSignInResult(idToken = idToken, nonce = rawNonce))
                 },
                 onFailure = { error ->
                     continuation.resumeWithException(error)
