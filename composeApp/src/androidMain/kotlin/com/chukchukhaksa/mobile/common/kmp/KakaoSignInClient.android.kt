@@ -17,6 +17,7 @@ actual class KakaoSignInClient {
             ?: throw IllegalStateException("Android Context is required for Kakao Login")
 
         val nonce = UUID.randomUUID().toString()
+        val hashedNonce = sha256Hex(nonce)
 
         return suspendCancellableCoroutine { continuation ->
             val callback: (OAuthToken?, Throwable?) -> Unit = callback@{ token, error ->
@@ -37,13 +38,13 @@ actual class KakaoSignInClient {
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(androidContext)) {
                 UserApiClient.instance.loginWithKakaoTalk(
                     context = androidContext,
-                    nonce = nonce,
+                    nonce = hashedNonce,
                 ) { token, error ->
                     if (error != null) {
                         if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
                             UserApiClient.instance.loginWithKakaoAccount(
                                 context = androidContext,
-                                nonce = nonce,
+                                nonce = hashedNonce,
                                 callback = callback,
                             )
                             return@loginWithKakaoTalk
@@ -56,7 +57,7 @@ actual class KakaoSignInClient {
             } else {
                 UserApiClient.instance.loginWithKakaoAccount(
                     context = androidContext,
-                    nonce = nonce,
+                    nonce = hashedNonce,
                     callback = callback,
                 )
             }

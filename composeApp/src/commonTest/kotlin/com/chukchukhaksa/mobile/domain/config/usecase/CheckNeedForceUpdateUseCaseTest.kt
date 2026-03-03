@@ -12,9 +12,13 @@ class CheckNeedForceUpdateUseCaseTest {
     private class MockAppConfigRepository : AppConfigRepository {
         var androidMinVersion: String = "1.0.0"
         var iosMinVersion: String = "1.0.0"
+        var appleStoreUrl: String = "https://apps.apple.com/app/id0000000000"
+        var googleStoreUrl: String = "https://play.google.com/store/apps/details?id=com.kunize.uswtimetable"
 
         override suspend fun getAndroidMinVersion(): String = androidMinVersion
         override suspend fun getIOSMinVersion(): String = iosMinVersion
+        override suspend fun getAppleStoreUrl(): String = appleStoreUrl
+        override suspend fun getGoogleStoreUrl(): String = googleStoreUrl
     }
 
     private val mockRepository = MockAppConfigRepository()
@@ -26,7 +30,7 @@ class CheckNeedForceUpdateUseCaseTest {
 
         val result = useCase(Platform.Android, "1.5.0").getOrThrow()
 
-        assertTrue(result)
+        assertTrue(result.needForceUpdate)
     }
 
     @Test
@@ -35,7 +39,7 @@ class CheckNeedForceUpdateUseCaseTest {
 
         val result = useCase(Platform.Android, "2.0.0").getOrThrow()
 
-        assertFalse(result)
+        assertFalse(result.needForceUpdate)
     }
 
     @Test
@@ -44,7 +48,7 @@ class CheckNeedForceUpdateUseCaseTest {
 
         val result = useCase(Platform.Android, "1.5.0").getOrThrow()
 
-        assertFalse(result)
+        assertFalse(result.needForceUpdate)
     }
 
     @Test
@@ -53,7 +57,7 @@ class CheckNeedForceUpdateUseCaseTest {
 
         val result = useCase(Platform.IOS, "2.0.0").getOrThrow()
 
-        assertTrue(result)
+        assertTrue(result.needForceUpdate)
     }
 
     @Test
@@ -62,7 +66,7 @@ class CheckNeedForceUpdateUseCaseTest {
 
         val result = useCase(Platform.Android, "1.0.0").getOrThrow()
 
-        assertTrue(result)
+        assertTrue(result.needForceUpdate)
     }
 
     @Test
@@ -71,7 +75,7 @@ class CheckNeedForceUpdateUseCaseTest {
 
         val result = useCase(Platform.Android, "1.0.0").getOrThrow()
 
-        assertTrue(result)
+        assertTrue(result.needForceUpdate)
     }
 
     @Test
@@ -80,7 +84,7 @@ class CheckNeedForceUpdateUseCaseTest {
 
         val result = useCase(Platform.Android, "1.0.0").getOrThrow()
 
-        assertFalse(result)
+        assertFalse(result.needForceUpdate)
     }
 
     @Test
@@ -98,7 +102,7 @@ class CheckNeedForceUpdateUseCaseTest {
 
         val result = useCase(Platform.Android, "1.9.9").getOrThrow()
 
-        assertTrue(result)
+        assertTrue(result.needForceUpdate)
     }
 
     @Test
@@ -107,7 +111,7 @@ class CheckNeedForceUpdateUseCaseTest {
 
         val result = useCase(Platform.Android, "1.4.9").getOrThrow()
 
-        assertTrue(result)
+        assertTrue(result.needForceUpdate)
     }
 
     @Test

@@ -9,6 +9,8 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.observer.ResponseObserver
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -18,13 +20,11 @@ import org.koin.dsl.module
 
 private val prettyJson = Json { prettyPrint = true }
 
-private fun prettyPrintIfJson(message: String): String {
-    return try {
-        val element = prettyJson.decodeFromString<JsonElement>(message)
-        prettyJson.encodeToString(JsonElement.serializer(), element)
-    } catch (_: Exception) {
-        message
-    }
+private fun String.prettyPrintJson(): String = try {
+    val element = prettyJson.decodeFromString<JsonElement>(this)
+    prettyJson.encodeToString(JsonElement.serializer(), element)
+} catch (_: Exception) {
+    this
 }
 
 val httpClientModule = module {
@@ -42,10 +42,24 @@ val httpClientModule = module {
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
-                        Napier.d(prettyPrintIfJson(message), tag = "HttpClient")
+                        Napier.d(message, tag = "HttpClient")
                     }
                 }
-                level = if (isDebug) LogLevel.ALL else LogLevel.NONE
+                level = if (isDebug) LogLevel.HEADERS else LogLevel.NONE
+            }
+
+            if (isDebug) {
+                install(ResponseObserver) {
+                    onResponse { response ->
+                        val body = response.bodyAsText()
+                        if (body.isNotBlank()) {
+                            Napier.d(
+                                "RESPONSE BODY:\n${body.prettyPrintJson()}",
+                                tag = "HttpClient",
+                            )
+                        }
+                    }
+                }
             }
 
             defaultRequest {
