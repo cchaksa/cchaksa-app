@@ -12,9 +12,14 @@ class KakaoLoginUseCase(
     suspend operator fun invoke(context: Any? = null): Result<SignInResult> =
         runCatchingIgnoreCancelled {
             val kakaoResult = kakaoSignInClient.signIn(context)
-            authRepository.signIn(
+            val signInResult = authRepository.signIn(
                 idToken = kakaoResult.idToken,
                 nonce = kakaoResult.nonce,
             )
+            authRepository.saveTokens(
+                accessToken = signInResult.accessToken,
+                refreshToken = signInResult.refreshToken,
+            )
+            signInResult
         }
 }

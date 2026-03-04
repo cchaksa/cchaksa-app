@@ -2,6 +2,7 @@ package com.chukchukhaksa.mobile.di
 
 import com.chukchukhaksa.mobile.common.kmp.AppleSignInClient
 import com.chukchukhaksa.mobile.common.kmp.KakaoSignInClient
+import eu.anifantakis.lib.ksafe.KSafe
 import com.chukchukhaksa.mobile.local.database.openlecture.database.OpenLectureDatabaseFactory
 import com.chukchukhaksa.mobile.local.database.openmajor.database.OpenMajorDatabaseFactory
 import com.chukchukhaksa.mobile.local.database.timetable.database.TimetableDatabaseFactory
@@ -16,4 +17,5 @@ actual val platformModule
         single { ChukChukHaksaDataStoreFactory() }
         factory { AppleSignInClient() }
         factory { KakaoSignInClient(get()) }
+        single { KSafe() }
     }
