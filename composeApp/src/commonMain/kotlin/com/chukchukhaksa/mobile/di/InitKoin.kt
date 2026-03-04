@@ -10,6 +10,7 @@ import com.chukchukhaksa.mobile.local.database.common.di.openMajorDatabaseModule
 import com.chukchukhaksa.mobile.local.database.common.di.timetableDatabaseModule
 import com.chukchukhaksa.mobile.local.datasource.openlecture.di.localOpenLectureDataSourceModule
 import com.chukchukhaksa.mobile.local.datasource.openmajor.di.localOpenMajorDataSourceModule
+import com.chukchukhaksa.mobile.local.datasource.auth.di.localAuthDataSourceModule
 import com.chukchukhaksa.mobile.local.datasource.timetable.di.localTimetableDataSourceModule
 import com.chukchukhaksa.mobile.local.datastore.di.dataStoreModule
 import com.chukchukhaksa.mobile.remote.config.remoteAppConfigDataSourceModule
@@ -41,6 +42,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             httpClientModule,
             remoteAppConfigDataSourceModule,
             appConfigRepositoryModule,
+            localAuthDataSourceModule,
             authRepositoryModule,
         )
     }

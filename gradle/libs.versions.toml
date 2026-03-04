@@ -36,6 +36,7 @@ composeRuntime = "1.10.0"
 ktor = "3.3.1"
 kakao-sdk = "2.20.6"
 kinappbrowser = "1.0.0"
+ksafe = "1.6.0"
 
 
 [libraries]
@@ -98,6 +99,8 @@ ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version
 kakao-sdk-v2-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao-sdk" }
 
 kinappbrowser = { group = "dev.yjyoon", name = "kinappbrowser", version.ref = "kinappbrowser" }
+
+ksafe = { group = "eu.anifantakis", name = "ksafe", version.ref = "ksafe" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
