@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,13 +24,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import chukchukhaksa.composeapp.generated.resources.Res
-import chukchukhaksa.composeapp.generated.resources.ic_appbar_arrow_left_chukchuk
 import chukchukhaksa.composeapp.generated.resources.ic_appbar_arrow_right_chukchuk
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
-import com.chukchukhaksa.mobile.common.designsystem.theme.Purple500
 import com.chukchukhaksa.mobile.common.designsystem.theme.Purple600
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.cchClickable
