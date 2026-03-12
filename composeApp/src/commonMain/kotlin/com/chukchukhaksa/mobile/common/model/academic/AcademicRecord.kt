@@ -6,8 +6,8 @@ data class AcademicRecord(
 )
 
 data class AcademicRecordCourses(
-  val liberal: List<Liberal>,
-  val major: List<Major>
+  val liberal: List<CourseDetail>,
+  val major: List<CourseDetail>
 )
 
 data class SemesterGrade(
@@ -21,24 +21,7 @@ data class SemesterGrade(
   val year: Int
 )
 
-data class Major(
-  val areaType: String,
-  val courseCode: String,
-  val courseName: String,
-  val credits: Int,
-  val grade: String,
-  val id: String,
-  val isOnline: Boolean,
-  val isRetake: Boolean,
-  val isRetakeDelete: Boolean,
-  val originalScore: Int,
-  val professor: String,
-  val score: Int,
-  val semester: Int,
-  val year: Int
-)
-
-data class Liberal(
+data class CourseDetail(
   val areaType: String,
   val courseCode: String,
   val courseName: String,

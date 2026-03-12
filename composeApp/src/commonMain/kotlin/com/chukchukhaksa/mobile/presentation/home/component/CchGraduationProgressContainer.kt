@@ -7,7 +7,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,8 +26,6 @@ import androidx.compose.ui.unit.dp
 import chukchukhaksa.composeapp.generated.resources.Res
 import chukchukhaksa.composeapp.generated.resources.ic_arrow_down_black
 import chukchukhaksa.composeapp.generated.resources.ic_arrow_down_white
-import chukchukhaksa.composeapp.generated.resources.ic_arrow_up_black
-import chukchukhaksa.composeapp.generated.resources.ic_arrow_up_white
 import chukchukhaksa.composeapp.generated.resources.ic_check_box
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
