@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,9 +34,10 @@ fun CchTotalGradeContainer(
       .clip(RoundedCornerShape(16.dp))
       .background(Black100)
       .padding(vertical = 16.dp, horizontal = 29.dp)
+      .fillMaxWidth()
       .wrapContentHeight(),
     verticalAlignment = Alignment.CenterVertically,
-    horizontalArrangement = Arrangement.spacedBy(32.dp)
+    horizontalArrangement = Arrangement.SpaceEvenly
   ) {
     CchTotalGradeContainerItem(
       title = "취득학점",
@@ -59,7 +62,6 @@ fun CchTotalGradeContainerItem(
   value: String,
 ) {
   Column(
-    modifier = Modifier.fillMaxHeight(),
     verticalArrangement = Arrangement.spacedBy(4.dp),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
@@ -79,7 +81,9 @@ fun CchTotalGradeContainerItem(
 @Composable
 fun CchTotalGradeContainerDivider() {
   VerticalDivider(
-    modifier = Modifier.padding(vertical = 17.dp),
+    modifier = Modifier
+      .padding(vertical = 17.dp)
+      .height(27.dp),
     thickness = 1.dp,
     color = Color(0xFF505050)
   )

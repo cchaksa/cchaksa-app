@@ -5,7 +5,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.presentation.home.component.CchTotalGradeContainer
 
-@Preview(heightDp = 93)
+@Preview
 @Composable
 fun CchTotalGradeContainerPreview() {
   CchTheme {
