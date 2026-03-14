@@ -27,6 +27,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.kmp.Platform.*
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
+import com.chukchukhaksa.mobile.presentation.timetable.navigation.TimetableRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.timetableNavGraph
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.FirebaseAnalytics
@@ -41,14 +42,28 @@ fun App(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = koinViewModel(),
     navigator: MainNavigator = rememberMainNavigator(),
+    onReady: () -> Unit = {},
 ) {
     CchTheme {
         KoinContext {
             val uiState = viewModel.mviStore.uiState.collectAsState().value
             val uriHandler = LocalUriHandler.current
+            var startDestination by remember { mutableStateOf<String?>(null) }
+
             viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
                 when (sideEffect) {
                     is MainSideEffect.OpenUrl -> uriHandler.openUri(sideEffect.url)
+                }
+            }
+
+            // Phase 1에서 CheckAuthStateUseCase로 대체 예정
+            LaunchedEffect(Unit) {
+                startDestination = TimetableRoute.route
+            }
+
+            LaunchedEffect(startDestination) {
+                if (startDestination != null) {
+                    onReady()
                 }
             }
 
@@ -73,38 +88,42 @@ fun App(
                 contentWindowInsets = WindowInsets(0.dp),
                 modifier = modifier,
                 content = { innerPadding ->
-                    val navGraphBuilder: NavGraphBuilder.() -> Unit = {
-                        timetableNavGraph(
-                            padding = innerPadding,
-                            popBackStack = navigator::popBackStackIfNotHome,
-                            navigateTimetableNameInput = navigator::navigateTimetableNameInput,
-                            navigateTimetableEditor = navigator::navigateTimetableEditor,
-                            navigateTimetableList = navigator::navigateTimetableList,
-                            navigateOpenLecture = navigator::navigateOpenLecture,
-                            handleException = viewModel::handleException,
-                            onShowToast = viewModel::onShowToast,
-                            navigateCellEditor = navigator::navigateCellEditor,
-                            navigateSemesterSelect = navigator::navigateSemesterSelect,
-                            navigateTimetable = navigator::navigateTimetable,
-                        )
-                    }
+                    val currentStartDestination = startDestination
 
-                    when (getPlatform()) {
-                        Android -> NavHost(
-                            navController = navigator.navController,
-                            startDestination = navigator.startDestination,
-                            enterTransition = { slideInHorizontally(tween(350, easing = FastOutSlowInEasing)) { it } },
-                            exitTransition = { slideOutHorizontally(tween(350, easing = FastOutSlowInEasing)) { -it / 3 } },
-                            popEnterTransition = { slideInHorizontally(tween(350, easing = FastOutSlowInEasing)) { -it / 3 } },
-                            popExitTransition = { slideOutHorizontally(tween(350, easing = FastOutSlowInEasing)) { it } },
-                            builder = navGraphBuilder,
-                        )
+                    if (currentStartDestination != null) {
+                        val navGraphBuilder: NavGraphBuilder.() -> Unit = {
+                            timetableNavGraph(
+                                padding = innerPadding,
+                                popBackStack = navigator::popBackStackIfNotHome,
+                                navigateTimetableNameInput = navigator::navigateTimetableNameInput,
+                                navigateTimetableEditor = navigator::navigateTimetableEditor,
+                                navigateTimetableList = navigator::navigateTimetableList,
+                                navigateOpenLecture = navigator::navigateOpenLecture,
+                                handleException = viewModel::handleException,
+                                onShowToast = viewModel::onShowToast,
+                                navigateCellEditor = navigator::navigateCellEditor,
+                                navigateSemesterSelect = navigator::navigateSemesterSelect,
+                                navigateTimetable = navigator::navigateTimetable,
+                            )
+                        }
 
-                        IOS -> NavHost(
-                            navController = navigator.navController,
-                            startDestination = navigator.startDestination,
-                            builder = navGraphBuilder,
-                        )
+                        when (getPlatform()) {
+                            Android -> NavHost(
+                                navController = navigator.navController,
+                                startDestination = currentStartDestination,
+                                enterTransition = { slideInHorizontally(tween(350, easing = FastOutSlowInEasing)) { it } },
+                                exitTransition = { slideOutHorizontally(tween(350, easing = FastOutSlowInEasing)) { -it / 3 } },
+                                popEnterTransition = { slideInHorizontally(tween(350, easing = FastOutSlowInEasing)) { -it / 3 } },
+                                popExitTransition = { slideOutHorizontally(tween(350, easing = FastOutSlowInEasing)) { it } },
+                                builder = navGraphBuilder,
+                            )
+
+                            IOS -> NavHost(
+                                navController = navigator.navController,
+                                startDestination = currentStartDestination,
+                                builder = navGraphBuilder,
+                            )
+                        }
                     }
 
                     if (uiState.showNetworkErrorDialog) {

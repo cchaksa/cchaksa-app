@@ -37,6 +37,7 @@ ktor = "3.3.1"
 kakao-sdk = "2.20.6"
 kinappbrowser = "1.0.0"
 ksafe = "1.6.0"
+androidx-splashscreen = "1.0.1"
 
 
 [libraries]
@@ -101,6 +102,8 @@ kakao-sdk-v2-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "
 kinappbrowser = { group = "dev.yjyoon", name = "kinappbrowser", version.ref = "kinappbrowser" }
 
 ksafe = { group = "eu.anifantakis", name = "ksafe", version.ref = "ksafe" }
+
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-splashscreen" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

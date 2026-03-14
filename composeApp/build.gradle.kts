@@ -59,6 +59,7 @@ kotlin {
       implementation(libs.compose.runtime)
       implementation(libs.kakao.sdk.v2.user)
       implementation(libs.ktor.client.okhttp)
+      implementation(libs.androidx.core.splashscreen)
     }
     iosMain.dependencies {
       implementation(libs.ktor.client.darwin)
