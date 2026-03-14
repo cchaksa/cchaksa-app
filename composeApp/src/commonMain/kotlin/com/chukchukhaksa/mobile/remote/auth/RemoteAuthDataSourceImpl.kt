@@ -27,7 +27,7 @@ class RemoteAuthDataSourceImpl(
     }
 
     override suspend fun refreshToken(refreshToken: String): RefreshTokenResult {
-        val response = httpClient.post("api/auth/refresh") {
+        val response = httpClient.post("auth/refresh") {
             setBody(RefreshRequest(refreshToken = refreshToken))
         }.body<ApiResponse<RefreshResponse>>()
 

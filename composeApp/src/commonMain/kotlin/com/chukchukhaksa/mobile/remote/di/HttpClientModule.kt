@@ -4,6 +4,7 @@ import com.chukchukhaksa.mobile.common.kmp.httpClientEngineFactory
 import com.chukchukhaksa.mobile.common.kmp.isDebug
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -11,9 +12,11 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.observer.ResponseObserver
+import io.ktor.client.plugins.plugin
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.content.TextContent
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
@@ -82,6 +85,19 @@ val httpClientModule = module {
             defaultRequest {
                 url("https://api.cchaksa.com/api/")
                 contentType(ContentType.Application.Json)
+            }
+        }.also { client ->
+            if (isDebug) {
+                client.plugin(HttpSend).intercept { request ->
+                    val body = request.body
+                    if (body is TextContent) {
+                        Napier.d(
+                            "REQUEST BODY:\n${body.text.prettyPrintJson()}",
+                            tag = "HttpClient",
+                        )
+                    }
+                    execute(request)
+                }
             }
         }
     }

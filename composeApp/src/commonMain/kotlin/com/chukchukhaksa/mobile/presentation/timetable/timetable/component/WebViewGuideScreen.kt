@@ -11,12 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -30,16 +24,9 @@ import com.chukchukhaksa.mobile.common.designsystem.component.button.CchBasicBut
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray600
 import com.chukchukhaksa.mobile.common.designsystem.theme.Purple600
-import com.chukchukhaksa.mobile.common.kmp.Platform
-import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.cchClickable
-import com.chukchukhaksa.mobile.common.provider.LocalAppContext
-import com.chukchukhaksa.mobile.domain.auth.usecase.AppleLoginUseCase
-import com.chukchukhaksa.mobile.domain.auth.usecase.KakaoLoginUseCase
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.koinInject
 
 private const val CCHAKSA_URL = "https://www.cchaksa.com/"
 private const val CCHAKSA_ASK_URL = "https://heliotrope-flea-959.notion.site/24d1a2480da1805d9d9bcaf608fb629b"
@@ -80,14 +67,6 @@ fun WebViewGuideScreen() {
           textStyle = CchTheme.typography.bodyMdStrong,
           onClick = { uriHandler.openUri(CCHAKSA_URL) },
         )
-
-        if (getPlatform() == Platform.IOS) {
-          Spacer(modifier = Modifier.height(16.dp))
-          AppleLoginButton()
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        KakaoLoginButton()
       }
 
       Text(
@@ -103,49 +82,4 @@ fun WebViewGuideScreen() {
       )
     }
   }
-}
-
-@Composable
-private fun AppleLoginButton(
-  appleLoginUseCase: AppleLoginUseCase = koinInject(),
-) {
-  val scope = rememberCoroutineScope()
-  var isLoading by remember { mutableStateOf(false) }
-
-  CchBasicButton(
-    modifier = Modifier.padding(horizontal = 38.dp),
-    text = if (isLoading) "로그인 중..." else "Apple로 로그인",
-    enable = !isLoading,
-    textStyle = CchTheme.typography.bodyMdStrong,
-    onClick = {
-      scope.launch {
-        isLoading = true
-        appleLoginUseCase()
-        isLoading = false
-      }
-    },
-  )
-}
-
-@Composable
-private fun KakaoLoginButton(
-  kakaoLoginUseCase: KakaoLoginUseCase = koinInject(),
-) {
-  val context = LocalAppContext.current
-  val scope = rememberCoroutineScope()
-  var isLoading by remember { mutableStateOf(false) }
-
-  CchBasicButton(
-    modifier = Modifier.padding(horizontal = 38.dp),
-    text = if (isLoading) "로그인 중..." else "카카오로 로그인",
-    enable = !isLoading,
-    textStyle = CchTheme.typography.bodyMdStrong,
-    onClick = {
-      scope.launch {
-        isLoading = true
-        kakaoLoginUseCase(context)
-        isLoading = false
-      }
-    },
-  )
 }
