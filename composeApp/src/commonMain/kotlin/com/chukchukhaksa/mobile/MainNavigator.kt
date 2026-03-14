@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.chukchukhaksa.mobile.presentation.landing.navigation.LandingRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.TimetableRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
@@ -47,6 +48,14 @@ class MainNavigator(
 
     fun navigateTimetable() {
         navController.navigateTimetable()
+    }
+
+    fun navigateFromLandingToHome() {
+        navController.navigate(TimetableRoute.route) {
+            popUpTo(LandingRoute.route) {
+                inclusive = true
+            }
+        }
     }
 
     fun popBackStackIfNotHome() {

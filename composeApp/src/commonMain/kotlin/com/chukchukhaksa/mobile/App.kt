@@ -27,6 +27,9 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.kmp.Platform.*
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
+import com.chukchukhaksa.mobile.domain.auth.usecase.CheckAuthStateUseCase
+import com.chukchukhaksa.mobile.presentation.landing.navigation.LandingRoute
+import com.chukchukhaksa.mobile.presentation.landing.navigation.landingNavGraph
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.TimetableRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.timetableNavGraph
 import dev.gitlive.firebase.Firebase
@@ -35,6 +38,7 @@ import dev.gitlive.firebase.analytics.analytics
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -48,6 +52,7 @@ fun App(
         KoinContext {
             val uiState = viewModel.mviStore.uiState.collectAsState().value
             val uriHandler = LocalUriHandler.current
+            val checkAuthStateUseCase: CheckAuthStateUseCase = koinInject()
             var startDestination by remember { mutableStateOf<String?>(null) }
 
             viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
@@ -56,9 +61,9 @@ fun App(
                 }
             }
 
-            // Phase 1에서 CheckAuthStateUseCase로 대체 예정
             LaunchedEffect(Unit) {
-                startDestination = TimetableRoute.route
+                val isAuthenticated = checkAuthStateUseCase().getOrDefault(false)
+                startDestination = if (isAuthenticated) TimetableRoute.route else LandingRoute.route
             }
 
             LaunchedEffect(startDestination) {
@@ -92,6 +97,12 @@ fun App(
 
                     if (currentStartDestination != null) {
                         val navGraphBuilder: NavGraphBuilder.() -> Unit = {
+                            landingNavGraph(
+                                handleException = viewModel::handleException,
+                                onShowToast = viewModel::onShowToast,
+                                navigateToHome = navigator::navigateFromLandingToHome,
+                            )
+
                             timetableNavGraph(
                                 padding = innerPadding,
                                 popBackStack = navigator::popBackStackIfNotHome,
