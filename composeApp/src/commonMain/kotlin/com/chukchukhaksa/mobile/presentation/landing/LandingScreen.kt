@@ -1,34 +1,50 @@
 package com.chukchukhaksa.mobile.presentation.landing
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
+import chukchukhaksa.composeapp.generated.resources.ic_apple_logo
+import chukchukhaksa.composeapp.generated.resources.ic_kakao_logo
 import chukchukhaksa.composeapp.generated.resources.img_landing_1
 import chukchukhaksa.composeapp.generated.resources.img_landing_2
 import chukchukhaksa.composeapp.generated.resources.img_landing_3
 import chukchukhaksa.composeapp.generated.resources.img_landing_4
 import chukchukhaksa.composeapp.generated.resources.img_landing_5
-import com.chukchukhaksa.mobile.common.designsystem.component.button.CchBasicButton
+import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.kmp.Platform
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.provider.LocalAppContext
+import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -111,20 +127,26 @@ fun LandingScreen(
                 .padding(horizontal = 24.dp)
                 .padding(bottom = 40.dp),
         ) {
-            CchBasicButton(
+            SocialLoginButton(
                 modifier = Modifier.fillMaxWidth(),
-                text = "카카오로 시작하기",
-                enable = !uiState.isLoading,
+                text = "3초만에 카카오톡으로 시작하기",
+                iconRes = Res.drawable.ic_kakao_logo,
+                containerColor = KakaoYellow,
+                contentColor = KakaoBlack,
+                enabled = !uiState.isLoading,
                 onClick = onKakaoLogin,
             )
 
             if (getPlatform() == Platform.IOS) {
                 Spacer(modifier = Modifier.height(12.dp))
 
-                CchBasicButton(
+                SocialLoginButton(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Apple로 시작하기",
-                    enable = true,
+                    text = "애플 아이디로 시작하기",
+                    iconRes = Res.drawable.ic_apple_logo,
+                    containerColor = Black100,
+                    contentColor = White100,
+                    enabled = true,
                     onClick = onAppleLogin,
                 )
             }
@@ -133,3 +155,50 @@ fun LandingScreen(
 }
 
 private val LOGIN_BUTTON_AREA_HEIGHT = 160.dp
+
+private val KakaoYellow = Color(0xFFFEE500)
+private val KakaoBlack = Color(0xD9000000) // 85% opacity
+
+@Composable
+private fun SocialLoginButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    iconRes: DrawableResource,
+    containerColor: Color,
+    contentColor: Color,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    val clickableModifier = if (enabled) {
+        Modifier.cchClickable { onClick() }
+    } else {
+        Modifier
+    }
+
+    Box(
+        modifier = modifier
+            .wrapContentHeight()
+            .clip(RoundedCornerShape(10.dp))
+            .then(clickableModifier)
+            .background(containerColor)
+            .padding(18.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Image(
+                painter = painterResource(iconRes),
+                contentDescription = null,
+                modifier = Modifier.size(32.dp),
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = text,
+                color = contentColor,
+                style = CchTheme.typography.bodyMdStrong,
+            )
+        }
+    }
+}
