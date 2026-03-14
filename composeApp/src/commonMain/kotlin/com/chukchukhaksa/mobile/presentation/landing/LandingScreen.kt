@@ -87,36 +87,20 @@ fun LandingScreen(
         ) {
             val imageModifier = Modifier.fillMaxWidth()
 
-            Image(
-                painter = painterResource(Res.drawable.img_landing_1),
-                contentDescription = null,
-                modifier = imageModifier,
-                contentScale = ContentScale.FillWidth,
-            )
-            Image(
-                painter = painterResource(Res.drawable.img_landing_2),
-                contentDescription = null,
-                modifier = imageModifier,
-                contentScale = ContentScale.FillWidth,
-            )
-            Image(
-                painter = painterResource(Res.drawable.img_landing_3),
-                contentDescription = null,
-                modifier = imageModifier,
-                contentScale = ContentScale.FillWidth,
-            )
-            Image(
-                painter = painterResource(Res.drawable.img_landing_4),
-                contentDescription = null,
-                modifier = imageModifier,
-                contentScale = ContentScale.FillWidth,
-            )
-            Image(
-                painter = painterResource(Res.drawable.img_landing_5),
-                contentDescription = null,
-                modifier = imageModifier,
-                contentScale = ContentScale.FillWidth,
-            )
+            listOf(
+                Res.drawable.img_landing_1,
+                Res.drawable.img_landing_2,
+                Res.drawable.img_landing_3,
+                Res.drawable.img_landing_4,
+                Res.drawable.img_landing_5,
+            ).forEach { imageRes ->
+                Image(
+                    painter = painterResource(imageRes),
+                    contentDescription = null,
+                    modifier = imageModifier,
+                    contentScale = ContentScale.FillWidth,
+                )
+            }
 
             Spacer(modifier = Modifier.height(LOGIN_BUTTON_AREA_HEIGHT))
         }

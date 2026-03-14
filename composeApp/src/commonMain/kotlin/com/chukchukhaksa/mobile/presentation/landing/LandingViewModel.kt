@@ -15,19 +15,20 @@ class LandingViewModel(
 
     fun onKakaoLogin(context: Any? = null) {
         if (mviStore.uiState.value.isLoading) return
+        mviStore.setState { copy(isLoading = true) }
 
         viewModelScope.launch {
-            mviStore.setState { copy(isLoading = true) }
-
-            kakaoLoginUseCase(context)
-                .onSuccess {
-                    mviStore.postSideEffect(LandingSideEffect.NavigateHome)
-                }
-                .onFailure { throwable ->
-                    mviStore.postSideEffect(LandingSideEffect.HandleException(throwable))
-                }
-
-            mviStore.setState { copy(isLoading = false) }
+            try {
+                kakaoLoginUseCase(context)
+                    .onSuccess {
+                        mviStore.postSideEffect(LandingSideEffect.NavigateHome)
+                    }
+                    .onFailure { throwable ->
+                        mviStore.postSideEffect(LandingSideEffect.HandleException(throwable))
+                    }
+            } finally {
+                mviStore.setState { copy(isLoading = false) }
+            }
         }
     }
 

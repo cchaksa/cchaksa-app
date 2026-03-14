@@ -18,8 +18,10 @@ class AuthRepositoryImpl(
         val token = localAuthDataSource.getRefreshToken()
             ?: throw IllegalStateException("No refresh token")
         val result = remoteAuthDataSource.refreshToken(token)
-        localAuthDataSource.saveAccessToken(result.accessToken)
-        localAuthDataSource.saveRefreshToken(result.refreshToken)
+        saveTokens(
+            accessToken = result.accessToken,
+            refreshToken = result.refreshToken,
+        )
     }
 
     override suspend fun saveTokens(accessToken: String, refreshToken: String) {
