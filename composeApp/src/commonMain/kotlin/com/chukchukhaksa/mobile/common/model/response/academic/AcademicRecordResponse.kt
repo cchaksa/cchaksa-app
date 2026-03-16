@@ -2,8 +2,7 @@ package com.chukchukhaksa.mobile.common.model.response.academic
 
 import com.chukchukhaksa.mobile.common.model.academic.AcademicRecord
 import com.chukchukhaksa.mobile.common.model.academic.AcademicRecordCourses
-import com.chukchukhaksa.mobile.common.model.academic.Liberal
-import com.chukchukhaksa.mobile.common.model.academic.Major
+import com.chukchukhaksa.mobile.common.model.academic.CourseDetail
 import com.chukchukhaksa.mobile.common.model.academic.SemesterGrade
 
 data class AcademicRecordResponse(
@@ -71,7 +70,7 @@ data class MajorData(
   val semester: Int,
   val year: Int
 ) {
-  fun toMajor() = Major(
+  fun toMajor() = CourseDetail(
     areaType = areaType,
     courseCode = courseCode,
     courseName = courseName,
@@ -105,7 +104,7 @@ data class LiberalData(
   val semester: Int,
   val year: Int
 ) {
-  fun toLiberal() = Liberal(
+  fun toLiberal() = CourseDetail(
     areaType = areaType,
     courseCode = courseCode,
     courseName = courseName,
