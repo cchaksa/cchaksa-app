@@ -33,6 +33,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import com.chukchukhaksa.mobile.widget.sendWidgetUpdateCommand
 import com.chukchukhaksa.mobile.common.provider.LocalAppContext
+import com.chukchukhaksa.mobile.presentation.home.home.HomeRoute
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.WebViewGuideScreen
 
 @Composable
@@ -157,7 +158,8 @@ fun TimetableScreen(
             }
 
             if(uiState.timetableScreen == TimetableScreen.HOME) {
-              WebViewGuideScreen()
+//              WebViewGuideScreen()
+              HomeRoute()
             }
         }
     }

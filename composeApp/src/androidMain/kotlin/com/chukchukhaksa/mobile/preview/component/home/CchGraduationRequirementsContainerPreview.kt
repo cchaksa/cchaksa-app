@@ -11,6 +11,7 @@ import com.chukchukhaksa.mobile.presentation.home.component.CchGraduationRequire
 fun CchGraduationRequirementsContainerPreview() {
   CchTheme {
     CchGraduationRequirementsContainer(
+      title = "주전공",
       major = "정보통신학부",
       gradeLevel = 18,
       totalEarnedCredits = 109,

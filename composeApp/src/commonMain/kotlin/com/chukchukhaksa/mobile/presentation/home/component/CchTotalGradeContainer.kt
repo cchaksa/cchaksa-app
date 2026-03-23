@@ -25,12 +25,13 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 
 @Composable
 fun CchTotalGradeContainer(
+  modifier : Modifier = Modifier,
   totalEarnedCredits: Int,
   cumulativeGpa: Double,
   percentile: Double,
 ) {
   Row(
-    modifier = Modifier
+    modifier = modifier
       .clip(RoundedCornerShape(16.dp))
       .background(Black100)
       .padding(vertical = 16.dp, horizontal = 29.dp)

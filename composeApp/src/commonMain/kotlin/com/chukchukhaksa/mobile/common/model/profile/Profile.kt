@@ -5,6 +5,7 @@ data class Profile(
   val studentCode: String,
   val departmentName: String,
   val majorName: String,
+  val dualMajorName: String,
   val gradeLevel: Int,
   val currentSemester: Int,
   val status : String,
