@@ -3,6 +3,8 @@ package com.chukchukhaksa.mobile.presentation.timetable.timetable
 import com.chukchukhaksa.mobile.common.model.Timetable
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.model.TimetableCellColor
+import com.chukchukhaksa.mobile.common.model.academic.AcademicSummary
+import com.chukchukhaksa.mobile.common.model.profile.Profile
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell.TimetableCellType
 
@@ -13,6 +15,8 @@ data class TimetableState(
   val showEditCellBottomSheet: Boolean = false,
   val timetableScreen: TimetableScreen? = null,
   val showSelectCellTypeBottomSheet: Boolean = false,
+  val profile: Profile? = null,
+  val academicSummary: AcademicSummary? = null,
 )
 
 sealed interface TimetableSideEffect {

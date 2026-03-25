@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.ui.mviStore
+import com.chukchukhaksa.mobile.domain.academic.usecase.GetAcademicRecordUseCase
+import com.chukchukhaksa.mobile.domain.academic.usecase.GetAcademicSummaryUseCase
+import com.chukchukhaksa.mobile.domain.profile.usecase.GetProfileUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.GetMainTimetableUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.GetTimetableCellTypeUseCase
@@ -17,6 +20,8 @@ class TimetableViewModel(
     private val getTimetableCellTypeUseCase: GetTimetableCellTypeUseCase,
     private val deleteTimetableCellUseCase: DeleteTimetableCellUseCase,
     private val setTimetableCellTypeUseCase: SetTimetableCellTypeUseCase,
+    private val getProfileUseCase: GetProfileUseCase,
+    private val getAcademicSummaryUseCase: GetAcademicSummaryUseCase
 ) : ViewModel() {
     val mviStore = mviStore<TimetableState, TimetableSideEffect>(TimetableState())
 
@@ -64,6 +69,24 @@ class TimetableViewModel(
         val cellType = TimetableCellType.entries[position]
         setTimetableCellTypeUseCase(cellType.name)
             .onSuccess { mviStore.setState { copy(cellType = cellType) } }
+    }
+
+    fun getProfile() {
+      viewModelScope.launch {
+        getProfileUseCase()
+          .onSuccess { profile ->
+            mviStore.setState { copy(profile = profile) }
+          }
+      }
+    }
+
+    fun getAcademicSummary() {
+      viewModelScope.launch {
+        getAcademicSummaryUseCase()
+          .onSuccess { academicSummary ->
+            mviStore.setState { copy(academicSummary = academicSummary) }
+          }
+      }
     }
 
     fun showSelectCellTypeBottomSheet() {
