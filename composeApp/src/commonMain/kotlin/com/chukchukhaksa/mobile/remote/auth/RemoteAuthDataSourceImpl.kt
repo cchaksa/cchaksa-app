@@ -18,9 +18,9 @@ class RemoteAuthDataSourceImpl(
     private val httpClient: HttpClient,
 ) : RemoteAuthDataSource {
 
-    override suspend fun signIn(idToken: String, nonce: String): SignInResult {
+    override suspend fun signIn(provider: String, idToken: String, nonce: String): SignInResult {
         val response = httpClient.post("users/signin") {
-            setBody(SignInRequest(idToken = idToken, nonce = nonce))
+            setBody(SignInRequest(provider = provider, idToken = idToken, nonce = nonce))
         }.body<ApiResponse<SignInResponse>>()
 
         return response.getDataOrThrow().toSignInResult()

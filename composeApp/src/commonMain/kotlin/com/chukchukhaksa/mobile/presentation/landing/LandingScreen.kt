@@ -130,7 +130,7 @@ fun LandingScreen(
                     iconRes = Res.drawable.ic_apple_logo,
                     containerColor = Black100,
                     contentColor = White100,
-                    enabled = true,
+                    enabled = !uiState.isLoading,
                     onClick = onAppleLogin,
                 )
             }

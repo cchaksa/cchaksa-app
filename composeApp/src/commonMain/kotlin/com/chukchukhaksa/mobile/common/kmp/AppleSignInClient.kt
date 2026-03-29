@@ -6,6 +6,7 @@ data class AppleSignInResult(
     val userId: String,
     val email: String?,
     val fullName: String?,
+    val nonce: String,
 )
 
 expect class AppleSignInClient() {
