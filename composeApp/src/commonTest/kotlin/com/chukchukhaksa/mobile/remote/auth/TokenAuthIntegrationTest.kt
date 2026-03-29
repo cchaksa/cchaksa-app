@@ -1,17 +1,11 @@
 package com.chukchukhaksa.mobile.remote.auth
 
-import com.chukchukhaksa.mobile.remote.auth.model.RefreshRequest
-import com.chukchukhaksa.mobile.remote.auth.model.RefreshResponse
-import com.chukchukhaksa.mobile.remote.common.ApiResponse
-import com.chukchukhaksa.mobile.remote.common.getDataOrThrow
+import com.chukchukhaksa.mobile.remote.di.configureBearerAuth
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockRequestHandleScope
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.plugins.auth.Auth
-import io.ktor.client.plugins.auth.providers.BearerTokens
-import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.HttpRequestData
@@ -45,8 +39,6 @@ class TokenAuthIntegrationTest {
     }
 
     private val jsonHeaders = headersOf(HttpHeaders.ContentType, "application/json")
-
-    private val AUTH_EXCLUDED_PATHS = com.chukchukhaksa.mobile.remote.di.AUTH_EXCLUDED_PATHS
 
     // --- JSON Response Helpers ---
 
@@ -94,48 +86,7 @@ class TokenAuthIntegrationTest {
             install(ContentNegotiation) { json(json) }
 
             install(Auth) {
-                bearer {
-                    loadTokens {
-                        val access = fakeDataSource.getAccessToken()
-                        val refresh = fakeDataSource.getRefreshToken()
-                        if (access != null && refresh != null) {
-                            BearerTokens(access, refresh)
-                        } else {
-                            null
-                        }
-                    }
-
-                    refreshTokens {
-                        val currentRefresh = fakeDataSource.getRefreshToken()
-                        if (currentRefresh == null) {
-                            fakeDataSource.clearTokens()
-                            authEventBus.emit()
-                            return@refreshTokens null
-                        }
-
-                        try {
-                            val response = refreshClient.post("auth/refresh") {
-                                setBody(RefreshRequest(refreshToken = currentRefresh))
-                            }.body<ApiResponse<RefreshResponse>>()
-
-                            val result = response.getDataOrThrow()
-                            fakeDataSource.saveAccessToken(result.accessToken)
-                            fakeDataSource.saveRefreshToken(result.refreshToken)
-                            BearerTokens(result.accessToken, result.refreshToken)
-                        } catch (e: Exception) {
-                            fakeDataSource.clearTokens()
-                            authEventBus.emit()
-                            null
-                        }
-                    }
-
-                    sendWithoutRequest { request ->
-                        val requestPath = request.url.pathSegments.joinToString("/")
-                        AUTH_EXCLUDED_PATHS.none { path ->
-                            requestPath.contains(path)
-                        }
-                    }
-                }
+                configureBearerAuth(fakeDataSource, authEventBus, refreshClient)
             }
 
             defaultRequest {
