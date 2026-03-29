@@ -46,7 +46,7 @@ private fun String.prettyPrintJson(): String = try {
 
 private val BASE_URL = if (isDebug) "https://dev.api.cchaksa.com/api/" else "https://api.cchaksa.com/api/"
 
-private val AUTH_EXCLUDED_PATHS = listOf(
+internal val AUTH_EXCLUDED_PATHS = listOf(
     "auth/refresh",
     "users/signin",
 )
@@ -59,6 +59,11 @@ val httpClientModule = module {
         val authEventBus: AuthEventBus = get()
 
         val refreshClient = HttpClient(httpClientEngineFactory) {
+            install(HttpTimeout) {
+                requestTimeoutMillis = 10_000
+                connectTimeoutMillis = 5_000
+                socketTimeoutMillis = 10_000
+            }
             install(ContentNegotiation) {
                 json(
                     Json {
