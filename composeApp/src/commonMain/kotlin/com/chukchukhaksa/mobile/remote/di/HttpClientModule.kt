@@ -14,6 +14,7 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.AuthConfig
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -50,6 +51,56 @@ internal val AUTH_EXCLUDED_PATHS = listOf(
     "auth/refresh",
     "users/signin",
 )
+
+internal fun AuthConfig.configureBearerAuth(
+    localAuthDataSource: LocalAuthDataSource,
+    authEventBus: AuthEventBus,
+    refreshClient: HttpClient,
+) {
+    bearer {
+        loadTokens {
+            val accessToken = localAuthDataSource.getAccessToken()
+            val refreshToken = localAuthDataSource.getRefreshToken()
+            if (accessToken != null && refreshToken != null) {
+                BearerTokens(accessToken, refreshToken)
+            } else {
+                null
+            }
+        }
+
+        refreshTokens {
+            val currentRefreshToken = localAuthDataSource.getRefreshToken()
+            if (currentRefreshToken == null) {
+                localAuthDataSource.clearTokens()
+                authEventBus.emit()
+                return@refreshTokens null
+            }
+
+            try {
+                val response = refreshClient.post("auth/refresh") {
+                    setBody(RefreshRequest(refreshToken = currentRefreshToken))
+                }.body<ApiResponse<RefreshResponse>>()
+
+                val result = response.getDataOrThrow()
+                localAuthDataSource.saveAccessToken(result.accessToken)
+                localAuthDataSource.saveRefreshToken(result.refreshToken)
+                BearerTokens(result.accessToken, result.refreshToken)
+            } catch (e: Exception) {
+                Napier.e("Token refresh failed", e)
+                localAuthDataSource.clearTokens()
+                authEventBus.emit()
+                null
+            }
+        }
+
+        sendWithoutRequest { request ->
+            val requestPath = request.url.pathSegments.joinToString("/")
+            AUTH_EXCLUDED_PATHS.none { path ->
+                requestPath.contains(path)
+            }
+        }
+    }
+}
 
 val httpClientModule = module {
     single { AuthEventBus() }
@@ -95,49 +146,7 @@ val httpClientModule = module {
             }
 
             install(Auth) {
-                bearer {
-                    loadTokens {
-                        val accessToken = localAuthDataSource.getAccessToken()
-                        val refreshToken = localAuthDataSource.getRefreshToken()
-                        if (accessToken != null && refreshToken != null) {
-                            BearerTokens(accessToken, refreshToken)
-                        } else {
-                            null
-                        }
-                    }
-
-                    refreshTokens {
-                        val currentRefreshToken = localAuthDataSource.getRefreshToken()
-                        if (currentRefreshToken == null) {
-                            localAuthDataSource.clearTokens()
-                            authEventBus.emit()
-                            return@refreshTokens null
-                        }
-
-                        try {
-                            val response = refreshClient.post("auth/refresh") {
-                                setBody(RefreshRequest(refreshToken = currentRefreshToken))
-                            }.body<ApiResponse<RefreshResponse>>()
-
-                            val result = response.getDataOrThrow()
-                            localAuthDataSource.saveAccessToken(result.accessToken)
-                            localAuthDataSource.saveRefreshToken(result.refreshToken)
-                            BearerTokens(result.accessToken, result.refreshToken)
-                        } catch (e: Exception) {
-                            Napier.e("Token refresh failed", e)
-                            localAuthDataSource.clearTokens()
-                            authEventBus.emit()
-                            null
-                        }
-                    }
-
-                    sendWithoutRequest { request ->
-                        val requestPath = request.url.pathSegments.joinToString("/")
-                        AUTH_EXCLUDED_PATHS.none { path ->
-                            requestPath.contains(path)
-                        }
-                    }
-                }
+                configureBearerAuth(localAuthDataSource, authEventBus, refreshClient)
             }
 
             install(Logging) {
