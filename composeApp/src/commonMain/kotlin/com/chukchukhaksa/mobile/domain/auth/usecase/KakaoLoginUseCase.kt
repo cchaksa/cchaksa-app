@@ -13,6 +13,7 @@ class KakaoLoginUseCase(
         runCatchingIgnoreCancelled {
             val kakaoResult = kakaoSignInClient.signIn(context)
             val signInResult = authRepository.signIn(
+                provider = "KAKAO",
                 idToken = kakaoResult.idToken,
                 nonce = kakaoResult.nonce,
             )

@@ -66,7 +66,7 @@ class MainViewModel(
             is NetworkException -> { mviStore.setState { copy(showNetworkErrorDialog = true) } }
 //            is ConnectException -> { mviStore.setState { copy(showNetworkErrorDialog = true) } }
             else -> {
-                onShowToast(throwable.message ?: UnknownException().message)
+                onShowToast("네트워크 오류가 발생했습니다.")
                 throwable.record()
             }
         }

@@ -10,8 +10,8 @@ class AuthRepositoryImpl(
     private val localAuthDataSource: LocalAuthDataSource,
 ) : AuthRepository {
 
-    override suspend fun signIn(idToken: String, nonce: String): SignInResult {
-        return remoteAuthDataSource.signIn(idToken = idToken, nonce = nonce)
+    override suspend fun signIn(provider: String, idToken: String, nonce: String): SignInResult {
+        return remoteAuthDataSource.signIn(provider = provider, idToken = idToken, nonce = nonce)
     }
 
     override suspend fun refreshToken() {

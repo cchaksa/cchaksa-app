@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
+import com.chukchukhaksa.mobile.domain.auth.usecase.AppleLoginUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.KakaoLoginUseCase
 import kotlinx.coroutines.launch
 
 class LandingViewModel(
     private val kakaoLoginUseCase: KakaoLoginUseCase,
+    private val appleLoginUseCase: AppleLoginUseCase,
 ) : ViewModel() {
 
     val mviStore: MviStore<LandingState, LandingSideEffect> = mviStore(LandingState())
@@ -33,6 +35,21 @@ class LandingViewModel(
     }
 
     fun onAppleLogin() {
-        mviStore.postSideEffect(LandingSideEffect.ShowToast("준비 중입니다"))
+        if (mviStore.uiState.value.isLoading) return
+        mviStore.setState { copy(isLoading = true) }
+
+        viewModelScope.launch {
+            try {
+                appleLoginUseCase()
+                    .onSuccess {
+                        mviStore.postSideEffect(LandingSideEffect.NavigateHome)
+                    }
+                    .onFailure { throwable ->
+                        mviStore.postSideEffect(LandingSideEffect.HandleException(throwable))
+                    }
+            } finally {
+                mviStore.setState { copy(isLoading = false) }
+            }
+        }
     }
 }

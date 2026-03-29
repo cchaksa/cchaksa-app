@@ -16,6 +16,7 @@ import platform.AuthenticationServices.ASPresentationAnchor
 import platform.Foundation.NSError
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.NSUUID
 import platform.Foundation.create
 import platform.UIKit.UIApplication
 import platform.UIKit.UIWindow
@@ -31,7 +32,10 @@ actual class AppleSignInClient actual constructor() {
     private var currentController: ASAuthorizationController? = null
 
     actual suspend fun signIn(): AppleSignInResult = suspendCancellableCoroutine { continuation ->
-        val delegate = AppleSignInDelegate(continuation) {
+        val rawNonce = NSUUID().UUIDString()
+        val hashedNonce = sha256Hex(rawNonce)
+
+        val delegate = AppleSignInDelegate(continuation, rawNonce) {
             currentDelegate = null
             currentController = null
         }
@@ -43,6 +47,7 @@ actual class AppleSignInClient actual constructor() {
             ASAuthorizationScopeEmail,
             ASAuthorizationScopeFullName,
         )
+        request.nonce = hashedNonce
 
         val controller = ASAuthorizationController(
             authorizationRequests = listOf(request),
@@ -62,6 +67,7 @@ actual class AppleSignInClient actual constructor() {
 
 private class AppleSignInDelegate(
     private val continuation: CancellableContinuation<AppleSignInResult>,
+    private val rawNonce: String,
     private val onComplete: () -> Unit,
 ) : NSObject(),
     ASAuthorizationControllerDelegateProtocol,
@@ -129,6 +135,7 @@ private class AppleSignInDelegate(
                 userId = credential.user,
                 email = credential.email,
                 fullName = fullName,
+                nonce = rawNonce,
             ),
         )
     }

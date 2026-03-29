@@ -45,7 +45,7 @@ val domainModule = module {
     factory { CheckNeedForceUpdateUseCase(get())}
 
     // Auth use cases
-    factory { AppleLoginUseCase(get()) }
+    factory { AppleLoginUseCase(get(), get()) }
     factory { CheckAuthStateUseCase(get()) }
     factory { KakaoLoginUseCase(get(), get()) }
 }
