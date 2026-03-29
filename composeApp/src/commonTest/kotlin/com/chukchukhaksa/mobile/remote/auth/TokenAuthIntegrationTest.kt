@@ -46,10 +46,7 @@ class TokenAuthIntegrationTest {
 
     private val jsonHeaders = headersOf(HttpHeaders.ContentType, "application/json")
 
-    private val AUTH_EXCLUDED_PATHS = listOf(
-        "auth/refresh",
-        "users/signin",
-    )
+    private val AUTH_EXCLUDED_PATHS = com.chukchukhaksa.mobile.remote.di.AUTH_EXCLUDED_PATHS
 
     // --- JSON Response Helpers ---
 
