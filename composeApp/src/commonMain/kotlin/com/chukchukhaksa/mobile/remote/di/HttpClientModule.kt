@@ -2,10 +2,20 @@ package com.chukchukhaksa.mobile.remote.di
 
 import com.chukchukhaksa.mobile.common.kmp.httpClientEngineFactory
 import com.chukchukhaksa.mobile.common.kmp.isDebug
+import com.chukchukhaksa.mobile.data.auth.datasource.LocalAuthDataSource
+import com.chukchukhaksa.mobile.remote.auth.AuthEventBus
+import com.chukchukhaksa.mobile.remote.auth.model.RefreshRequest
+import com.chukchukhaksa.mobile.remote.auth.model.RefreshResponse
+import com.chukchukhaksa.mobile.remote.common.ApiResponse
+import com.chukchukhaksa.mobile.remote.common.getDataOrThrow
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -13,6 +23,8 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.observer.ResponseObserver
 import io.ktor.client.plugins.plugin
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -32,8 +44,35 @@ private fun String.prettyPrintJson(): String = try {
     this
 }
 
+private val BASE_URL = if (isDebug) "https://dev.api.cchaksa.com/api/" else "https://api.cchaksa.com/api/"
+
+private val AUTH_EXCLUDED_PATHS = listOf(
+    "auth/refresh",
+    "users/signin",
+)
+
 val httpClientModule = module {
+    single { AuthEventBus() }
+
     single {
+        val localAuthDataSource: LocalAuthDataSource = get()
+        val authEventBus: AuthEventBus = get()
+
+        val refreshClient = HttpClient(httpClientEngineFactory) {
+            install(ContentNegotiation) {
+                json(
+                    Json {
+                        ignoreUnknownKeys = true
+                        isLenient = true
+                    },
+                )
+            }
+            defaultRequest {
+                url(BASE_URL)
+                contentType(ContentType.Application.Json)
+            }
+        }
+
         HttpClient(httpClientEngineFactory) {
             install(HttpTimeout) {
                 requestTimeoutMillis = 15_000
@@ -48,6 +87,52 @@ val httpClientModule = module {
                         isLenient = true
                     },
                 )
+            }
+
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        val accessToken = localAuthDataSource.getAccessToken()
+                        val refreshToken = localAuthDataSource.getRefreshToken()
+                        if (accessToken != null && refreshToken != null) {
+                            BearerTokens(accessToken, refreshToken)
+                        } else {
+                            null
+                        }
+                    }
+
+                    refreshTokens {
+                        val currentRefreshToken = localAuthDataSource.getRefreshToken()
+                        if (currentRefreshToken == null) {
+                            localAuthDataSource.clearTokens()
+                            authEventBus.emit()
+                            return@refreshTokens null
+                        }
+
+                        try {
+                            val response = refreshClient.post("auth/refresh") {
+                                setBody(RefreshRequest(refreshToken = currentRefreshToken))
+                            }.body<ApiResponse<RefreshResponse>>()
+
+                            val result = response.getDataOrThrow()
+                            localAuthDataSource.saveAccessToken(result.accessToken)
+                            localAuthDataSource.saveRefreshToken(result.refreshToken)
+                            BearerTokens(result.accessToken, result.refreshToken)
+                        } catch (e: Exception) {
+                            Napier.e("Token refresh failed", e)
+                            localAuthDataSource.clearTokens()
+                            authEventBus.emit()
+                            null
+                        }
+                    }
+
+                    sendWithoutRequest { request ->
+                        val requestPath = request.url.pathSegments.joinToString("/")
+                        AUTH_EXCLUDED_PATHS.none { path ->
+                            requestPath.contains(path)
+                        }
+                    }
+                }
             }
 
             install(Logging) {
@@ -83,7 +168,7 @@ val httpClientModule = module {
             }
 
             defaultRequest {
-                url("https://api.cchaksa.com/api/")
+                url(BASE_URL)
                 contentType(ContentType.Application.Json)
             }
         }.also { client ->
