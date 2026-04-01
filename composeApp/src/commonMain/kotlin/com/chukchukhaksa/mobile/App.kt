@@ -63,8 +63,8 @@ fun App(
 
             LaunchedEffect(Unit) {
                 val isAuthenticated = checkAuthStateUseCase().getOrDefault(false)
-//                startDestination = if (isAuthenticated) TimetableRoute.route else LandingRoute.route
-              startDestination = TimetableRoute.route
+                startDestination = if (isAuthenticated) TimetableRoute.route else LandingRoute.route
+//              startDestination = TimetableRoute.route
                 onReady()
             }
 
