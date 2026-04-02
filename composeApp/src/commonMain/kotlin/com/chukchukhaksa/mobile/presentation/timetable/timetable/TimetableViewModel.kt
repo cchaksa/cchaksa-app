@@ -126,4 +126,8 @@ class TimetableViewModel(
             mviStore.postSideEffect(TimetableSideEffect.NavigateAddTimetableCell)
         }
     }
+
+  fun navigateGraduationProgress() {
+    mviStore.postSideEffect(TimetableSideEffect.NavigateGraduationProgress)
+  }
 }

@@ -47,6 +47,7 @@ fun TimetableRoute(
   onShowToast: (String, Dp) -> Unit,
   navigateCellEditor: (CellEditorArgument) -> Unit,
   navigateSemesterSelect: () -> Unit,
+  navigateGraduationProgress: () -> Unit,
 ) {
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
 
@@ -59,6 +60,7 @@ fun TimetableRoute(
       is TimetableSideEffect.NavigateCellEditor -> navigateCellEditor(sideEffect.argument)
       TimetableSideEffect.NavigateTimetableList -> navigateTimetableList()
       TimetableSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
+      TimetableSideEffect.NavigateGraduationProgress -> navigateGraduationProgress()
     }
   }
 
@@ -98,6 +100,7 @@ fun TimetableRoute(
     onClickHome = viewModel::showHomeScreen,
     onClickTimetable = viewModel::getMainTimetable,
     onClickMyPage = viewModel::showHomeScreen,
+    onClickGraduationProgress = viewModel::navigateGraduationProgress,
   )
 }
 
@@ -117,7 +120,8 @@ fun TimetableScreen(
   onClickHamburger: () -> Unit = {},
   onClickHome: () -> Unit = {},
   onClickTimetable: () -> Unit = {},
-  onClickMyPage: () -> Unit = {}
+  onClickMyPage: () -> Unit = {},
+  onClickGraduationProgress: () -> Unit = {},
 ) {
     val semester = "${uiState.timetable?.year}년 ${uiState.timetable?.semester}학기"
     SuwikiBackground {
@@ -164,7 +168,8 @@ fun TimetableScreen(
 //              WebViewGuideScreen()
               HomeRoute(
                 profile = uiState.profile ?: Profile(),
-                academicSummary = uiState.academicSummary ?: AcademicSummary()
+                academicSummary = uiState.academicSummary ?: AcademicSummary(),
+                navigateGraduationProgress = onClickGraduationProgress
               )
             }
         }

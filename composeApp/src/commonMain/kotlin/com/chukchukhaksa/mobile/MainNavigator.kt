@@ -9,6 +9,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.navigation.TimetableRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateCellEditor
+import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateGraduationProgress
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateOpenLecture
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateSemesterSelect
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateTimetable
@@ -44,6 +45,10 @@ class MainNavigator(
 
     fun navigateOpenLecture() {
         navController.navigateOpenLecture()
+    }
+
+    fun navigateGraduationProgress() {
+        navController.navigateGraduationProgress()
     }
 
     fun navigateTimetable() {

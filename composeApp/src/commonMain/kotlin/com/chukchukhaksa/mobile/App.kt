@@ -111,6 +111,7 @@ fun App(
                                 navigateCellEditor = navigator::navigateCellEditor,
                                 navigateSemesterSelect = navigator::navigateSemesterSelect,
                                 navigateTimetable = navigator::navigateTimetable,
+                                navigateGraduationProgress = navigator::navigateGraduationProgress,
                             )
                         }
 

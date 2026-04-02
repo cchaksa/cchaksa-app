@@ -26,6 +26,7 @@ sealed interface TimetableSideEffect {
   data class NavigateCellEditor(val argument: CellEditorArgument) : TimetableSideEffect
   data class HandleException(val throwable: Throwable) : TimetableSideEffect
   data object NavigateSemesterSelect : TimetableSideEffect
+  data object NavigateGraduationProgress : TimetableSideEffect
 }
 
 enum class TimetableScreen {

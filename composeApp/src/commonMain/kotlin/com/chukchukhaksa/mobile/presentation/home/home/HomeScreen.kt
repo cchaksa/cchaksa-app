@@ -15,11 +15,13 @@ import com.chukchukhaksa.mobile.presentation.home.component.CchTotalGradeContain
 @Composable
 fun HomeRoute(
   profile: Profile,
-  academicSummary: AcademicSummary
+  academicSummary: AcademicSummary,
+  navigateGraduationProgress: () -> Unit,
 ) {
   HomeScreen(
     profile = profile,
-    academicSummary = academicSummary
+    academicSummary = academicSummary,
+    navigateGraduationProgress = navigateGraduationProgress,
   )
 }
 
@@ -27,6 +29,7 @@ fun HomeRoute(
 fun HomeScreen(
   profile: Profile,
   academicSummary: AcademicSummary,
+  navigateGraduationProgress: () -> Unit,
 ) {
   Column(modifier = Modifier.padding(horizontal = 20.dp)) {
     CchProfileContainer(
@@ -50,7 +53,7 @@ fun HomeScreen(
         gradeLevel = profile.gradeLevel,
         totalEarnedCredits = academicSummary.totalEarnedCredits,
         requiredCredits = academicSummary.requiredCredits,
-        onClickGraduationProgress = {},
+        onClickGraduationProgress = navigateGraduationProgress,
       )
       if(profile.dualMajorName != "") {
         CchGraduationRequirementsContainer(
@@ -59,7 +62,7 @@ fun HomeScreen(
           gradeLevel = profile.gradeLevel,
           totalEarnedCredits = academicSummary.totalEarnedCredits,
           requiredCredits = academicSummary.requiredCredits,
-          onClickGraduationProgress = {},
+          onClickGraduationProgress = navigateGraduationProgress,
         )
       }
     }

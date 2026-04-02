@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.chukchukhaksa.mobile.common.ui.encodeToUri
+import com.chukchukhaksa.mobile.presentation.home.graduationprogress.GraduationProgressRoute
 import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
@@ -43,6 +44,10 @@ fun NavController.navigateSemesterSelect() {
     navigate(TimetableRoute.semesterSelectRoute)
 }
 
+fun NavController.navigateGraduationProgress() {
+    navigate(TimetableRoute.graduationProgressRoute)
+}
+
 fun NavController.navigateTimetable() {
     navigate(TimetableRoute.route) {
       popUpTo(0)
@@ -59,6 +64,7 @@ fun NavGraphBuilder.timetableNavGraph(
     navigateCellEditor: (CellEditorArgument) -> Unit,
     navigateSemesterSelect: () -> Unit,
     navigateTimetable:() -> Unit,
+    navigateGraduationProgress: () -> Unit,
     handleException: (Throwable) -> Unit,
     onShowToast: (String, Dp) -> Unit,
 ) {
@@ -71,6 +77,7 @@ fun NavGraphBuilder.timetableNavGraph(
             navigateOpenLecture = navigateOpenLecture,
             navigateCellEditor = navigateCellEditor,
             navigateSemesterSelect = navigateSemesterSelect,
+            navigateGraduationProgress = navigateGraduationProgress,
         )
     }
 
@@ -157,6 +164,14 @@ fun NavGraphBuilder.timetableNavGraph(
         navigateTimetableNameInput = navigateTimetableNameInput,
     )
   }
+
+  composable(
+    route = TimetableRoute.graduationProgressRoute,
+  ) {
+    GraduationProgressRoute(
+//      popBackStack = popBackStack,
+    )
+  }
 }
 
 object TimetableRoute {
@@ -164,6 +179,7 @@ object TimetableRoute {
     const val openLectureRoute = "open-lecture"
     const val timetableListRoute = "$route/list"
     const val semesterSelectRoute = "semester-select"
+    const val graduationProgressRoute = "graduation-progress"
     const val CELL_EDITOR_ARGUMENT = "cell-editor-argument"
     const val TIMETABLE_EDITOR_ARGUMENT = "timetable-editor-argument"
 
