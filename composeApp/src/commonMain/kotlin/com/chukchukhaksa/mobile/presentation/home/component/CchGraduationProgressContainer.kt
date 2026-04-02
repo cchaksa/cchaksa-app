@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import chukchukhaksa.composeapp.generated.resources.ic_arrow_down_white
 import chukchukhaksa.composeapp.generated.resources.ic_check_box
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.Purple300
 import com.chukchukhaksa.mobile.common.designsystem.theme.Purple500
@@ -50,6 +52,7 @@ fun CchGraduationProgressContainer(
 ) {
   val isExpanded = remember { mutableStateOf(false) }
   val backgroundColor = if (requirementStatus) Black100 else White100
+  val borderColor = if(requirementStatus) Black100 else Gray200
   val areaTypeTextColor = if (requirementStatus) Purple500 else Black100
   val creditTextColor = if (requirementStatus) White100 else Gray400
   val courseTextColor = if (requirementStatus) White100 else Black100
@@ -64,6 +67,7 @@ fun CchGraduationProgressContainer(
   Column(
     modifier = Modifier
       .clip(RoundedCornerShape(16.dp))
+      .border(1.dp, borderColor, RoundedCornerShape(16.dp))
       .background(backgroundColor)
       .animateContentSize(
         animationSpec = spring(

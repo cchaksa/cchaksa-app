@@ -29,12 +29,13 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun CchSemesterGradeButton(
+  modifier: Modifier = Modifier,
   startSemester: String,
   endSemester: String,
   onClick: () -> Unit
 ) {
   Column(
-    modifier = Modifier
+    modifier = modifier
       .clip(RoundedCornerShape(16.dp))
       .background(White100)
       .border(1.dp, Gray200, RoundedCornerShape(16.dp))

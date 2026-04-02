@@ -169,7 +169,7 @@ fun NavGraphBuilder.timetableNavGraph(
     route = TimetableRoute.graduationProgressRoute,
   ) {
     GraduationProgressRoute(
-//      popBackStack = popBackStack,
+        popBackStack = popBackStack,
     )
   }
 }

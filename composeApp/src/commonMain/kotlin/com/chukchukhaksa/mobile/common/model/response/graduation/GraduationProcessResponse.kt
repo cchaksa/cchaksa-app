@@ -15,13 +15,13 @@ data class GraduationProcessResponseData(
 )
 
 data class GraduationProgressData(
-  val areaType: String,
-  val completedElectiveCourses: Int,
-  val courses: List<GraduationProcessCourseData>,
-  val earnedCredits: Int,
-  val requiredCredits: Int,
-  val requiredElectiveCourses: Int,
-  val totalElectiveCourses: Int
+  val areaType: String = "",
+  val completedElectiveCourses: Int = 0,
+  val courses: List<GraduationProcessCourseData> = listOf(),
+  val earnedCredits: Int = 0,
+  val requiredCredits: Int = 0,
+  val requiredElectiveCourses: Int = 0,
+  val totalElectiveCourses: Int = 0
 ) {
   fun toGraduationProcess() = GraduationProcess(
     areaType = areaType,
