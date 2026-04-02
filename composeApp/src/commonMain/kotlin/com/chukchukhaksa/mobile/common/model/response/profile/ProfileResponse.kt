@@ -13,6 +13,7 @@ data class ProfileResponseData(
   val studentCode: String,
   val departmentName: String,
   val majorName: String,
+  val dualMajorName: String,
   val gradeLevel: Int,
   val currentSemester: Int,
   val status : String,
@@ -25,6 +26,7 @@ data class ProfileResponseData(
     studentCode = studentCode,
     departmentName = departmentName,
     majorName = majorName,
+    dualMajorName = dualMajorName,
     gradeLevel = gradeLevel,
     currentSemester = currentSemester,
     status = status

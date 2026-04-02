@@ -1,9 +1,12 @@
 package com.chukchukhaksa.mobile.di
 
+import com.chukchukhaksa.mobile.domain.academic.usecase.GetAcademicRecordUseCase
+import com.chukchukhaksa.mobile.domain.academic.usecase.GetAcademicSummaryUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.AppleLoginUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.CheckAuthStateUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.KakaoLoginUseCase
 import com.chukchukhaksa.mobile.domain.config.usecase.CheckNeedForceUpdateUseCase
+import com.chukchukhaksa.mobile.domain.profile.usecase.GetProfileUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.GetAllTimetableUseCase
@@ -48,4 +51,11 @@ val domainModule = module {
     factory { AppleLoginUseCase(get(), get()) }
     factory { CheckAuthStateUseCase(get()) }
     factory { KakaoLoginUseCase(get(), get()) }
+
+    // Profile use cases
+    factory { GetProfileUseCase(get()) }
+
+    // Academic use cases
+    factory { GetAcademicSummaryUseCase(get()) }
+    factory { GetAcademicRecordUseCase(get()) }
 }

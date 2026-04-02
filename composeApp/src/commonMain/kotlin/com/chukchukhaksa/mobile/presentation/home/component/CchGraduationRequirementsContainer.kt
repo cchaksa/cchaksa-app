@@ -36,6 +36,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun CchGraduationRequirementsContainer(
+  title: String,
   major: String,
   gradeLevel: Int,
   totalEarnedCredits: Int,
@@ -54,7 +55,7 @@ fun CchGraduationRequirementsContainer(
       modifier = Modifier
         .fillMaxWidth()
         .padding(bottom = 8.dp),
-      text = major,
+      text = title,
       color = Gray400,
       style = CchTheme.typography.bodySm,
       textAlign = TextAlign.Start
