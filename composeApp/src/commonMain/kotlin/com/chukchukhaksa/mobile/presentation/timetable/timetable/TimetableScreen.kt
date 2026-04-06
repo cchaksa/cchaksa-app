@@ -65,7 +65,7 @@ fun TimetableRoute(
   }
 
   LaunchedEffect(key1 = Unit) {
-    viewModel.getMainTimetable()
+    viewModel.getMainTimetable(isChangeScreen = false)
     viewModel.getProfile()
     viewModel.getAcademicSummary()
   }
@@ -98,7 +98,7 @@ fun TimetableRoute(
     onClickSetting = viewModel::showSelectCellTypeBottomSheet,
     onClickHamburger = viewModel::navigateTimetableList,
     onClickHome = viewModel::showHomeScreen,
-    onClickTimetable = viewModel::getMainTimetable,
+    onClickTimetable = { viewModel.getMainTimetable(isChangeScreen = true) },
     onClickMyPage = viewModel::showHomeScreen,
     onClickGraduationProgress = viewModel::navigateGraduationProgress,
   )

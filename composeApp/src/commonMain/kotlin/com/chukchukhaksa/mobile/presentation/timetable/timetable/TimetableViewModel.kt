@@ -25,16 +25,17 @@ class TimetableViewModel(
 ) : ViewModel() {
     val mviStore = mviStore<TimetableState, TimetableSideEffect>(TimetableState())
 
-    fun getMainTimetable() = viewModelScope.launch {
+    fun getMainTimetable(isChangeScreen: Boolean = true) = viewModelScope.launch {
         val cellType = TimetableCellType.getType(getTimetableCellTypeUseCase().getOrNull())
 
         getMainTimetableUseCase()
             .onSuccess { timetable ->
                 mviStore.setState {
+                    val defaultScreen = if (timetable == null) TimetableScreen.EMPTY_TIMETABLE else TimetableScreen.TIMETABLE
                     copy(
                         timetable = timetable,
                         cellType = cellType,
-                        timetableScreen = if (timetable == null) TimetableScreen.EMPTY_TIMETABLE else TimetableScreen.TIMETABLE,
+                        timetableScreen = if (isChangeScreen) defaultScreen else (timetableScreen ?: defaultScreen),
                     )
                 }
             }
