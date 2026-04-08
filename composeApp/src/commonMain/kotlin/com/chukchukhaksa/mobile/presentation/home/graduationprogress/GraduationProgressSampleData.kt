@@ -1,6 +1,5 @@
 package com.chukchukhaksa.mobile.presentation.home.graduationprogress
 
-import com.chukchukhaksa.mobile.common.model.graduation.GraduationProcessCourse
 import com.chukchukhaksa.mobile.common.model.response.graduation.GraduationProcessCourseData
 import com.chukchukhaksa.mobile.common.model.response.graduation.GraduationProcessResponseData
 import com.chukchukhaksa.mobile.common.model.response.graduation.GraduationProgressData
@@ -125,7 +124,15 @@ val graduationProgressSampleData = listOf(
     areaType = "진로취업",
     requiredCredits = 3,
     earnedCredits = 3,
-    courses = listOf(),
+    courses = listOf(
+      GraduationProcessCourseData(
+        courseName = "진로취업과목",
+        credits = 3,
+        grade = "A+",
+        semester = 2,
+        year = 23,
+      )
+    )
   ),
   GraduationProgressData(
     areaType = "일반선택",
@@ -138,4 +145,4 @@ val graduationProgressSampleData = listOf(
 val graduationProgressResponseSampleData = GraduationProcessResponseData(
   graduationProgress = graduationProgressSampleData,
   hasDifferentGraduationRequirement = true,
-)
+).toGraduationProcessData()

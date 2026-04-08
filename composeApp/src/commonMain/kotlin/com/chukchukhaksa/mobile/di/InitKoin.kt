@@ -3,6 +3,7 @@ package com.chukchukhaksa.mobile.di
 import com.chukchukhaksa.mobile.data.academic.di.AcademicRepositoryModule
 import com.chukchukhaksa.mobile.data.auth.di.authRepositoryModule
 import com.chukchukhaksa.mobile.data.config.di.appConfigRepositoryModule
+import com.chukchukhaksa.mobile.data.graduation.di.GraduationRepositoryModule
 import com.chukchukhaksa.mobile.data.openlecture.di.openLectureRepositoryModule
 import com.chukchukhaksa.mobile.data.openmajor.di.openMajorRepositoryModule
 import com.chukchukhaksa.mobile.data.profile.di.ProfileRepositoryModule
@@ -48,6 +49,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             authRepositoryModule,
             ProfileRepositoryModule,
             AcademicRepositoryModule,
+            GraduationRepositoryModule,
         )
     }
 }

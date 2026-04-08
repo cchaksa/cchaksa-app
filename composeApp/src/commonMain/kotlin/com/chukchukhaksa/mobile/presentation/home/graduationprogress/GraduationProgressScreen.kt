@@ -3,38 +3,47 @@ package com.chukchukhaksa.mobile.presentation.home.graduationprogress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.CchAppBarWithTitle
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray500
-import com.chukchukhaksa.mobile.common.model.response.graduation.GraduationProcessResponseData
+import com.chukchukhaksa.mobile.common.model.graduation.GraduationProcessListData
 import com.chukchukhaksa.mobile.presentation.home.component.CchGraduationProgressContainer
 import com.chukchukhaksa.mobile.presentation.home.component.CchSemesterGradeButton
 import com.chukchukhaksa.mobile.presentation.home.component.CchTotalGradeContainer
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun GraduationProgressRoute(
   popBackStack: () -> Unit = {},
+  viewModel: GraduationProgressViewModel = koinViewModel(),
 ) {
-  val graduationProgressSample = graduationProgressResponseSampleData
+  val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
+
+  LaunchedEffect(Unit) {
+    viewModel.getGraduationProgress()
+  }
+
   GraduationProgressScreen(
-    graduationProgress = graduationProgressSample,
-    onClickBackButton = popBackStack
+    graduationProgress = uiState.graduationProgress,
+    onClickBackButton = popBackStack,
   )
 }
 
 @Composable
 fun GraduationProgressScreen(
-  graduationProgress: GraduationProcessResponseData,
+  graduationProgress: GraduationProcessListData,
   onClickBackButton: () -> Unit = {},
 ) {
   val scrollState = rememberScrollState()
@@ -50,13 +59,13 @@ fun GraduationProgressScreen(
         modifier = Modifier
           .fillMaxSize()
           .padding(top = 11.dp, start = 20.dp, end = 20.dp)
-          .verticalScroll(scrollState)
+          .verticalScroll(scrollState),
       ) {
         CchSemesterGradeButton(
           modifier = Modifier.padding(bottom = 26.dp),
           startSemester = "1학년 1학기",
           endSemester = "3학년 1학기",
-          onClick = {}
+          onClick = {},
         )
         Text(
           modifier = Modifier
@@ -73,7 +82,7 @@ fun GraduationProgressScreen(
           percentile = 83.2,
         )
         Column(
-          verticalArrangement = Arrangement.spacedBy(12.dp)
+          verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
           graduationProgress.graduationProgress.forEach { data ->
             CchGraduationProgressContainer(
@@ -81,7 +90,7 @@ fun GraduationProgressScreen(
               areaType = data.areaType,
               earnedCredits = data.earnedCredits,
               requiredCredits = data.requiredCredits,
-              courses = data.courses.map { it.toGraduationProcessCourse() },
+              courses = data.courses,
             )
           }
         }

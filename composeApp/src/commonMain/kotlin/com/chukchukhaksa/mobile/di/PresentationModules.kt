@@ -1,6 +1,7 @@
 package com.chukchukhaksa.mobile.di
 
 import com.chukchukhaksa.mobile.MainViewModel
+import com.chukchukhaksa.mobile.presentation.home.graduationprogress.GraduationProgressViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor.OpenMajorBottomSheetViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.openlecture.OpenLectureViewModel
@@ -24,4 +25,5 @@ val presentationModule = module {
     viewModelOf(::OpenLectureViewModel)
     viewModelOf(::OpenMajorBottomSheetViewModel)
     viewModelOf(::SemesterSelectViewModel)
+    viewModelOf(::GraduationProgressViewModel)
 }

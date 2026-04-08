@@ -2,6 +2,7 @@ package com.chukchukhaksa.mobile.common.model.response.graduation
 
 import com.chukchukhaksa.mobile.common.model.graduation.GraduationProcess
 import com.chukchukhaksa.mobile.common.model.graduation.GraduationProcessCourse
+import com.chukchukhaksa.mobile.common.model.graduation.GraduationProcessListData
 
 data class GraduationProcessResponse(
     val data: GraduationProcessResponseData,
@@ -10,9 +11,14 @@ data class GraduationProcessResponse(
 )
 
 data class GraduationProcessResponseData(
-  val graduationProgress: List<GraduationProgressData>,
-  val hasDifferentGraduationRequirement: Boolean
-)
+  val graduationProgress: List<GraduationProgressData> = listOf(),
+  val hasDifferentGraduationRequirement: Boolean = false
+) {
+  fun toGraduationProcessData() = GraduationProcessListData(
+    graduationProgress = graduationProgress.map { it.toGraduationProcess() },
+    hasDifferentGraduationRequirement = hasDifferentGraduationRequirement,
+  )
+}
 
 data class GraduationProgressData(
   val areaType: String = "",

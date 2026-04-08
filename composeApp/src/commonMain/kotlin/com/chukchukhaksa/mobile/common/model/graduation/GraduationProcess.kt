@@ -1,5 +1,10 @@
 package com.chukchukhaksa.mobile.common.model.graduation
 
+data class GraduationProcessListData(
+  val graduationProgress: List<GraduationProcess> = listOf(),
+  val hasDifferentGraduationRequirement: Boolean = false
+)
+
 data class GraduationProcess(
   val areaType: String,
   val completedElectiveCourses: Int,

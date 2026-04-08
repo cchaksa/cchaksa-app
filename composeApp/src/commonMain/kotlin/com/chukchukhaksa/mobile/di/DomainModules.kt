@@ -2,6 +2,7 @@ package com.chukchukhaksa.mobile.di
 
 import com.chukchukhaksa.mobile.domain.academic.usecase.GetAcademicRecordUseCase
 import com.chukchukhaksa.mobile.domain.academic.usecase.GetAcademicSummaryUseCase
+import com.chukchukhaksa.mobile.domain.graduation.usecase.GetGraduationProgressUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.AppleLoginUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.CheckAuthStateUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.KakaoLoginUseCase
@@ -58,4 +59,5 @@ val domainModule = module {
     // Academic use cases
     factory { GetAcademicSummaryUseCase(get()) }
     factory { GetAcademicRecordUseCase(get()) }
+    factory { GetGraduationProgressUseCase(get()) }
 }
