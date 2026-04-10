@@ -2,40 +2,60 @@ package com.chukchukhaksa.mobile.remote.portal
 
 import com.chukchukhaksa.mobile.data.portal.datasource.PortalRemoteDataSource
 import com.chukchukhaksa.mobile.domain.portal.model.PortalScrapingException
-import com.chukchukhaksa.mobile.domain.portal.model.ScrapingResult
-import com.chukchukhaksa.mobile.domain.portal.model.StudentInfo
 import com.chukchukhaksa.mobile.remote.common.ApiResponse
-import com.chukchukhaksa.mobile.remote.portal.model.ScrapingResponseDto
-import com.chukchukhaksa.mobile.remote.portal.model.StudentInfoDto
+import com.chukchukhaksa.mobile.remote.portal.model.AcceptedResponseDto
+import com.chukchukhaksa.mobile.remote.portal.model.JobStatusResponseDto
+import com.chukchukhaksa.mobile.remote.portal.model.JobSummaryResponseDto
+import com.chukchukhaksa.mobile.remote.portal.model.LinkRequestDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.parameter
+import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
-import kotlinx.serialization.json.JsonObject
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.http.path
 
 class PortalRemoteDataSourceImpl(
     private val httpClient: HttpClient,
 ) : PortalRemoteDataSource {
 
-    override suspend fun login(username: String, password: String) {
-        val httpResponse = httpClient.post("suwon-scrape/login") {
-            parameter("username", username)
-            parameter("password", password)
+    override suspend fun createLinkJob(
+        portalType: String,
+        username: String,
+        password: String,
+        idempotencyKey: String,
+    ): AcceptedResponseDto {
+        val httpResponse = httpClient.post {
+            url { path("portal", "link") }
+            header(IDEMPOTENCY_KEY_HEADER, idempotencyKey)
+            contentType(ContentType.Application.Json)
+            setBody(
+                LinkRequestDto(
+                    portalType = portalType,
+                    username = username,
+                    password = password,
+                ),
+            )
         }
-        parseOrThrow<JsonObject>(httpResponse)
+        return parseOrThrow<AcceptedResponseDto>(httpResponse)
     }
 
-    override suspend fun startScraping(): ScrapingResult {
-        val httpResponse = httpClient.post("suwon-scrape/start")
-        val dto = parseOrThrow<ScrapingResponseDto>(httpResponse)
-        return dto.toDomain()
+    override suspend fun getJobStatus(jobId: String): JobStatusResponseDto {
+        val httpResponse = httpClient.get {
+            url { path("portal", "link", "jobs", jobId) }
+        }
+        return parseOrThrow<JobStatusResponseDto>(httpResponse)
     }
 
-    override suspend fun refreshScraping(): ScrapingResult {
-        val httpResponse = httpClient.post("suwon-scrape/refresh")
-        val dto = parseOrThrow<ScrapingResponseDto>(httpResponse)
-        return dto.toDomain()
+    override suspend fun getJobSummary(jobId: String): JobSummaryResponseDto {
+        val httpResponse = httpClient.get {
+            url { path("portal", "link", "jobs", jobId, "summary") }
+        }
+        return parseOrThrow<JobSummaryResponseDto>(httpResponse)
     }
 
     private suspend inline fun <reified T> parseOrThrow(httpResponse: HttpResponse): T {
@@ -65,20 +85,8 @@ class PortalRemoteDataSourceImpl(
             message = apiResponse.error?.message ?: error.defaultMessage,
         )
     }
+
+    companion object {
+        private const val IDEMPOTENCY_KEY_HEADER = "Idempotency-Key"
+    }
 }
-
-private fun ScrapingResponseDto.toDomain() = ScrapingResult(
-    taskId = taskId,
-    studentInfo = studentInfo?.toDomain(),
-    status = status,
-)
-
-private fun StudentInfoDto.toDomain() = StudentInfo(
-    name = name,
-    school = school,
-    majorName = majorName,
-    studentCode = studentCode,
-    gradeLevel = gradeLevel,
-    status = status,
-    completedSemesterType = completedSemesterType,
-)

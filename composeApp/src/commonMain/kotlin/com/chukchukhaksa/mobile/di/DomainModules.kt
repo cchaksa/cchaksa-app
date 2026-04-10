@@ -6,9 +6,7 @@ import com.chukchukhaksa.mobile.domain.auth.usecase.AppleLoginUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.CheckAuthStateUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.KakaoLoginUseCase
 import com.chukchukhaksa.mobile.domain.config.usecase.CheckNeedForceUpdateUseCase
-import com.chukchukhaksa.mobile.domain.portal.usecase.PortalLoginUseCase
-import com.chukchukhaksa.mobile.domain.portal.usecase.RefreshPortalScrapingUseCase
-import com.chukchukhaksa.mobile.domain.portal.usecase.StartPortalScrapingUseCase
+import com.chukchukhaksa.mobile.domain.portal.usecase.LinkPortalUseCase
 import com.chukchukhaksa.mobile.domain.profile.usecase.GetProfileUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableUseCase
@@ -63,7 +61,5 @@ val domainModule = module {
     factory { GetAcademicRecordUseCase(get()) }
 
     // Portal use cases
-    factory { PortalLoginUseCase(get()) }
-    factory { StartPortalScrapingUseCase(get()) }
-    factory { RefreshPortalScrapingUseCase(get()) }
+    factory { LinkPortalUseCase(get()) }
 }

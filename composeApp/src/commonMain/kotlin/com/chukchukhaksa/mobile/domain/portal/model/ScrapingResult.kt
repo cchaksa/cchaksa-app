@@ -1,9 +1,10 @@
 package com.chukchukhaksa.mobile.domain.portal.model
 
 data class ScrapingResult(
-    val taskId: String?,
+    val jobId: String?,
     val studentInfo: StudentInfo?,
     val status: String?,
+    val finishedAt: String?,
 )
 
 data class StudentInfo(

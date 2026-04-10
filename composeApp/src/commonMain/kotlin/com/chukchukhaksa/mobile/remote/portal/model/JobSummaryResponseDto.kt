@@ -1,11 +1,13 @@
 package com.chukchukhaksa.mobile.remote.portal.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ScrapingResponseDto(
-    val taskId: String? = null,
+data class JobSummaryResponseDto(
+    @SerialName("job_id") val jobId: String? = null,
     val studentInfo: StudentInfoDto? = null,
+    @SerialName("finished_at") val finishedAt: String? = null,
     val status: String? = null,
 )
 

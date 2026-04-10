@@ -1,9 +1,13 @@
 package com.chukchukhaksa.mobile.domain.portal.repository
 
-import com.chukchukhaksa.mobile.domain.portal.model.ScrapingResult
+import com.chukchukhaksa.mobile.domain.portal.model.ScrapingProgress
+import kotlinx.coroutines.flow.Flow
 
 interface PortalRepository {
-    suspend fun login(username: String, password: String)
-    suspend fun startScraping(): ScrapingResult
-    suspend fun refreshScraping(): ScrapingResult
+    fun linkPortal(
+        portalType: String,
+        username: String,
+        password: String,
+        idempotencyKey: String,
+    ): Flow<ScrapingProgress>
 }
