@@ -32,6 +32,7 @@ import com.chukchukhaksa.mobile.presentation.landing.navigation.LandingRoute
 import com.chukchukhaksa.mobile.presentation.landing.navigation.landingNavGraph
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.TimetableRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.timetableNavGraph
+import com.chukchukhaksa.mobile.presentation.webview.navigation.webViewNavGraph
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.FirebaseAnalytics
 import dev.gitlive.firebase.analytics.analytics
@@ -111,6 +112,11 @@ fun App(
                                 navigateCellEditor = navigator::navigateCellEditor,
                                 navigateSemesterSelect = navigator::navigateSemesterSelect,
                                 navigateTimetable = navigator::navigateTimetable,
+                                navigateWebView = navigator::navigateWebView,
+                            )
+
+                            webViewNavGraph(
+                                popBackStack = navigator::popBackStackIfNotHome,
                             )
                         }
 

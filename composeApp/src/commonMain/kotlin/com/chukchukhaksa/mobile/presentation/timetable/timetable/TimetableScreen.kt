@@ -47,6 +47,7 @@ fun TimetableRoute(
   onShowToast: (String, Dp) -> Unit,
   navigateCellEditor: (CellEditorArgument) -> Unit,
   navigateSemesterSelect: () -> Unit,
+  navigateWebView: (String) -> Unit,
 ) {
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
 
@@ -98,6 +99,7 @@ fun TimetableRoute(
     onClickHome = viewModel::showHomeScreen,
     onClickTimetable = viewModel::getMainTimetable,
     onClickMyPage = viewModel::showHomeScreen,
+    onClickWebView = { navigateWebView("https://naver.com") },
   )
 }
 
@@ -117,7 +119,8 @@ fun TimetableScreen(
   onClickHamburger: () -> Unit = {},
   onClickHome: () -> Unit = {},
   onClickTimetable: () -> Unit = {},
-  onClickMyPage: () -> Unit = {}
+  onClickMyPage: () -> Unit = {},
+  onClickWebView: () -> Unit = {},
 ) {
     val semester = "${uiState.timetable?.year}년 ${uiState.timetable?.semester}학기"
     SuwikiBackground {
@@ -164,7 +167,8 @@ fun TimetableScreen(
 //              WebViewGuideScreen()
               HomeRoute(
                 profile = uiState.profile ?: Profile(),
-                academicSummary = uiState.academicSummary ?: AcademicSummary()
+                academicSummary = uiState.academicSummary ?: AcademicSummary(),
+                onClickWebView = onClickWebView,
               )
             }
         }

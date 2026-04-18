@@ -15,6 +15,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateTimeta
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateTimetableEditor
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateTimetableNameInput
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateTimetableList
+import com.chukchukhaksa.mobile.presentation.webview.navigation.navigateWebView
 
 class MainNavigator(
     val navController: NavHostController,
@@ -48,6 +49,10 @@ class MainNavigator(
 
     fun navigateTimetable() {
         navController.navigateTimetable()
+    }
+
+    fun navigateWebView(url: String) {
+        navController.navigateWebView(url)
     }
 
     fun navigateFromLandingToHome() {

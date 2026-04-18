@@ -59,6 +59,7 @@ fun NavGraphBuilder.timetableNavGraph(
     navigateCellEditor: (CellEditorArgument) -> Unit,
     navigateSemesterSelect: () -> Unit,
     navigateTimetable:() -> Unit,
+    navigateWebView: (String) -> Unit,
     handleException: (Throwable) -> Unit,
     onShowToast: (String, Dp) -> Unit,
 ) {
@@ -71,6 +72,7 @@ fun NavGraphBuilder.timetableNavGraph(
             navigateOpenLecture = navigateOpenLecture,
             navigateCellEditor = navigateCellEditor,
             navigateSemesterSelect = navigateSemesterSelect,
+            navigateWebView = navigateWebView,
         )
     }
 
