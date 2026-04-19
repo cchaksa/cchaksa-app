@@ -1,6 +1,10 @@
 package com.chukchukhaksa.mobile.common.designsystem.component.webview
 
 import android.annotation.SuppressLint
+import android.view.View
+import android.view.ViewGroup
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
@@ -35,8 +39,23 @@ actual fun CchWebView(
     modifier = modifier,
     factory = { context ->
       WebView(context).apply {
+        layoutParams = ViewGroup.LayoutParams(
+          ViewGroup.LayoutParams.MATCH_PARENT,
+          ViewGroup.LayoutParams.MATCH_PARENT,
+        )
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
+        settings.useWideViewPort = true
+        settings.loadWithOverviewMode = true
+        settings.textZoom = 100
+        settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+        settings.cacheMode = WebSettings.LOAD_DEFAULT
+        settings.userAgentString = settings.userAgentString.replace("; wv)", ")")
+        isVerticalScrollBarEnabled = false
+        isHorizontalScrollBarEnabled = false
+        scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
+        setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        webChromeClient = WebChromeClient()
         webViewClient = object : WebViewClient() {
           override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
             super.doUpdateVisitedHistory(view, url, isReload)

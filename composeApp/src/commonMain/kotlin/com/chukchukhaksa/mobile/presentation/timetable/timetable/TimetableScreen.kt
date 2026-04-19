@@ -99,7 +99,7 @@ fun TimetableRoute(
     onClickHome = viewModel::showHomeScreen,
     onClickTimetable = viewModel::getMainTimetable,
     onClickMyPage = viewModel::showHomeScreen,
-    onClickWebView = { navigateWebView("https://naver.com") },
+    onClickWebView = { navigateWebView("https://www.cchaksa.com/") },
   )
 }
 

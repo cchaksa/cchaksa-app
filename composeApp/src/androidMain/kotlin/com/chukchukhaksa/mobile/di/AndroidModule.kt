@@ -1,5 +1,6 @@
 package com.chukchukhaksa.mobile.di
 
+import com.chukchukhaksa.mobile.common.kmp.AppleSignInClient
 import com.chukchukhaksa.mobile.common.kmp.KakaoSignInClient
 import eu.anifantakis.lib.ksafe.KSafe
 import com.chukchukhaksa.mobile.local.database.openlecture.database.OpenLectureDatabaseFactory
@@ -14,6 +15,7 @@ actual val platformModule = module {
     single { OpenMajorDatabaseFactory(androidApplication()) }
     single { OpenLectureDatabaseFactory(androidApplication()) }
     single { ChukChukHaksaDataStoreFactory(androidApplication()) }
+    factory { AppleSignInClient() }
     factory { KakaoSignInClient() }
     single { KSafe(androidApplication()) }
 }

@@ -2,7 +2,11 @@ package com.chukchukhaksa.mobile.presentation.webview
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.chukchukhaksa.mobile.common.designsystem.component.appbar.CchAppBarWithTitle
@@ -37,12 +41,9 @@ private fun WebViewRouteContent(
   Column(
     modifier = Modifier
       .fillMaxSize()
-      .background(White100),
+      .background(White100)
+      .windowInsetsPadding(WindowInsets.systemBars),
   ) {
-    CchAppBarWithTitle(
-      title = "웹뷰",
-      onClickBackButton = popBackStack,
-    )
     CchWebView(
       url = url,
       controller = controller,
