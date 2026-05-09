@@ -113,10 +113,12 @@ fun App(
                                 navigateSemesterSelect = navigator::navigateSemesterSelect,
                                 navigateTimetable = navigator::navigateTimetable,
                                 navigateWebView = navigator::navigateWebView,
+                                navigateToLanding = navigator::navigateToLanding,
                             )
 
                             webViewNavGraph(
                                 popBackStack = navigator::popBackStackIfNotHome,
+                                onNavigateWebView = navigator::navigateWebView,
                             )
                         }
 

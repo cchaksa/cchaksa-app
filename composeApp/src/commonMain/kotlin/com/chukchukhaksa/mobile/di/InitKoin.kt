@@ -48,6 +48,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             authRepositoryModule,
             ProfileRepositoryModule,
             AcademicRepositoryModule,
+            webViewModule,
         )
     }
 }

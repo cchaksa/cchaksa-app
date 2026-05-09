@@ -63,6 +63,13 @@ class MainNavigator(
         }
     }
 
+    fun navigateToLanding() {
+        navController.navigate(LandingRoute.route) {
+            popUpTo(0) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
+
     fun popBackStackIfNotHome() {
         if (!isSameCurrentDestination(TimetableRoute.route)) {
             navController.popBackStack()

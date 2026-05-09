@@ -27,15 +27,13 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timet
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell.TimetableCellType
 import com.chukchukhaksa.mobile.common.designsystem.component.tabbar.TimetableTabBar
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
-import com.chukchukhaksa.mobile.common.model.academic.AcademicSummary
-import com.chukchukhaksa.mobile.common.model.profile.Profile
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import com.chukchukhaksa.mobile.widget.sendWidgetUpdateCommand
 import com.chukchukhaksa.mobile.common.provider.LocalAppContext
-import com.chukchukhaksa.mobile.presentation.home.home.HomeRoute
+import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.WebViewGuideScreen
 
 @Composable
 fun TimetableRoute(
@@ -48,6 +46,7 @@ fun TimetableRoute(
   navigateCellEditor: (CellEditorArgument) -> Unit,
   navigateSemesterSelect: () -> Unit,
   navigateWebView: (String) -> Unit,
+  navigateToLanding: () -> Unit,
 ) {
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
 
@@ -100,6 +99,8 @@ fun TimetableRoute(
     onClickTimetable = viewModel::getMainTimetable,
     onClickMyPage = viewModel::showHomeScreen,
     onClickWebView = { navigateWebView("https://www.cchaksa.com/") },
+    navigateToLanding = navigateToLanding,
+    navigateWebView = navigateWebView,
   )
 }
 
@@ -121,6 +122,8 @@ fun TimetableScreen(
   onClickTimetable: () -> Unit = {},
   onClickMyPage: () -> Unit = {},
   onClickWebView: () -> Unit = {},
+  navigateToLanding: () -> Unit = {},
+  navigateWebView: (String) -> Unit = {},
 ) {
     val semester = "${uiState.timetable?.year}년 ${uiState.timetable?.semester}학기"
     SuwikiBackground {
@@ -164,11 +167,9 @@ fun TimetableScreen(
             }
 
             if(uiState.timetableScreen == TimetableScreen.HOME) {
-//              WebViewGuideScreen()
-              HomeRoute(
-                profile = uiState.profile ?: Profile(),
-                academicSummary = uiState.academicSummary ?: AcademicSummary(),
-                onClickWebView = onClickWebView,
+              WebViewGuideScreen(
+                navigateToLogin = navigateToLanding,
+                navigateWebView = navigateWebView,
               )
             }
         }

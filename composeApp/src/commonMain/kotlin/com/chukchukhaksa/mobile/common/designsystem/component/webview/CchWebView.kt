@@ -26,4 +26,6 @@ expect fun CchWebView(
   url: String,
   controller: CchWebViewController,
   modifier: Modifier = Modifier,
+  cookies: List<WebViewCookie> = emptyList(),
+  onBridgeMessage: (BridgeMessage) -> Unit = {},
 )
