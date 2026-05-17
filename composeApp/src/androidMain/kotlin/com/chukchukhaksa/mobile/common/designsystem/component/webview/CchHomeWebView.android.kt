@@ -1,6 +1,7 @@
 package com.chukchukhaksa.mobile.common.designsystem.component.webview
 
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -41,17 +42,31 @@ actual fun CchHomeWebView(
 
   AndroidView(
     modifier = modifier,
-    factory = { _ ->
-      val view = holder.webView
-      (view.parent as? ViewGroup)?.removeView(view)
-      view.layoutParams = ViewGroup.LayoutParams(
-        ViewGroup.LayoutParams.MATCH_PARENT,
-        ViewGroup.LayoutParams.MATCH_PARENT,
-      )
-      view
+    factory = { context ->
+      FrameLayout(context).apply {
+        layoutParams = ViewGroup.LayoutParams(
+          ViewGroup.LayoutParams.MATCH_PARENT,
+          ViewGroup.LayoutParams.MATCH_PARENT,
+        )
+      }
     },
-    onRelease = { view ->
-      (view.parent as? ViewGroup)?.removeView(view)
+    update = { container ->
+      val view = holder.webView
+      val currentParent = view.parent as? ViewGroup
+      if (currentParent !== container) {
+        currentParent?.removeView(view)
+        container.addView(
+          view,
+          FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT,
+          ),
+        )
+      }
+      view.requestLayout()
+    },
+    onRelease = { container ->
+      container.removeAllViews()
     },
   )
 }
