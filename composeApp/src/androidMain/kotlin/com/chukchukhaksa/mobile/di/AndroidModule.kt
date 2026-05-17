@@ -1,5 +1,6 @@
 package com.chukchukhaksa.mobile.di
 
+import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
 import com.chukchukhaksa.mobile.common.kmp.AppleSignInClient
 import com.chukchukhaksa.mobile.common.kmp.KakaoSignInClient
 import eu.anifantakis.lib.ksafe.KSafe
@@ -18,4 +19,5 @@ actual val platformModule = module {
     factory { AppleSignInClient() }
     factory { KakaoSignInClient() }
     single { KSafe(androidApplication()) }
+    single { WebViewHolder(androidApplication()) }
 }

@@ -25,6 +25,11 @@ class TimetableViewModel(
 ) : ViewModel() {
     val mviStore = mviStore<TimetableState, TimetableSideEffect>(TimetableState())
 
+    init {
+        getProfile()
+        getAcademicSummary()
+    }
+
     fun getMainTimetable() = viewModelScope.launch {
         val cellType = TimetableCellType.getType(getTimetableCellTypeUseCase().getOrNull())
 
@@ -34,13 +39,23 @@ class TimetableViewModel(
                     copy(
                         timetable = timetable,
                         cellType = cellType,
-                        timetableScreen = if (timetable == null) TimetableScreen.EMPTY_TIMETABLE else TimetableScreen.TIMETABLE,
+                        timetableScreen = timetableScreen
+                            ?: if (timetable == null) TimetableScreen.EMPTY_TIMETABLE else TimetableScreen.TIMETABLE,
                     )
                 }
             }
             .onFailure {
                 mviStore.postSideEffect(TimetableSideEffect.HandleException(it))
             }
+    }
+
+    fun showTimetableTab() {
+        mviStore.setState {
+            copy(
+                timetableScreen = if (timetable == null) TimetableScreen.EMPTY_TIMETABLE else TimetableScreen.TIMETABLE,
+            )
+        }
+        getMainTimetable()
     }
 
     fun deleteCell(cell: TimetableCell) = viewModelScope.launch {

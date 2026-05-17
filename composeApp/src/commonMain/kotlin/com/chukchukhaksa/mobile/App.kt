@@ -28,6 +28,7 @@ import com.chukchukhaksa.mobile.common.kmp.Platform.*
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.domain.auth.usecase.CheckAuthStateUseCase
+import com.chukchukhaksa.mobile.domain.webview.WebViewPreloader
 import com.chukchukhaksa.mobile.presentation.landing.navigation.LandingRoute
 import com.chukchukhaksa.mobile.presentation.landing.navigation.landingNavGraph
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.TimetableRoute
@@ -54,6 +55,7 @@ fun App(
             val uiState = viewModel.mviStore.uiState.collectAsState().value
             val uriHandler = LocalUriHandler.current
             val checkAuthStateUseCase: CheckAuthStateUseCase = koinInject()
+            val webViewPreloader: WebViewPreloader = koinInject()
             var startDestination by remember { mutableStateOf<String?>(null) }
 
             viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
@@ -66,6 +68,9 @@ fun App(
                 val isAuthenticated = checkAuthStateUseCase().getOrDefault(false)
                 startDestination = if (isAuthenticated) TimetableRoute.route else LandingRoute.route
 //              startDestination = TimetableRoute.route
+                if (isAuthenticated) {
+                    webViewPreloader.preload()
+                }
                 onReady()
             }
 
@@ -97,7 +102,10 @@ fun App(
                             landingNavGraph(
                                 handleException = viewModel::handleException,
                                 onShowToast = viewModel::onShowToast,
-                                navigateToHome = navigator::navigateFromLandingToHome,
+                                navigateToHome = {
+                                    webViewPreloader.preload()
+                                    navigator.navigateFromLandingToHome()
+                                },
                             )
 
                             timetableNavGraph(

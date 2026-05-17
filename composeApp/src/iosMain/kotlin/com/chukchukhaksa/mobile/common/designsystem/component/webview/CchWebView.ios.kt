@@ -236,7 +236,7 @@ private class WebViewNavigationDelegate(
 }
 
 @OptIn(ExperimentalForeignApi::class)
-private fun setComposeEdgeGestureEnabled(webView: WKWebView, enabled: Boolean) {
+internal fun setComposeEdgeGestureEnabled(webView: WKWebView, enabled: Boolean) {
   var view: UIView? = webView.superview
   while (view != null) {
     view.gestureRecognizers?.forEach { recognizer ->

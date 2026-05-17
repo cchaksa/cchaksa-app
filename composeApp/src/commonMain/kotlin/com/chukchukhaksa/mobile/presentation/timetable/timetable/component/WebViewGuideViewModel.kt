@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.BridgeMessage
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewCookie
+import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.webHomeUrl
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
@@ -18,16 +19,20 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import kotlin.time.TimeSource
 
 class WebViewGuideViewModel(
   private val exchangeWebSession: ExchangeWebSessionUseCase,
   private val authEventBus: AuthEventBus,
+  private val webViewHolder: WebViewHolder,
 ) : ViewModel() {
 
   val mviStore: MviStore<WebViewGuideState, WebViewGuideSideEffect> =
     mviStore(WebViewGuideState())
 
   private val currentHost: String = webHomeUrl.substringAfter("://").substringBefore("/")
+  private val timeSource = TimeSource.Monotonic
+  private var lastPushMark: TimeSource.Monotonic.ValueTimeMark? = null
 
   init {
     observeCookies()
@@ -39,8 +44,14 @@ class WebViewGuideViewModel(
     viewModelScope.launch {
       val status = exchangeWebSession.refresh()
       mviStore.setState { copy(exchangeStatus = status) }
-      if (status is ExchangeStatus.Failed400) {
-        mviStore.postSideEffect(WebViewGuideSideEffect.NavigateToLogin)
+      when {
+        status is ExchangeStatus.Failed400 -> {
+          mviStore.postSideEffect(WebViewGuideSideEffect.NavigateToLogin)
+        }
+
+        status == ExchangeStatus.Loaded && !webViewHolder.isInitialLoaded() -> {
+          webViewHolder.preload(webHomeUrl, exchangeWebSession.cookies.value)
+        }
       }
     }
   }
@@ -50,10 +61,17 @@ class WebViewGuideViewModel(
     when (val action = message.toAction(currentHost)) {
       is BridgeAction.NavigateWebView -> {
         val previous = mviStore.uiState.value.lastPushedUrl
-        if (previous == action.absoluteUrl) {
-          Napier.w(tag = "BridgeAction") { "Skipped duplicate push: ${action.absoluteUrl}" }
+        val mark = lastPushMark
+        if (previous == action.absoluteUrl &&
+          mark != null &&
+          mark.elapsedNow().inWholeMilliseconds < DUPLICATE_PUSH_DEBOUNCE_MS
+        ) {
+          Napier.w(tag = "BridgeAction") {
+            "Skipped duplicate push within ${mark.elapsedNow().inWholeMilliseconds}ms: ${action.absoluteUrl}"
+          }
           return
         }
+        lastPushMark = timeSource.markNow()
         mviStore.setState { copy(lastPushedUrl = action.absoluteUrl) }
         mviStore.postSideEffect(WebViewGuideSideEffect.NavigateWebView(absoluteUrl = action.absoluteUrl))
       }
@@ -75,6 +93,7 @@ class WebViewGuideViewModel(
       authEventBus.events.collect { event ->
         if (event is AuthEvent.TokenExpired) {
           exchangeWebSession.clear()
+          webViewHolder.reset()
           mviStore.setState {
             copy(
               exchangeStatus = ExchangeStatus.NotLoggedIn,
@@ -99,3 +118,5 @@ sealed interface WebViewGuideSideEffect {
   data object NavigateToLogin : WebViewGuideSideEffect
   data class NavigateWebView(val absoluteUrl: String) : WebViewGuideSideEffect
 }
+
+private const val DUPLICATE_PUSH_DEBOUNCE_MS = 500L

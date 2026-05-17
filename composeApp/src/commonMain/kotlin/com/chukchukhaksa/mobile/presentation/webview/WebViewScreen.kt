@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +26,9 @@ import com.chukchukhaksa.mobile.common.ui.PlatformBackHandler
 import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import io.github.aakira.napier.Napier
 import org.koin.compose.koinInject
+import kotlin.time.TimeSource
+
+private const val DUPLICATE_PUSH_DEBOUNCE_MS = 500L
 
 @Composable
 fun WebViewRoute(
@@ -59,12 +64,13 @@ private fun WebViewRouteContent(
     url.substringAfter("://").substringBefore("/")
   }
   var lastPushedUrl by rememberSaveable { mutableStateOf<String?>(null) }
+  val lastPushMarkHolder = remember { object { var mark: TimeSource.Monotonic.ValueTimeMark? = null } }
 
   Column(
     modifier = Modifier
       .fillMaxSize()
       .background(White100)
-      .windowInsetsPadding(WindowInsets.systemBars),
+      .windowInsetsPadding(WindowInsets.systemBars.union(WindowInsets.ime)),
   ) {
     CchWebView(
       url = url,
@@ -74,10 +80,15 @@ private fun WebViewRouteContent(
         Napier.w(tag = "BridgeAction") { "raw message: $message" }
         when (val action = message.toAction(currentHost)) {
           is BridgeAction.NavigateWebView -> {
-            if (lastPushedUrl == action.absoluteUrl) {
-              Napier.w(tag = "BridgeAction") { "Skipped duplicate push: ${action.absoluteUrl}" }
+            val mark = lastPushMarkHolder.mark
+            val elapsedMs = mark?.elapsedNow()?.inWholeMilliseconds ?: Long.MAX_VALUE
+            if (lastPushedUrl == action.absoluteUrl && elapsedMs < DUPLICATE_PUSH_DEBOUNCE_MS) {
+              Napier.w(tag = "BridgeAction") {
+                "Skipped duplicate push within ${elapsedMs}ms: ${action.absoluteUrl}"
+              }
             } else {
               lastPushedUrl = action.absoluteUrl
+              lastPushMarkHolder.mark = TimeSource.Monotonic.markNow()
               onNavigateWebView(action.absoluteUrl)
             }
           }

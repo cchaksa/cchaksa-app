@@ -4,6 +4,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.webview.sessionApi
 import com.chukchukhaksa.mobile.common.kmp.httpClientEngineFactory
 import com.chukchukhaksa.mobile.common.kmp.isDebug
 import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
+import com.chukchukhaksa.mobile.domain.webview.WebViewPreloader
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.WebViewGuideViewModel
 import com.chukchukhaksa.mobile.remote.auth.SessionApi
 import com.chukchukhaksa.mobile.remote.auth.SessionApiImpl
@@ -63,6 +64,8 @@ val webViewModule = module {
   }
 
   single { ExchangeWebSessionUseCase(localAuthDataSource = get(), sessionApi = get()) }
+
+  single { WebViewPreloader(exchangeWebSession = get(), webViewHolder = get()) }
 
   viewModelOf(::WebViewGuideViewModel)
 }
