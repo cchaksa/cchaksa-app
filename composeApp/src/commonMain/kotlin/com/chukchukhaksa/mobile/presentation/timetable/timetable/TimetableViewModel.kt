@@ -11,6 +11,7 @@ import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseC
 import com.chukchukhaksa.mobile.domain.timetable.usecase.GetMainTimetableUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.GetTimetableCellTypeUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.SetTimetableCellTypeUseCase
+import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.toCellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell.TimetableCellType
 import kotlinx.coroutines.launch
@@ -21,13 +22,30 @@ class TimetableViewModel(
     private val deleteTimetableCellUseCase: DeleteTimetableCellUseCase,
     private val setTimetableCellTypeUseCase: SetTimetableCellTypeUseCase,
     private val getProfileUseCase: GetProfileUseCase,
-    private val getAcademicSummaryUseCase: GetAcademicSummaryUseCase
+    private val getAcademicSummaryUseCase: GetAcademicSummaryUseCase,
+    private val exchangeWebSessionUseCase: ExchangeWebSessionUseCase,
 ) : ViewModel() {
     val mviStore = mviStore<TimetableState, TimetableSideEffect>(TimetableState())
 
     init {
         getProfile()
         getAcademicSummary()
+        observePortalLinked()
+        refreshWebSession()
+    }
+
+    private fun observePortalLinked() {
+        viewModelScope.launch {
+            exchangeWebSessionUseCase.isPortalLinked.collect { linked ->
+                mviStore.setState { copy(isPortalLinked = linked) }
+            }
+        }
+    }
+
+    private fun refreshWebSession() {
+        viewModelScope.launch {
+            exchangeWebSessionUseCase.refresh()
+        }
     }
 
     fun getMainTimetable() = viewModelScope.launch {
@@ -122,6 +140,14 @@ class TimetableViewModel(
 
     fun showHomeScreen() {
         mviStore.setState { copy(timetableScreen = TimetableScreen.HOME) }
+    }
+
+    fun showPortalLinkDialog() {
+        mviStore.setState { copy(showPortalLinkDialog = true) }
+    }
+
+    fun hidePortalLinkDialog() {
+        mviStore.setState { copy(showPortalLinkDialog = false) }
     }
 
     fun navigateSemesterSelect() {

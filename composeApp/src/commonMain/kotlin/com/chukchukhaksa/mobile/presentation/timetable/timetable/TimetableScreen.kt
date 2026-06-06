@@ -17,6 +17,7 @@ import chukchukhaksa.composeapp.generated.resources.timetable_screen_need_create
 import chukchukhaksa.composeapp.generated.resources.timetable_screen_select_type_cell_title
 import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchSelectBottomSheet
+import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
@@ -26,6 +27,9 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.Timet
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.Timetable
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell.TimetableCellType
 import com.chukchukhaksa.mobile.common.designsystem.component.tabbar.TimetableTabBar
+import com.chukchukhaksa.mobile.common.designsystem.component.webview.webMyPageUrl
+import com.chukchukhaksa.mobile.common.designsystem.component.webview.webPortalLoginUrl
+import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.getString
@@ -34,6 +38,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import com.chukchukhaksa.mobile.widget.sendWidgetUpdateCommand
 import com.chukchukhaksa.mobile.common.provider.LocalAppContext
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.WebViewGuideScreen
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun TimetableRoute(
@@ -93,10 +98,21 @@ fun TimetableRoute(
     },
     onClickSetting = viewModel::showSelectCellTypeBottomSheet,
     onClickHamburger = viewModel::navigateTimetableList,
-    onClickHome = viewModel::showHomeScreen,
+    onClickHome = {
+      if (!uiState.isPortalLinked) {
+        viewModel.showPortalLinkDialog()
+      } else {
+        viewModel.showHomeScreen()
+      }
+    },
     onClickTimetable = viewModel::showTimetableTab,
-    onClickMyPage = viewModel::showHomeScreen,
+    onClickMyPage = { navigateWebView(webMyPageUrl) },
     onClickWebView = { navigateWebView("https://www.cchaksa.com/") },
+    onDismissPortalLinkDialog = viewModel::hidePortalLinkDialog,
+    onConfirmPortalLinkDialog = {
+      viewModel.hidePortalLinkDialog()
+      navigateWebView(webPortalLoginUrl)
+    },
     navigateToLanding = navigateToLanding,
     navigateWebView = navigateWebView,
   )
@@ -122,6 +138,8 @@ fun TimetableScreen(
   onClickWebView: () -> Unit = {},
   navigateToLanding: () -> Unit = {},
   navigateWebView: (String) -> Unit = {},
+  onDismissPortalLinkDialog: () -> Unit = {},
+  onConfirmPortalLinkDialog: () -> Unit = {},
 ) {
     val semester = "${uiState.timetable?.year}년 ${uiState.timetable?.semester}학기"
     SuwikiBackground {
@@ -193,12 +211,24 @@ fun TimetableScreen(
       onClickEditButton = onClickTimetableCellEditButton,
     )
   }
+
+  if (uiState.showPortalLinkDialog) {
+    CchDialog(
+      headerText = "알림",
+      bodyText = "학교 연동 후 이용 가능한 기능입니다.\n학교 연동을 진행하시겠어요?",
+      confirmButtonText = "네",
+      dismissButtonText = "아니오",
+      onDismissRequest = onDismissPortalLinkDialog,
+      onClickConfirm = onConfirmPortalLinkDialog,
+      onClickDismiss = onDismissPortalLinkDialog,
+    )
+  }
 }
 
-//@Preview
-//@Composable
-//fun TimetableScreenPreview() {
-//    SuwikiTheme {
-//        TimetableScreen(padding = PaddingValues(0.dp))
-//    }
-//}
+@Preview
+@Composable
+fun TimetableScreenPreview() {
+  CchTheme {
+      TimetableScreen(padding = PaddingValues(0.dp))
+  }
+}

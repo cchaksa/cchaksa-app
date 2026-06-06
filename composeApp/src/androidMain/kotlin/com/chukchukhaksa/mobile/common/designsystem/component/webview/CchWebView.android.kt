@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import com.chukchukhaksa.mobile.BuildConfig
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.toLogString
 import io.github.aakira.napier.Napier
 
@@ -56,6 +57,9 @@ actual fun CchWebView(
     modifier = modifier,
     factory = { context ->
       WebView(context).apply {
+        if (BuildConfig.DEBUG) {
+          WebView.setWebContentsDebuggingEnabled(true)
+        }
         layoutParams = ViewGroup.LayoutParams(
           ViewGroup.LayoutParams.MATCH_PARENT,
           ViewGroup.LayoutParams.MATCH_PARENT,

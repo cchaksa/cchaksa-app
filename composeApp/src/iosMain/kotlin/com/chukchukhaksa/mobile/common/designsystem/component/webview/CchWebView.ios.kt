@@ -8,6 +8,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.interop.UIKitView
 import io.github.aakira.napier.Napier
+import kotlin.experimental.ExperimentalNativeApi
+import kotlin.native.Platform
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCSignatureOverride
@@ -39,7 +41,7 @@ import platform.darwin.NSObject
 
 private const val BRIDGE_HANDLER_NAME = "bridge"
 
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class, ExperimentalNativeApi::class)
 @Composable
 actual fun CchWebView(
   url: String,
@@ -66,6 +68,9 @@ actual fun CchWebView(
     ).apply {
       allowsBackForwardNavigationGestures = true
       customUserAgent = buildWebViewUserAgent("iOS")
+      if (Platform.isDebugBinary) {
+        setInspectable(true)
+      }
     }
   }
 

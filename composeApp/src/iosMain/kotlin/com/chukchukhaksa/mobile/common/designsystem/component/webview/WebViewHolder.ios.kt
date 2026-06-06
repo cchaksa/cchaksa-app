@@ -1,6 +1,8 @@
 package com.chukchukhaksa.mobile.common.designsystem.component.webview
 
 import io.github.aakira.napier.Napier
+import kotlin.experimental.ExperimentalNativeApi
+import kotlin.native.Platform
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCSignatureOverride
@@ -29,7 +31,7 @@ import platform.darwin.NSObject
 
 private const val BRIDGE_HANDLER_NAME = "bridge"
 
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class, ExperimentalNativeApi::class)
 actual class WebViewHolder {
 
   internal var bridgeMessageListener: ((BridgeMessage) -> Unit)? = null
@@ -90,6 +92,9 @@ actual class WebViewHolder {
       allowsBackForwardNavigationGestures = true
       customUserAgent = buildWebViewUserAgent("iOS")
       navigationDelegate = navDelegate
+      if (Platform.isDebugBinary) {
+        setInspectable(true)
+      }
     }
   }
 

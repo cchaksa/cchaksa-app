@@ -7,3 +7,9 @@ internal val webHomeUrl: String
 
 internal val sessionApiBaseUrl: String
   get() = if (isDebug) "https://dv.cchaksa.com" else "https://cchaksa.com"
+
+val webMyPageUrl: String
+  get() = if (isDebug) "https://dv.cchaksa.com/mpa/me" else "https://cchaksa.com/mpa/me"
+
+val webPortalLoginUrl: String
+  get() = if (isDebug) "https://dv.cchaksa.com/portal-login" else "https://cchaksa.com/portal-login"

@@ -6,9 +6,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,6 +28,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.TimetableScreen
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun TimetableTabBar(
@@ -52,14 +58,14 @@ fun TimetableTabBar(
 
     Spacer(modifier = Modifier.weight(1f))
 
-//    Icon(
-//      modifier = Modifier
-//        .padding(top = 4.dp, bottom = 4.dp, end = 10.dp)
-//        .cchClickable { onClickMyPage() },
-//      painter = painterResource(Res.drawable.ic_tabbar_mypage),
-//      contentDescription = "",
-//      tint = Black100,
-//    )
+    Icon(
+      modifier = Modifier
+        .padding(top = 4.dp, bottom = 4.dp, end = 10.dp)
+        .cchClickable { onClickMyPage() },
+      painter = painterResource(Res.drawable.ic_tabbar_mypage),
+      contentDescription = "",
+      tint = Black100,
+    )
   }
 }
 
@@ -74,7 +80,7 @@ fun TimetableTabBarItem(
 
   Column(
     modifier = modifier
-      .clip(CircleShape)
+      .clip(RoundedCornerShape(8.dp))
       .cchClickable { onClick() },
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
@@ -87,6 +93,21 @@ fun TimetableTabBarItem(
       text = text,
       style = CchTheme.typography.bodyMdStrong,
       color = textColor,
+    )
+  }
+}
+
+@Preview
+@Composable
+private fun TimetableTabBarPreview() {
+  CchTheme {
+    var selectedScreen by remember { mutableStateOf(TimetableScreen.HOME) }
+
+    TimetableTabBar(
+      timetableScreenContent = selectedScreen,
+      onClickHome = { selectedScreen = TimetableScreen.HOME },
+      onClickTimetable = { selectedScreen = TimetableScreen.TIMETABLE },
+      onClickMyPage = {},
     )
   }
 }

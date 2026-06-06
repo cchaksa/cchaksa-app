@@ -24,10 +24,13 @@ import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.component.toast.CchToast
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.kmp.AppLifecycleObserver
 import com.chukchukhaksa.mobile.common.kmp.Platform.*
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.domain.auth.usecase.CheckAuthStateUseCase
+import com.chukchukhaksa.mobile.domain.webview.ExchangeStatus
+import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import com.chukchukhaksa.mobile.domain.webview.WebViewPreloader
 import com.chukchukhaksa.mobile.presentation.landing.navigation.LandingRoute
 import com.chukchukhaksa.mobile.presentation.landing.navigation.landingNavGraph
@@ -37,6 +40,7 @@ import com.chukchukhaksa.mobile.presentation.webview.navigation.webViewNavGraph
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.FirebaseAnalytics
 import dev.gitlive.firebase.analytics.analytics
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinContext
@@ -56,6 +60,8 @@ fun App(
             val uriHandler = LocalUriHandler.current
             val checkAuthStateUseCase: CheckAuthStateUseCase = koinInject()
             val webViewPreloader: WebViewPreloader = koinInject()
+            val appLifecycleObserver: AppLifecycleObserver = koinInject()
+            val exchangeWebSession: ExchangeWebSessionUseCase = koinInject()
             var startDestination by remember { mutableStateOf<String?>(null) }
 
             viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
@@ -72,6 +78,16 @@ fun App(
                     webViewPreloader.preload()
                 }
                 onReady()
+            }
+
+            LaunchedEffect(Unit) {
+                appLifecycleObserver.onForeground.collect {
+                    val status = exchangeWebSession.refreshIfExpired() ?: return@collect
+                    if (status !is ExchangeStatus.Loaded) {
+                        Napier.w(tag = "App") { "Foreground refresh failed ($status) → navigating to Landing" }
+                        navigator.navigateToLanding()
+                    }
+                }
             }
 
             LaunchedEffect(key1 = Unit) {

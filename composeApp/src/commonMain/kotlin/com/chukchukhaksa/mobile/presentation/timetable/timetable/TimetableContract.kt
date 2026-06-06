@@ -17,6 +17,8 @@ data class TimetableState(
   val showSelectCellTypeBottomSheet: Boolean = false,
   val profile: Profile? = null,
   val academicSummary: AcademicSummary? = null,
+  val isPortalLinked: Boolean = false,
+  val showPortalLinkDialog: Boolean = false,
 )
 
 sealed interface TimetableSideEffect {

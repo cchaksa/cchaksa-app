@@ -1,7 +1,9 @@
 package com.chukchukhaksa.mobile.di
 
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
+import com.chukchukhaksa.mobile.common.kmp.AppLifecycleObserver
 import com.chukchukhaksa.mobile.common.kmp.AppleSignInClient
+import com.chukchukhaksa.mobile.common.kmp.IosAppLifecycleObserver
 import com.chukchukhaksa.mobile.common.kmp.KakaoSignInClient
 import eu.anifantakis.lib.ksafe.KSafe
 import com.chukchukhaksa.mobile.local.database.openlecture.database.OpenLectureDatabaseFactory
@@ -20,4 +22,5 @@ actual val platformModule
         factory { KakaoSignInClient(get()) }
         single { KSafe() }
         single { WebViewHolder() }
+        single<AppLifecycleObserver> { IosAppLifecycleObserver() }
     }
