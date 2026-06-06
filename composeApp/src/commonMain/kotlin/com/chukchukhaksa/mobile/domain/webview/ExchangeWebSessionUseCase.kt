@@ -18,12 +18,10 @@ class ExchangeWebSessionUseCase(
 ) {
   private val cache = MutableStateFlow<List<WebViewCookie>>(emptyList())
   private val _status = MutableStateFlow<ExchangeStatus>(ExchangeStatus.Loading)
-  private val _isPortalLinked = MutableStateFlow(false)
   private var lastTokenPair: Pair<String, String>? = null
 
   val cookies: StateFlow<List<WebViewCookie>> = cache.asStateFlow()
   val status: StateFlow<ExchangeStatus> = _status.asStateFlow()
-  val isPortalLinked: StateFlow<Boolean> = _isPortalLinked.asStateFlow()
 
   suspend fun refresh(): ExchangeStatus {
     Napier.d(tag = "ExchangeWebSession") { "refresh() called" }
@@ -35,7 +33,6 @@ class ExchangeWebSessionUseCase(
       }
       cache.value = emptyList()
       lastTokenPair = null
-      _isPortalLinked.value = false
       _status.value = ExchangeStatus.NotLoggedIn
       return ExchangeStatus.NotLoggedIn
     }
@@ -52,17 +49,15 @@ class ExchangeWebSessionUseCase(
     val nextStatus = result.fold(
       onSuccess = { exchange ->
         Napier.d(tag = "ExchangeWebSession") {
-          "Exchange success (cookies.size=${exchange.cookies.size}, isPortalLinked=${exchange.isPortalLinked}) → cache updated"
+          "Exchange success (cookies.size=${exchange.cookies.size}) → cache updated"
         }
         cache.value = exchange.cookies
-        _isPortalLinked.value = exchange.isPortalLinked
         lastTokenPair = if (exchange.cookies.isNotEmpty()) ac to re else null
         ExchangeStatus.Loaded
       },
       onFailure = { error ->
         Napier.w(tag = "ExchangeWebSession") { "Exchange failed: $error" }
         cache.value = emptyList()
-        _isPortalLinked.value = false
         lastTokenPair = null
         when (error) {
           is SessionExchangeError.MissingAccessToken,
@@ -104,7 +99,6 @@ class ExchangeWebSessionUseCase(
   fun clear() {
     Napier.d(tag = "ExchangeWebSession") { "clear() called → cache emptied" }
     cache.value = emptyList()
-    _isPortalLinked.value = false
     lastTokenPair = null
     _status.value = ExchangeStatus.NotLoggedIn
   }

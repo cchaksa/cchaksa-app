@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SessionExchangeSuccessDto(
   val ok: Boolean,
-  val isPortalLinked: Boolean,
 )
 
 @Serializable

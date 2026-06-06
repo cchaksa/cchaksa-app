@@ -8,6 +8,8 @@ import com.chukchukhaksa.mobile.domain.webview.WebViewPreloader
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.WebViewGuideViewModel
 import com.chukchukhaksa.mobile.remote.auth.SessionApi
 import com.chukchukhaksa.mobile.remote.auth.SessionApiImpl
+import com.chukchukhaksa.mobile.remote.user.UserApi
+import com.chukchukhaksa.mobile.remote.user.UserApiImpl
 import org.koin.core.module.dsl.viewModelOf
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
@@ -62,6 +64,8 @@ val webViewModule = module {
       baseUrl = sessionApiBaseUrl,
     )
   }
+
+  single<UserApi> { UserApiImpl(client = get()) }
 
   single { ExchangeWebSessionUseCase(localAuthDataSource = get(), sessionApi = get()) }
 

@@ -17,11 +17,13 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -46,6 +48,7 @@ import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -53,14 +56,14 @@ fun LandingRoute(
     viewModel: LandingViewModel = koinViewModel(),
     handleException: (Throwable) -> Unit,
     onShowToast: (String, Dp) -> Unit,
-    navigateToHome: () -> Unit,
+    navigateToHome: (isPortalLinked: Boolean) -> Unit,
 ) {
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     val context = LocalAppContext.current
 
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
-            is LandingSideEffect.NavigateHome -> navigateToHome()
+            is LandingSideEffect.NavigateHome -> navigateToHome(sideEffect.isPortalLinked)
             is LandingSideEffect.ShowToast -> onShowToast(sideEffect.message, 70.dp)
             is LandingSideEffect.HandleException -> handleException(sideEffect.throwable)
         }
@@ -118,6 +121,7 @@ fun LandingScreen(
                 containerColor = KakaoYellow,
                 contentColor = KakaoBlack,
                 enabled = !uiState.isLoading,
+                loading = uiState.loadingProvider == LoginProvider.KAKAO,
                 onClick = onKakaoLogin,
             )
 
@@ -131,6 +135,7 @@ fun LandingScreen(
                     containerColor = Black100,
                     contentColor = White100,
                     enabled = !uiState.isLoading,
+                    loading = uiState.loadingProvider == LoginProvider.APPLE,
                     onClick = onAppleLogin,
                 )
             }
@@ -151,6 +156,7 @@ private fun SocialLoginButton(
     containerColor: Color,
     contentColor: Color,
     enabled: Boolean,
+    loading: Boolean = false,
     onClick: () -> Unit,
 ) {
     val clickableModifier = if (enabled) {
@@ -162,27 +168,143 @@ private fun SocialLoginButton(
     Box(
         modifier = modifier
             .wrapContentHeight()
+            // 로그인 진행 중 비활성화된 버튼은 투명도를 낮춰 시각적으로 disabled 상태를 표시한다.
+            .alpha(if (enabled) 1f else 0.5f)
             .clip(RoundedCornerShape(10.dp))
             .then(clickableModifier)
             .background(containerColor)
             .padding(18.dp),
+        contentAlignment = Alignment.Center,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Image(
-                painter = painterResource(iconRes),
-                contentDescription = null,
-                modifier = Modifier.size(32.dp),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = text,
-                color = contentColor,
-                style = CchTheme.typography.bodyMdStrong,
-            )
+        // 로딩 중에도 버튼 높이가 흔들리지 않도록 아이콘과 동일한 32dp 높이를 유지한다.
+        if (loading) {
+            Box(
+                modifier = Modifier.height(32.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = contentColor,
+                    strokeWidth = 3.dp,
+                )
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Image(
+                    painter = painterResource(iconRes),
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = text,
+                    color = contentColor,
+                    style = CchTheme.typography.bodyMdStrong,
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun SocialLoginButtonPreviewContainer(content: @Composable () -> Unit) {
+    CchTheme {
+        Box(
+            modifier = Modifier
+                .background(White100)
+                .width(360.dp)
+                .padding(16.dp),
+        ) {
+            content()
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun SocialLoginButtonKakaoPreview() {
+    SocialLoginButtonPreviewContainer {
+        SocialLoginButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = "3초만에 카카오톡으로 시작하기",
+            iconRes = Res.drawable.ic_kakao_logo,
+            containerColor = KakaoYellow,
+            contentColor = KakaoBlack,
+            enabled = true,
+            loading = false,
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SocialLoginButtonKakaoLoadingPreview() {
+    SocialLoginButtonPreviewContainer {
+        SocialLoginButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = "3초만에 카카오톡으로 시작하기",
+            iconRes = Res.drawable.ic_kakao_logo,
+            containerColor = KakaoYellow,
+            contentColor = KakaoBlack,
+            enabled = false,
+            loading = true,
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SocialLoginButtonKakaoDisabledPreview() {
+    SocialLoginButtonPreviewContainer {
+        SocialLoginButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = "3초만에 카카오톡으로 시작하기",
+            iconRes = Res.drawable.ic_kakao_logo,
+            containerColor = KakaoYellow,
+            contentColor = KakaoBlack,
+            enabled = false,
+            loading = false,
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SocialLoginButtonApplePreview() {
+    SocialLoginButtonPreviewContainer {
+        SocialLoginButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = "애플 아이디로 시작하기",
+            iconRes = Res.drawable.ic_apple_logo,
+            containerColor = Black100,
+            contentColor = White100,
+            enabled = true,
+            loading = false,
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SocialLoginButtonAppleLoadingPreview() {
+    SocialLoginButtonPreviewContainer {
+        SocialLoginButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = "애플 아이디로 시작하기",
+            iconRes = Res.drawable.ic_apple_logo,
+            containerColor = Black100,
+            contentColor = White100,
+            enabled = false,
+            loading = true,
+            onClick = {},
+        )
     }
 }

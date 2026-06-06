@@ -12,7 +12,7 @@ object LandingRoute {
 fun NavGraphBuilder.landingNavGraph(
     handleException: (Throwable) -> Unit,
     onShowToast: (String, Dp) -> Unit,
-    navigateToHome: () -> Unit,
+    navigateToHome: (isPortalLinked: Boolean) -> Unit,
 ) {
     composable(route = LandingRoute.route) {
         LandingRoute(

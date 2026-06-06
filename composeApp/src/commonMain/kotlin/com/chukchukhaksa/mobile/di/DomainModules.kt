@@ -20,6 +20,7 @@ import com.chukchukhaksa.mobile.domain.timetable.usecase.SetTimetableCellTypeUse
 import com.chukchukhaksa.mobile.domain.timetable.usecase.UpdateOpenLectureIfNeedUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.UpdateTimetableCellUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.UpdateTimetableUseCase
+import com.chukchukhaksa.mobile.domain.user.usecase.GetPortalLinkStatusUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -54,6 +55,9 @@ val domainModule = module {
 
     // Profile use cases
     factory { GetProfileUseCase(get()) }
+
+    // User use cases
+    factory { GetPortalLinkStatusUseCase(get()) }
 
     // Academic use cases
     factory { GetAcademicSummaryUseCase(get()) }

@@ -53,8 +53,8 @@ class SessionApiImpl(
   }
 
   private suspend fun handleSuccess(response: HttpResponse): Result<SessionExchangeResult> {
-    val success: SessionExchangeSuccessDto = try {
-      response.body()
+    try {
+      response.body<SessionExchangeSuccessDto>()
     } catch (e: CancellationException) {
       throw e
     } catch (t: Throwable) {
@@ -71,10 +71,7 @@ class SessionApiImpl(
       "Parsed cookies (count=${cookies.size}): ${cookies.joinToString(" || ") { it.toLogString() }}"
     }
     return Result.success(
-      SessionExchangeResult(
-        cookies = cookies,
-        isPortalLinked = success.isPortalLinked,
-      ),
+      SessionExchangeResult(cookies = cookies),
     )
   }
 

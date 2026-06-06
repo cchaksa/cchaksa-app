@@ -1,6 +1,7 @@
 package com.chukchukhaksa.mobile.presentation.webview
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.BridgeMessage
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.CchWebView
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.CchWebViewController
+import com.chukchukhaksa.mobile.common.designsystem.component.webview.DebugWebViewBadge
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewCookie
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.rememberCchWebViewController
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
@@ -66,12 +68,13 @@ private fun WebViewRouteContent(
   var lastPushedUrl by rememberSaveable { mutableStateOf<String?>(null) }
   val lastPushMarkHolder = remember { object { var mark: TimeSource.Monotonic.ValueTimeMark? = null } }
 
-  Column(
+  Box(modifier = Modifier.fillMaxSize()) {
+   Column(
     modifier = Modifier
       .fillMaxSize()
       .background(White100)
       .windowInsetsPadding(WindowInsets.systemBars.union(WindowInsets.ime)),
-  ) {
+   ) {
     CchWebView(
       url = url,
       controller = controller,
@@ -98,5 +101,7 @@ private fun WebViewRouteContent(
       },
       modifier = Modifier.fillMaxSize(),
     )
+   }
+   DebugWebViewBadge()
   }
 }

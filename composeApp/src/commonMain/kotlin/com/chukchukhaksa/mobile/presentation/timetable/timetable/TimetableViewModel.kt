@@ -11,6 +11,7 @@ import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseC
 import com.chukchukhaksa.mobile.domain.timetable.usecase.GetMainTimetableUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.GetTimetableCellTypeUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.SetTimetableCellTypeUseCase
+import com.chukchukhaksa.mobile.domain.user.usecase.GetPortalLinkStatusUseCase
 import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.toCellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell.TimetableCellType
@@ -23,6 +24,7 @@ class TimetableViewModel(
     private val setTimetableCellTypeUseCase: SetTimetableCellTypeUseCase,
     private val getProfileUseCase: GetProfileUseCase,
     private val getAcademicSummaryUseCase: GetAcademicSummaryUseCase,
+    private val getPortalLinkStatusUseCase: GetPortalLinkStatusUseCase,
     private val exchangeWebSessionUseCase: ExchangeWebSessionUseCase,
 ) : ViewModel() {
     val mviStore = mviStore<TimetableState, TimetableSideEffect>(TimetableState())
@@ -30,15 +32,16 @@ class TimetableViewModel(
     init {
         getProfile()
         getAcademicSummary()
-        observePortalLinked()
+        fetchPortalLinkStatus()
         refreshWebSession()
     }
 
-    private fun observePortalLinked() {
+    private fun fetchPortalLinkStatus() {
         viewModelScope.launch {
-            exchangeWebSessionUseCase.isPortalLinked.collect { linked ->
-                mviStore.setState { copy(isPortalLinked = linked) }
-            }
+            getPortalLinkStatusUseCase()
+                .onSuccess { linked ->
+                    mviStore.setState { copy(isPortalLinked = linked) }
+                }
         }
     }
 

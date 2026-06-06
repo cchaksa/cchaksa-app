@@ -31,7 +31,7 @@ class ExchangeWebSessionUseCaseTest {
   @Test
   fun `missing tokens returns NotLoggedIn without API call`() = runTest {
     val auth = FakeLocalAuthDataSource()
-    val api = FakeSessionApi { Result.success(SessionExchangeResult(emptyList(), false)) }
+    val api = FakeSessionApi { Result.success(SessionExchangeResult(emptyList())) }
     val useCase = ExchangeWebSessionUseCase(auth, api)
 
     val status = useCase.refresh()
@@ -47,7 +47,7 @@ class ExchangeWebSessionUseCaseTest {
       WebViewCookie(name = "cchaksa_session", value = "abc", domain = ".cchaksa.com"),
     )
     val api = FakeSessionApi {
-      Result.success(SessionExchangeResult(cookies = cookies, isPortalLinked = false))
+      Result.success(SessionExchangeResult(cookies = cookies))
     }
     val useCase = ExchangeWebSessionUseCase(auth, api)
 
@@ -90,7 +90,7 @@ class ExchangeWebSessionUseCaseTest {
       WebViewCookie(name = "cchaksa_session", value = "abc", domain = ".cchaksa.com"),
     )
     val api = FakeSessionApi {
-      Result.success(SessionExchangeResult(cookies = cookies, isPortalLinked = false))
+      Result.success(SessionExchangeResult(cookies = cookies))
     }
     val useCase = ExchangeWebSessionUseCase(auth, api)
     useCase.refresh()

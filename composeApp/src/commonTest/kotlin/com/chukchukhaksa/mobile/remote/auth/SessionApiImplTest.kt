@@ -41,7 +41,7 @@ class SessionApiImplTest {
   fun `200 with set-cookie returns cookie list`() = runTest {
     val engine = MockEngine { _ ->
       respond(
-        content = ByteReadChannel("""{"ok":true,"isPortalLinked":false}"""),
+        content = ByteReadChannel("""{"ok":true}"""),
         status = HttpStatusCode.OK,
         headers = headersOf(
           HttpHeaders.ContentType to listOf("application/json"),
@@ -57,7 +57,6 @@ class SessionApiImplTest {
 
     assertTrue(result.isSuccess)
     val payload = result.getOrThrow()
-    assertEquals(false, payload.isPortalLinked)
     assertEquals(1, payload.cookies.size)
     val cookie = payload.cookies.first()
     assertEquals("cchaksa_session", cookie.name)
@@ -123,7 +122,7 @@ class SessionApiImplTest {
   fun `200 with set-cookie missing domain falls back to base url host`() = runTest {
     val engine = MockEngine { _ ->
       respond(
-        content = ByteReadChannel("""{"ok":true,"isPortalLinked":false}"""),
+        content = ByteReadChannel("""{"ok":true}"""),
         status = HttpStatusCode.OK,
         headers = headersOf(
           HttpHeaders.ContentType to listOf("application/json"),

@@ -8,7 +8,6 @@ interface SessionApi {
 
 data class SessionExchangeResult(
   val cookies: List<WebViewCookie>,
-  val isPortalLinked: Boolean,
 )
 
 sealed class SessionExchangeError : Throwable() {

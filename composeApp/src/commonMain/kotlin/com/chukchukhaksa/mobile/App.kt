@@ -22,6 +22,7 @@ import chukchukhaksa.composeapp.generated.resources.dialog_update_mandatory_head
 import chukchukhaksa.composeapp.generated.resources.word_confirm
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.component.toast.CchToast
+import com.chukchukhaksa.mobile.common.designsystem.component.webview.webPortalLoginUrl
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.kmp.AppLifecycleObserver
@@ -118,9 +119,13 @@ fun App(
                             landingNavGraph(
                                 handleException = viewModel::handleException,
                                 onShowToast = viewModel::onShowToast,
-                                navigateToHome = {
-                                    webViewPreloader.preload()
-                                    navigator.navigateFromLandingToHome()
+                                navigateToHome = { isPortalLinked ->
+                                    // 세션 쿠키 교환·preload는 LandingViewModel에서 이미 await 완료된 상태.
+                                    if (!isPortalLinked) {
+                                        navigator.navigateWebView(webPortalLoginUrl)
+                                    } else {
+                                      navigator.navigateFromLandingToHome()
+                                    }
                                 },
                             )
 

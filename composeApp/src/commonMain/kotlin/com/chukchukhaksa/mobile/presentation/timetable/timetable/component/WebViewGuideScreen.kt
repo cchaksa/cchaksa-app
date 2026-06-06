@@ -1,6 +1,7 @@
 package com.chukchukhaksa.mobile.presentation.timetable.timetable.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chukchukhaksa.mobile.common.designsystem.component.loading.LoadingScreen
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.BridgeMessage
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.CchHomeWebView
+import com.chukchukhaksa.mobile.common.designsystem.component.webview.DebugWebViewBadge
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.rememberCchWebViewController
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
@@ -58,12 +60,13 @@ private fun WebViewGuideContent(
     controller.goBack()
   }
 
-  Column(
+  Box(modifier = Modifier.fillMaxSize()) {
+   Column(
     modifier = Modifier
       .fillMaxSize()
       .background(White100)
       .windowInsetsPadding(WindowInsets.systemBars.union(WindowInsets.ime)),
-  ) {
+   ) {
     when (state.exchangeStatus) {
       ExchangeStatus.Loading -> if (holder.isInitialLoaded()) {
         CchHomeWebView(
@@ -85,5 +88,7 @@ private fun WebViewGuideContent(
         modifier = Modifier.fillMaxSize(),
       )
     }
+   }
+   DebugWebViewBadge()
   }
 }
