@@ -11,6 +11,7 @@ import com.chukchukhaksa.mobile.remote.common.getDataOrThrow
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.call.save
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.auth.Auth
@@ -19,16 +20,13 @@ import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.observer.ResponseObserver
 import io.ktor.client.plugins.plugin
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
 import io.ktor.http.content.TextContent
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -43,6 +41,35 @@ private fun String.prettyPrintJson(): String = try {
     prettyJson.encodeToString(JsonElement.serializer(), element)
 } catch (_: Exception) {
     this
+}
+
+private fun buildRequestLog(request: HttpRequestBuilder): String = buildString {
+    appendLine("REQUEST: ${request.method.value} ${request.url.buildString()}")
+    val headers = request.headers.entries()
+    if (headers.isNotEmpty()) {
+        appendLine("HEADERS")
+        headers.forEach { (key, values) -> appendLine("  -> $key: ${values.joinToString()}") }
+    }
+    val body = request.body
+    if (body is TextContent) {
+        appendLine("BODY:")
+        append(body.text.prettyPrintJson())
+    }
+}
+
+private suspend fun buildResponseLog(response: HttpResponse): String = buildString {
+    appendLine("RESPONSE: ${response.status}")
+    appendLine("FROM: ${response.call.request.method.value} ${response.call.request.url}")
+    val headers = response.headers.entries()
+    if (headers.isNotEmpty()) {
+        appendLine("HEADERS")
+        headers.forEach { (key, values) -> appendLine("  -> $key: ${values.joinToString()}") }
+    }
+    val text = response.bodyAsText()
+    if (text.isNotBlank()) {
+        appendLine("BODY:")
+        append(text.take(4096).prettyPrintJson())
+    }
 }
 
 private val BASE_URL = if (isDebug) "https://dev.api.cchaksa.com/api/" else "https://api.cchaksa.com/api/"
@@ -149,38 +176,6 @@ val httpClientModule = module {
                 configureBearerAuth(localAuthDataSource, authEventBus, refreshClient)
             }
 
-            install(Logging) {
-                logger = object : Logger {
-                    override fun log(message: String) {
-                        Napier.d(message, tag = "HttpClient")
-                    }
-                }
-                level = if (isDebug) LogLevel.HEADERS else LogLevel.NONE
-                sanitizeHeader { header ->
-                    header.equals(HttpHeaders.Authorization, ignoreCase = true) ||
-                        header.equals(HttpHeaders.Cookie, ignoreCase = true) ||
-                        header.equals(HttpHeaders.SetCookie, ignoreCase = true)
-                }
-            }
-
-            if (isDebug) {
-                install(ResponseObserver) {
-                    onResponse { response ->
-                        val contentType = response.headers[HttpHeaders.ContentType]
-                        if (contentType?.contains("application/json", ignoreCase = true) != true) return@onResponse
-
-                        val body = response.bodyAsText()
-                        if (body.isNotBlank()) {
-                            val preview = body.take(4096)
-                            Napier.d(
-                                "RESPONSE BODY:\n${preview.prettyPrintJson()}",
-                                tag = "HttpClient",
-                            )
-                        }
-                    }
-                }
-            }
-
             defaultRequest {
                 url(BASE_URL)
                 contentType(ContentType.Application.Json)
@@ -188,14 +183,10 @@ val httpClientModule = module {
         }.also { client ->
             if (isDebug) {
                 client.plugin(HttpSend).intercept { request ->
-                    val body = request.body
-                    if (body is TextContent) {
-                        Napier.d(
-                            "REQUEST BODY:\n${body.text.prettyPrintJson()}",
-                            tag = "HttpClient",
-                        )
-                    }
-                    execute(request)
+                    Napier.d(buildRequestLog(request), tag = "HttpClient")
+                    val call = execute(request).save()
+                    Napier.d(buildResponseLog(call.response), tag = "HttpClient")
+                    call
                 }
             }
         }
