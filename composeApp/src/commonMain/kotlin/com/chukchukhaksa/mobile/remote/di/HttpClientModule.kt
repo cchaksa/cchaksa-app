@@ -32,6 +32,7 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 private val prettyJson = Json { prettyPrint = true }
@@ -79,6 +80,20 @@ internal val AUTH_EXCLUDED_PATHS = listOf(
     "users/signin",
 )
 
+// Auth 플러그인이 없는 클라이언트 식별자.
+// 토큰 갱신/로그인처럼 401 자동 재발급 로직을 타면 안 되는 인증 엔드포인트 전용으로 사용한다.
+internal val AUTH_REFRESH_CLIENT_QUALIFIER = named("authRefreshClient")
+
+// AccessToken 만료 에러 코드. 이 코드일 때만 토큰 갱신을 시도한다.
+internal const val ACCESS_TOKEN_EXPIRED_CODE = "T04"
+
+// 401 응답 body에서 에러 코드를 추출한다. 파싱 실패 시 null.
+private suspend fun HttpResponse.parseErrorCode(): String? = try {
+    body<ApiResponse<JsonElement>>().error?.code
+} catch (e: Exception) {
+    null
+}
+
 internal fun AuthConfig.configureBearerAuth(
     localAuthDataSource: LocalAuthDataSource,
     authEventBus: AuthEventBus,
@@ -96,6 +111,15 @@ internal fun AuthConfig.configureBearerAuth(
         }
 
         refreshTokens {
+            // AccessToken 만료(T04)일 때만 토큰 갱신을 시도한다.
+            // 그 외 인증 오류(예: T11 RefreshToken 불일치)는 갱신해도 실패하므로 세션 만료로 처리한다.
+            val errorCode = response.parseErrorCode()
+            if (errorCode != ACCESS_TOKEN_EXPIRED_CODE) {
+                localAuthDataSource.clearTokens()
+                authEventBus.emit()
+                return@refreshTokens null
+            }
+
             val currentRefreshToken = localAuthDataSource.getRefreshToken()
             if (currentRefreshToken == null) {
                 localAuthDataSource.clearTokens()
@@ -104,11 +128,11 @@ internal fun AuthConfig.configureBearerAuth(
             }
 
             try {
-                val response = refreshClient.post("auth/refresh") {
+                val refreshResponse = refreshClient.post("auth/refresh") {
                     setBody(RefreshRequest(refreshToken = currentRefreshToken))
                 }.body<ApiResponse<RefreshResponse>>()
 
-                val result = response.getDataOrThrow()
+                val result = refreshResponse.getDataOrThrow()
                 localAuthDataSource.saveAccessToken(result.accessToken)
                 localAuthDataSource.saveRefreshToken(result.refreshToken)
                 BearerTokens(result.accessToken, result.refreshToken)
@@ -129,14 +153,26 @@ internal fun AuthConfig.configureBearerAuth(
     }
 }
 
+// 디버그 빌드에서 요청/응답을 로깅하는 인터셉터를 설치한다.
+private fun HttpClient.installDebugLogging(): HttpClient = also { client ->
+    if (isDebug) {
+        client.plugin(HttpSend).intercept { request ->
+            Napier.d(buildRequestLog(request), tag = "HttpClient")
+            val call = execute(request).save()
+            Napier.d(buildResponseLog(call.response), tag = "HttpClient")
+            call
+        }
+    }
+}
+
 val httpClientModule = module {
     single { AuthEventBus() }
 
-    single {
-        val localAuthDataSource: LocalAuthDataSource = get()
-        val authEventBus: AuthEventBus = get()
-
-        val refreshClient = HttpClient(httpClientEngineFactory) {
+    // Auth 플러그인이 없는 인증 전용 클라이언트.
+    // 토큰 갱신(auth/refresh)·로그인(users/signin) 및 Auth 플러그인의 401 자동 재발급에 사용한다.
+    // 이 클라이언트로 보낸 요청이 401을 받아도 갱신 로직이 중첩 실행되지 않는다.
+    single<HttpClient>(qualifier = AUTH_REFRESH_CLIENT_QUALIFIER) {
+        HttpClient(httpClientEngineFactory) {
             install(HttpTimeout) {
                 requestTimeoutMillis = 10_000
                 connectTimeoutMillis = 5_000
@@ -154,7 +190,13 @@ val httpClientModule = module {
                 url(BASE_URL)
                 contentType(ContentType.Application.Json)
             }
-        }
+        }.installDebugLogging()
+    }
+
+    single {
+        val localAuthDataSource: LocalAuthDataSource = get()
+        val authEventBus: AuthEventBus = get()
+        val refreshClient: HttpClient = get(qualifier = AUTH_REFRESH_CLIENT_QUALIFIER)
 
         HttpClient(httpClientEngineFactory) {
             install(HttpTimeout) {
@@ -180,15 +222,6 @@ val httpClientModule = module {
                 url(BASE_URL)
                 contentType(ContentType.Application.Json)
             }
-        }.also { client ->
-            if (isDebug) {
-                client.plugin(HttpSend).intercept { request ->
-                    Napier.d(buildRequestLog(request), tag = "HttpClient")
-                    val call = execute(request).save()
-                    Napier.d(buildResponseLog(call.response), tag = "HttpClient")
-                    call
-                }
-            }
-        }
+        }.installDebugLogging()
     }
 }

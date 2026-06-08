@@ -249,6 +249,46 @@ class TokenAuthIntegrationTest {
         assertTrue(events.any { it is AuthEvent.TokenExpired })
     }
 
+    @Test
+    fun `T04가 아닌 에러 응답 시 토큰 리프레시를 시도하지 않고 세션을 만료시킨다`() = runTest {
+        val fakeDataSource = FakeLocalAuthDataSource(
+            initialAccessToken = "expired-access-token",
+            initialRefreshToken = "valid-refresh-token",
+        )
+        val authEventBus = AuthEventBus()
+
+        val events = mutableListOf<AuthEvent>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            authEventBus.events.collect { events.add(it) }
+        }
+
+        val mainEngine = MockEngine {
+            jsonResponse(
+                errorApiResponse(code = "T11", message = "RefreshToken이 일치하지 않습니다."),
+                HttpStatusCode.Unauthorized,
+            )
+        }
+
+        val refreshLog = mutableListOf<HttpRequestData>()
+        val refreshEngine = MockEngine { request ->
+            refreshLog.add(request)
+            jsonResponse(refreshSuccessResponse())
+        }
+
+        val client = buildTestClient(fakeDataSource, authEventBus, mainEngine, refreshEngine)
+        val response = client.get("timetable")
+
+        // 최종 응답은 401
+        assertEquals(HttpStatusCode.Unauthorized, response.status)
+        // 리프레시 API는 호출되지 않음
+        assertEquals(0, refreshLog.size)
+        // 토큰이 삭제됨
+        assertNull(fakeDataSource.getAccessToken())
+        assertNull(fakeDataSource.getRefreshToken())
+        // 인증 만료 이벤트 발행됨
+        assertTrue(events.any { it is AuthEvent.TokenExpired })
+    }
+
     // --- 동시 요청 리프레시 테스트 ---
 
     @Test
