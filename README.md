@@ -83,3 +83,34 @@ Presentation (MVI)  →  Domain (UseCase)  →  Data (Repository)
 ```
 
 각 화면은 `[Feature]State`, `[Feature]SideEffect`, `[Feature]ViewModel` 구조를 따릅니다.
+
+## Logging
+
+로깅은 [Napier](https://github.com/AAkira/Napier)를 사용합니다. 디버깅 시 Logcat(Android) / Xcode 콘솔(iOS)에서 아래 태그로 필터링할 수 있습니다.
+
+### WebView
+
+| Tag | 용도 |
+|-----|------|
+| `CchWebView` | 웹뷰 컴포저블 — 로드 / 네비게이션 등 생명주기 |
+| `WebViewHolder` | 웹뷰 인스턴스 홀더 — 재사용 / 생성 / 해제 |
+| `WebViewPreloader` | 웹뷰 프리로드 |
+| `WebViewUserAgent` | 웹뷰 User-Agent 구성 |
+| `WebConsole` | 웹 페이지의 `console.log` 를 네이티브 로그로 출력 |
+| `BridgeAction` | JS ↔ 네이티브 브릿지 액션 |
+
+### Network / Session
+
+| Tag | 용도 |
+|-----|------|
+| `HttpClient` | HTTP 요청 / 응답 로깅 (디버그 빌드 전용) |
+| `ExchangeWebSession` | 웹 세션 쿠키 재교환 |
+| `SessionApi` | 세션 API 호출 |
+| `UserApi` | 유저 API 호출 |
+
+### App
+
+| Tag | 용도 |
+|-----|------|
+| `AppLifecycle` | 앱 포그라운드 / 백그라운드 전환 |
+| `App` | 앱 전역 (포그라운드 토큰 갱신 등) |
