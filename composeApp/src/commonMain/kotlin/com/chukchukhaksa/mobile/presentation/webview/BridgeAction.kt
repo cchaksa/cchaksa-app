@@ -5,10 +5,13 @@ import io.github.aakira.napier.Napier
 
 sealed interface BridgeAction {
   data class NavigateWebView(val absoluteUrl: String) : BridgeAction
+  data object RedirectToHome : BridgeAction
   data class Unhandled(val reason: String, val raw: String) : BridgeAction
 }
 
 fun BridgeMessage.toAction(currentHost: String): BridgeAction = when (this) {
+  is BridgeMessage.RedirectToHome -> BridgeAction.RedirectToHome
+
   is BridgeMessage.Navigate -> {
     val invalidReason = validatePath(path)
     if (invalidReason != null) {

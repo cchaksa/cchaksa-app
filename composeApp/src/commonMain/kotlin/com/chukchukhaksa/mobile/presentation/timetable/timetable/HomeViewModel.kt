@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.ui.mviStore
-import com.chukchukhaksa.mobile.domain.academic.usecase.GetAcademicRecordUseCase
 import com.chukchukhaksa.mobile.domain.academic.usecase.GetAcademicSummaryUseCase
 import com.chukchukhaksa.mobile.domain.profile.usecase.GetProfileUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseCase
@@ -14,10 +13,11 @@ import com.chukchukhaksa.mobile.domain.timetable.usecase.SetTimetableCellTypeUse
 import com.chukchukhaksa.mobile.domain.user.usecase.GetPortalLinkStatusUseCase
 import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.toCellEditorArgument
+import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEventBus
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell.TimetableCellType
 import kotlinx.coroutines.launch
 
-class TimetableViewModel(
+class HomeViewModel(
     private val getMainTimetableUseCase: GetMainTimetableUseCase,
     private val getTimetableCellTypeUseCase: GetTimetableCellTypeUseCase,
     private val deleteTimetableCellUseCase: DeleteTimetableCellUseCase,
@@ -26,14 +26,29 @@ class TimetableViewModel(
     private val getAcademicSummaryUseCase: GetAcademicSummaryUseCase,
     private val getPortalLinkStatusUseCase: GetPortalLinkStatusUseCase,
     private val exchangeWebSessionUseCase: ExchangeWebSessionUseCase,
+    private val homeRedirectEventBus: HomeRedirectEventBus,
 ) : ViewModel() {
-    val mviStore = mviStore<TimetableState, TimetableSideEffect>(TimetableState())
+    val mviStore = mviStore<HomeState, HomeSideEffect>(HomeState())
 
     init {
         getProfile()
         getAcademicSummary()
         fetchPortalLinkStatus()
         refreshWebSession()
+        observeHomeRedirect()
+    }
+
+    private fun observeHomeRedirect() {
+        viewModelScope.launch {
+            homeRedirectEventBus.events.collect {
+                // 포털 연동 시 홈 탭, 미연동 시 시간표 탭을 선택한다.
+                if (mviStore.uiState.value.isPortalLinked) {
+                    showHomeScreen()
+                } else {
+                    showTimetableTab()
+                }
+            }
+        }
     }
 
     private fun fetchPortalLinkStatus() {
@@ -60,20 +75,20 @@ class TimetableViewModel(
                     copy(
                         timetable = timetable,
                         cellType = cellType,
-                        timetableScreen = timetableScreen
-                            ?: if (timetable == null) TimetableScreen.EMPTY_TIMETABLE else TimetableScreen.TIMETABLE,
+                        selectedTab = selectedTab
+                            ?: if (timetable == null) HomeTab.EMPTY_TIMETABLE else HomeTab.TIMETABLE,
                     )
                 }
             }
             .onFailure {
-                mviStore.postSideEffect(TimetableSideEffect.HandleException(it))
+                mviStore.postSideEffect(HomeSideEffect.HandleException(it))
             }
     }
 
     fun showTimetableTab() {
         mviStore.setState {
             copy(
-                timetableScreen = if (timetable == null) TimetableScreen.EMPTY_TIMETABLE else TimetableScreen.TIMETABLE,
+                selectedTab = if (timetable == null) HomeTab.EMPTY_TIMETABLE else HomeTab.TIMETABLE,
             )
         }
         getMainTimetable()
@@ -89,7 +104,7 @@ class TimetableViewModel(
                     )
                 }
             }
-            .onFailure { mviStore.postSideEffect(TimetableSideEffect.HandleException(it)) }
+            .onFailure { mviStore.postSideEffect(HomeSideEffect.HandleException(it)) }
     }
 
     fun showEditCellBottomSheet(cell: TimetableCell) = viewModelScope.launch {
@@ -134,7 +149,7 @@ class TimetableViewModel(
     }
 
     fun navigateCellEdit(cell: TimetableCell) {
-        mviStore.postSideEffect(TimetableSideEffect.NavigateCellEditor(cell.toCellEditorArgument()))
+        mviStore.postSideEffect(HomeSideEffect.NavigateCellEditor(cell.toCellEditorArgument()))
     }
 
     fun hideEditCellBottomSheet() {
@@ -142,7 +157,7 @@ class TimetableViewModel(
     }
 
     fun showHomeScreen() {
-        mviStore.setState { copy(timetableScreen = TimetableScreen.HOME) }
+        mviStore.setState { copy(selectedTab = HomeTab.HOME) }
     }
 
     fun showPortalLinkDialog() {
@@ -154,20 +169,20 @@ class TimetableViewModel(
     }
 
     fun navigateSemesterSelect() {
-      mviStore.postSideEffect(TimetableSideEffect.NavigateSemesterSelect)
+      mviStore.postSideEffect(HomeSideEffect.NavigateSemesterSelect)
     }
 
 
   fun navigateTimetableList() {
-        mviStore.postSideEffect(TimetableSideEffect.NavigateTimetableList)
+        mviStore.postSideEffect(HomeSideEffect.NavigateTimetableList)
     }
 
     fun navigateAddTimetableCell() {
         val state = mviStore.uiState.value
         if (state.timetable == null) {
-            mviStore.postSideEffect(TimetableSideEffect.ShowNeedCreateTimetableToast)
+            mviStore.postSideEffect(HomeSideEffect.ShowNeedCreateTimetableToast)
         } else {
-            mviStore.postSideEffect(TimetableSideEffect.NavigateAddTimetableCell)
+            mviStore.postSideEffect(HomeSideEffect.NavigateAddTimetableCell)
         }
     }
 }

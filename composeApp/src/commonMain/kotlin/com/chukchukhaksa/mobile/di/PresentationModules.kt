@@ -5,7 +5,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.botto
 import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.openlecture.OpenLectureViewModel
 import com.chukchukhaksa.mobile.presentation.landing.LandingViewModel
-import com.chukchukhaksa.mobile.presentation.timetable.timetable.TimetableViewModel
+import com.chukchukhaksa.mobile.presentation.timetable.timetable.HomeViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput.TimetableNameInputViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.timetableeditor.TimetableEditorViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.timetablelist.TimetableListViewModel
@@ -15,7 +15,7 @@ import org.koin.dsl.module
 
 val presentationModule = module {
     viewModelOf(::LandingViewModel)
-    viewModelOf(::TimetableViewModel)
+    viewModelOf(::HomeViewModel)
     viewModelOf(::TimetableListViewModel)
     viewModelOf(::TimetableNameInputViewModel)
     viewModelOf(::TimetableEditorViewModel)

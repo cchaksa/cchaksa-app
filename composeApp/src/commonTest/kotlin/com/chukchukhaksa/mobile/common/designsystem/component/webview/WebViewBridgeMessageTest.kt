@@ -14,6 +14,14 @@ class WebViewBridgeMessageTest {
   }
 
   @Test
+  fun `parses redirectToHome`() {
+    assertEquals(
+      BridgeMessage.RedirectToHome,
+      BridgeMessage.parse("redirectToHome"),
+    )
+  }
+
+  @Test
   fun `treats other strings as unknown`() {
     assertEquals(
       BridgeMessage.Unknown(raw = "hello"),

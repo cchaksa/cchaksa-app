@@ -56,6 +56,12 @@ class BridgeActionTest {
   }
 
   @Test
+  fun `redirectToHome message becomes redirect to home action`() {
+    val action = BridgeMessage.RedirectToHome.toAction(host)
+    assertEquals(BridgeAction.RedirectToHome, action)
+  }
+
+  @Test
   fun `unknown message becomes unsupported prefix`() {
     val action = BridgeMessage.Unknown(raw = "hello").toAction(host)
     assertIs<BridgeAction.Unhandled>(action)

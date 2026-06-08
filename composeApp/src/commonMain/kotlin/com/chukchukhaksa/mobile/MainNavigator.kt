@@ -5,7 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.chukchukhaksa.mobile.presentation.landing.navigation.LandingRoute
-import com.chukchukhaksa.mobile.presentation.timetable.navigation.TimetableRoute
+import com.chukchukhaksa.mobile.presentation.timetable.navigation.HomeRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.navigateCellEditor
@@ -20,7 +20,7 @@ import com.chukchukhaksa.mobile.presentation.webview.navigation.navigateWebView
 class MainNavigator(
     val navController: NavHostController,
 ) {
-    val startDestination = TimetableRoute.route
+    val startDestination = HomeRoute.route
 
 
     fun navigateCellEditor(argument: CellEditorArgument) {
@@ -55,8 +55,22 @@ class MainNavigator(
         navController.navigateWebView(url)
     }
 
+    fun navigateToHome() {
+        // 이미 홈(HomeRoute)에 있으면 탭만 갱신하면 되므로 네비게이션은 하지 않는다.
+        if (isSameCurrentDestination(HomeRoute.route)) return
+
+        // 홈이 백스택에 있으면(홈 → 웹뷰 진입) 홈까지 pop, 없으면(랜딩 → 웹뷰 진입) 백스택을 비우고 홈으로 이동.
+        val poppedToHome = navController.popBackStack(HomeRoute.route, inclusive = false)
+        if (!poppedToHome) {
+            navController.navigate(HomeRoute.route) {
+                popUpTo(0) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
+    }
+
     fun navigateFromLandingToHome() {
-        navController.navigate(TimetableRoute.route) {
+        navController.navigate(HomeRoute.route) {
             popUpTo(LandingRoute.route) {
                 inclusive = true
             }
@@ -71,7 +85,7 @@ class MainNavigator(
     }
 
     fun popBackStackIfNotHome() {
-        if (!isSameCurrentDestination(TimetableRoute.route)) {
+        if (!isSameCurrentDestination(HomeRoute.route)) {
             navController.popBackStack()
         }
     }

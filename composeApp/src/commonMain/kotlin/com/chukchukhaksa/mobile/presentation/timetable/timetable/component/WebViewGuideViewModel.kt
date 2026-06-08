@@ -11,6 +11,7 @@ import com.chukchukhaksa.mobile.common.ui.mviStore
 import com.chukchukhaksa.mobile.domain.webview.ExchangeStatus
 import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import com.chukchukhaksa.mobile.presentation.webview.BridgeAction
+import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEventBus
 import com.chukchukhaksa.mobile.presentation.webview.toAction
 import com.chukchukhaksa.mobile.remote.auth.AuthEvent
 import com.chukchukhaksa.mobile.remote.auth.AuthEventBus
@@ -25,6 +26,7 @@ class WebViewGuideViewModel(
   private val exchangeWebSession: ExchangeWebSessionUseCase,
   private val authEventBus: AuthEventBus,
   private val webViewHolder: WebViewHolder,
+  private val homeRedirectEventBus: HomeRedirectEventBus,
 ) : ViewModel() {
 
   val mviStore: MviStore<WebViewGuideState, WebViewGuideSideEffect> =
@@ -75,6 +77,8 @@ class WebViewGuideViewModel(
         mviStore.setState { copy(lastPushedUrl = action.absoluteUrl) }
         mviStore.postSideEffect(WebViewGuideSideEffect.NavigateWebView(absoluteUrl = action.absoluteUrl))
       }
+
+      is BridgeAction.RedirectToHome -> homeRedirectEventBus.redirectToHome()
 
       is BridgeAction.Unhandled -> Unit
     }

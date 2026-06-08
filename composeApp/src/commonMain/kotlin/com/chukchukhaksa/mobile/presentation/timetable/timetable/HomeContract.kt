@@ -8,12 +8,12 @@ import com.chukchukhaksa.mobile.common.model.profile.Profile
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell.TimetableCellType
 
-data class TimetableState(
+data class HomeState(
   val timetable: Timetable? = null,
   val cellType: TimetableCellType = TimetableCellType.CLASSNAME_PROFESSOR_LOCATION,
   val selectedCell: TimetableCell = TimetableCell(color = TimetableCellColor.GRAY_DARK),
   val showEditCellBottomSheet: Boolean = false,
-  val timetableScreen: TimetableScreen? = null,
+  val selectedTab: HomeTab? = null,
   val showSelectCellTypeBottomSheet: Boolean = false,
   val profile: Profile? = null,
   val academicSummary: AcademicSummary? = null,
@@ -21,16 +21,16 @@ data class TimetableState(
   val showPortalLinkDialog: Boolean = false,
 )
 
-sealed interface TimetableSideEffect {
-  data object ShowNeedCreateTimetableToast : TimetableSideEffect
-  data object NavigateAddTimetableCell : TimetableSideEffect
-  data object NavigateTimetableList : TimetableSideEffect
-  data class NavigateCellEditor(val argument: CellEditorArgument) : TimetableSideEffect
-  data class HandleException(val throwable: Throwable) : TimetableSideEffect
-  data object NavigateSemesterSelect : TimetableSideEffect
+sealed interface HomeSideEffect {
+  data object ShowNeedCreateTimetableToast : HomeSideEffect
+  data object NavigateAddTimetableCell : HomeSideEffect
+  data object NavigateTimetableList : HomeSideEffect
+  data class NavigateCellEditor(val argument: CellEditorArgument) : HomeSideEffect
+  data class HandleException(val throwable: Throwable) : HomeSideEffect
+  data object NavigateSemesterSelect : HomeSideEffect
 }
 
-enum class TimetableScreen {
+enum class HomeTab {
   TIMETABLE,
   EMPTY_TIMETABLE,
   HOME

@@ -26,13 +26,13 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.cchClickable
-import com.chukchukhaksa.mobile.presentation.timetable.timetable.TimetableScreen
+import com.chukchukhaksa.mobile.presentation.timetable.timetable.HomeTab
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun TimetableTabBar(
-  timetableScreenContent: TimetableScreen,
+fun HomeTabBar(
+  selectedTab: HomeTab,
   onClickHome: () -> Unit,
   onClickTimetable: () -> Unit,
   onClickMyPage: () -> Unit,
@@ -45,14 +45,14 @@ fun TimetableTabBar(
     TimetableTabBarItem(
       modifier = Modifier.padding(start = 14.dp, end = 24.dp, bottom = 2.dp),
       text = "홈",
-      isSelected = (timetableScreenContent == TimetableScreen.HOME),
+      isSelected = (selectedTab == HomeTab.HOME),
       onClick = { onClickHome() }
     )
 
     TimetableTabBarItem(
       modifier = Modifier.padding(bottom = 2.dp),
       text = "시간표",
-      isSelected = (timetableScreenContent == TimetableScreen.EMPTY_TIMETABLE || timetableScreenContent == TimetableScreen.TIMETABLE),
+      isSelected = (selectedTab == HomeTab.EMPTY_TIMETABLE || selectedTab == HomeTab.TIMETABLE),
       onClick = { onClickTimetable() }
     )
 
@@ -99,14 +99,14 @@ fun TimetableTabBarItem(
 
 @Preview
 @Composable
-private fun TimetableTabBarPreview() {
+private fun HomeTabBarPreview() {
   CchTheme {
-    var selectedScreen by remember { mutableStateOf(TimetableScreen.HOME) }
+    var selectedTab by remember { mutableStateOf(HomeTab.HOME) }
 
-    TimetableTabBar(
-      timetableScreenContent = selectedScreen,
-      onClickHome = { selectedScreen = TimetableScreen.HOME },
-      onClickTimetable = { selectedScreen = TimetableScreen.TIMETABLE },
+    HomeTabBar(
+      selectedTab = selectedTab,
+      onClickHome = { selectedTab = HomeTab.HOME },
+      onClickTimetable = { selectedTab = HomeTab.TIMETABLE },
       onClickMyPage = {},
     )
   }

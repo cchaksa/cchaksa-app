@@ -12,7 +12,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorRout
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.openlecture.OpenLectureRoute
-import com.chukchukhaksa.mobile.presentation.timetable.timetable.TimetableRoute
+import com.chukchukhaksa.mobile.presentation.timetable.timetable.HomeRoute
 import com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput.TimetableNameInputRoute
 import com.chukchukhaksa.mobile.presentation.timetable.timetablelist.TimetableListRoute
 import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.SemesterSelectRoute
@@ -44,7 +44,7 @@ fun NavController.navigateSemesterSelect() {
 }
 
 fun NavController.navigateTimetable() {
-    navigate(TimetableRoute.route) {
+    navigate(HomeRoute.route) {
       popUpTo(0)
     }
 }
@@ -64,8 +64,8 @@ fun NavGraphBuilder.timetableNavGraph(
     handleException: (Throwable) -> Unit,
     onShowToast: (String, Dp) -> Unit,
 ) {
-    composable(route = TimetableRoute.route) {
-        TimetableRoute(
+    composable(route = HomeRoute.route) {
+        HomeRoute(
             padding = padding,
             navigateTimetableList = navigateTimetableList,
             handleException = handleException,
@@ -163,15 +163,21 @@ fun NavGraphBuilder.timetableNavGraph(
   }
 }
 
+/** 앱의 메인 탭 호스트(홈/시간표/마이페이지) = 시작 목적지. */
+object HomeRoute {
+    const val route = "home"
+}
+
+/** 시간표 탭에서 진입하는 하위 화면들의 라우트. */
 object TimetableRoute {
-    const val route = "timetable"
+    private const val base = "timetable"
     const val openLectureRoute = "open-lecture"
-    const val timetableListRoute = "$route/list"
+    const val timetableListRoute = "$base/list"
     const val semesterSelectRoute = "semester-select"
     const val CELL_EDITOR_ARGUMENT = "cell-editor-argument"
     const val TIMETABLE_EDITOR_ARGUMENT = "timetable-editor-argument"
 
-    fun timetableNameInputRoute(timetableEditor: String) = "$route/name-input/$timetableEditor"
-    fun timetableEditorRoute(timetableEditor: String) = "$route/editor/$timetableEditor"
+    fun timetableNameInputRoute(timetableEditor: String) = "$base/name-input/$timetableEditor"
+    fun timetableEditorRoute(timetableEditor: String) = "$base/editor/$timetableEditor"
     fun cellEditorRoute(cellEditor: String) = "cell-editor/$cellEditor"
 }

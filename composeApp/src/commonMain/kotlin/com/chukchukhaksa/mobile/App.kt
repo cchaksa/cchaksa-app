@@ -35,8 +35,9 @@ import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import com.chukchukhaksa.mobile.domain.webview.WebViewPreloader
 import com.chukchukhaksa.mobile.presentation.landing.navigation.LandingRoute
 import com.chukchukhaksa.mobile.presentation.landing.navigation.landingNavGraph
-import com.chukchukhaksa.mobile.presentation.timetable.navigation.TimetableRoute
+import com.chukchukhaksa.mobile.presentation.timetable.navigation.HomeRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.timetableNavGraph
+import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEventBus
 import com.chukchukhaksa.mobile.presentation.webview.navigation.webViewNavGraph
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.FirebaseAnalytics
@@ -63,6 +64,7 @@ fun App(
             val webViewPreloader: WebViewPreloader = koinInject()
             val appLifecycleObserver: AppLifecycleObserver = koinInject()
             val exchangeWebSession: ExchangeWebSessionUseCase = koinInject()
+            val homeRedirectEventBus: HomeRedirectEventBus = koinInject()
             var startDestination by remember { mutableStateOf<String?>(null) }
 
             viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
@@ -73,12 +75,18 @@ fun App(
 
             LaunchedEffect(Unit) {
                 val isAuthenticated = checkAuthStateUseCase().getOrDefault(false)
-                startDestination = if (isAuthenticated) TimetableRoute.route else LandingRoute.route
-//              startDestination = TimetableRoute.route
+                startDestination = if (isAuthenticated) HomeRoute.route else LandingRoute.route
+//              startDestination = HomeRoute.route
                 if (isAuthenticated) {
                     webViewPreloader.preload()
                 }
                 onReady()
+            }
+
+            LaunchedEffect(Unit) {
+                homeRedirectEventBus.events.collect {
+                    navigator.navigateToHome()
+                }
             }
 
             LaunchedEffect(Unit) {

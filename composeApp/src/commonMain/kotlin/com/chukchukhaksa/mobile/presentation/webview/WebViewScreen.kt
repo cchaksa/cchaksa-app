@@ -40,6 +40,7 @@ fun WebViewRoute(
 ) {
   val controller = rememberCchWebViewController()
   val exchangeWebSession: ExchangeWebSessionUseCase = koinInject()
+  val homeRedirectEventBus: HomeRedirectEventBus = koinInject()
   val cookies by exchangeWebSession.cookies.collectAsStateWithLifecycle()
 
   WebViewRouteContent(
@@ -48,6 +49,7 @@ fun WebViewRoute(
     popBackStack = popBackStack,
     controller = controller,
     onNavigateWebView = onNavigateWebView,
+    onRedirectToHome = homeRedirectEventBus::redirectToHome,
   )
 }
 
@@ -58,6 +60,7 @@ private fun WebViewRouteContent(
   popBackStack: () -> Unit,
   controller: CchWebViewController,
   onNavigateWebView: (String) -> Unit,
+  onRedirectToHome: () -> Unit,
 ) {
   PlatformBackHandler(enabled = controller.canGoBack) {
     controller.goBack()
@@ -95,6 +98,8 @@ private fun WebViewRouteContent(
               onNavigateWebView(action.absoluteUrl)
             }
           }
+
+          is BridgeAction.RedirectToHome -> onRedirectToHome()
 
           is BridgeAction.Unhandled -> Unit
         }

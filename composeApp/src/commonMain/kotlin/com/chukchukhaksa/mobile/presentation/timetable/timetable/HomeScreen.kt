@@ -26,7 +26,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.Timet
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.TimetableEmptyColumn
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.Timetable
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell.TimetableCellType
-import com.chukchukhaksa.mobile.common.designsystem.component.tabbar.TimetableTabBar
+import com.chukchukhaksa.mobile.common.designsystem.component.tabbar.HomeTabBar
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.webMyPageUrl
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.webPortalLoginUrl
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
@@ -41,9 +41,9 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.WebVi
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun TimetableRoute(
+fun HomeRoute(
   padding: PaddingValues,
-  viewModel: TimetableViewModel = koinViewModel(),
+  viewModel: HomeViewModel = koinViewModel(),
   navigateOpenLecture: () -> Unit,
   navigateTimetableList: () -> Unit,
   handleException: (Throwable) -> Unit,
@@ -58,12 +58,12 @@ fun TimetableRoute(
   val context = LocalAppContext.current
   viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
     when (sideEffect) {
-      is TimetableSideEffect.HandleException -> handleException(sideEffect.throwable)
-      TimetableSideEffect.NavigateAddTimetableCell -> navigateOpenLecture()
-      TimetableSideEffect.ShowNeedCreateTimetableToast -> onShowToast(getString(Res.string.timetable_screen_need_create_timetable), 70.dp)
-      is TimetableSideEffect.NavigateCellEditor -> navigateCellEditor(sideEffect.argument)
-      TimetableSideEffect.NavigateTimetableList -> navigateTimetableList()
-      TimetableSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
+      is HomeSideEffect.HandleException -> handleException(sideEffect.throwable)
+      HomeSideEffect.NavigateAddTimetableCell -> navigateOpenLecture()
+      HomeSideEffect.ShowNeedCreateTimetableToast -> onShowToast(getString(Res.string.timetable_screen_need_create_timetable), 70.dp)
+      is HomeSideEffect.NavigateCellEditor -> navigateCellEditor(sideEffect.argument)
+      HomeSideEffect.NavigateTimetableList -> navigateTimetableList()
+      HomeSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
     }
   }
 
@@ -79,7 +79,7 @@ fun TimetableRoute(
     }
   }
 
-  TimetableScreen(
+  HomeScreen(
     padding = padding,
     uiState = uiState,
     onClickAddTimetable = viewModel::navigateSemesterSelect,
@@ -119,9 +119,9 @@ fun TimetableRoute(
 }
 
 @Composable
-fun TimetableScreen(
+fun HomeScreen(
   padding: PaddingValues,
-  uiState: TimetableState = TimetableState(),
+  uiState: HomeState = HomeState(),
   onClickAddTimetable: () -> Unit = {},
   onClickAppbarAdd: () -> Unit = {},
   onClickTimetableCell: (TimetableCell) -> Unit = {},
@@ -148,14 +148,14 @@ fun TimetableScreen(
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            TimetableTabBar(
-                timetableScreenContent = uiState.timetableScreen ?: TimetableScreen.EMPTY_TIMETABLE,
+            HomeTabBar(
+                selectedTab = uiState.selectedTab ?: HomeTab.EMPTY_TIMETABLE,
                 onClickHome = { onClickHome() },
                 onClickTimetable = { onClickTimetable() },
                 onClickMyPage = { onClickMyPage() }
             )
 
-            if(uiState.timetableScreen == TimetableScreen.EMPTY_TIMETABLE) {
+            if(uiState.selectedTab == HomeTab.EMPTY_TIMETABLE) {
               TimetableEmptyColumn(
                 modifier = Modifier
                   .fillMaxSize()
@@ -164,7 +164,7 @@ fun TimetableScreen(
               )
             }
 
-            if(uiState.timetableScreen == TimetableScreen.TIMETABLE) {
+            if(uiState.selectedTab == HomeTab.TIMETABLE) {
               Column {
                 TimetableAppbar(
                   modifier = Modifier.padding(top = 8.dp, bottom = 12.dp, start = 20.dp, end = 20.dp),
@@ -182,7 +182,7 @@ fun TimetableScreen(
               }
             }
 
-            if(uiState.timetableScreen == TimetableScreen.HOME) {
+            if(uiState.selectedTab == HomeTab.HOME) {
               WebViewGuideScreen(
                 navigateToLogin = navigateToLanding,
                 navigateWebView = navigateWebView,
@@ -227,8 +227,8 @@ fun TimetableScreen(
 
 @Preview
 @Composable
-fun TimetableScreenPreview() {
+fun HomeScreenPreview() {
   CchTheme {
-      TimetableScreen(padding = PaddingValues(0.dp))
+      HomeScreen(padding = PaddingValues(0.dp))
   }
 }
