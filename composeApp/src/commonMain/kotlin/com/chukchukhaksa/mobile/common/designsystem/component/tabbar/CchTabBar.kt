@@ -32,7 +32,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun HomeTabBar(
-  selectedTab: HomeTab,
+  // null이면 어떤 탭도 강조하지 않는다(초기 로드 중 탭 미결정 상태).
+  selectedTab: HomeTab?,
   onClickHome: () -> Unit,
   onClickTimetable: () -> Unit,
   onClickMyPage: () -> Unit,

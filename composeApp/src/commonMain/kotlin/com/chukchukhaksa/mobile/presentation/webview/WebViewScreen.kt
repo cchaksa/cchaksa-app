@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,8 +26,10 @@ import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewCoo
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.rememberCchWebViewController
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.PlatformBackHandler
+import com.chukchukhaksa.mobile.domain.auth.usecase.WithdrawUseCase
 import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import kotlin.time.TimeSource
 
@@ -37,10 +40,13 @@ fun WebViewRoute(
   url: String,
   popBackStack: () -> Unit,
   onNavigateWebView: (String) -> Unit,
+  navigateToLanding: () -> Unit,
 ) {
   val controller = rememberCchWebViewController()
   val exchangeWebSession: ExchangeWebSessionUseCase = koinInject()
   val homeRedirectEventBus: HomeRedirectEventBus = koinInject()
+  val withdraw: WithdrawUseCase = koinInject()
+  val scope = rememberCoroutineScope()
   val cookies by exchangeWebSession.cookies.collectAsStateWithLifecycle()
 
   WebViewRouteContent(
@@ -50,6 +56,13 @@ fun WebViewRoute(
     controller = controller,
     onNavigateWebView = onNavigateWebView,
     onRedirectToHome = homeRedirectEventBus::redirectToHome,
+    // 회원 탈퇴 → 로컬 토큰·세션 정리 후 로그인(랜딩) 화면으로 이동.
+    onWithdraw = {
+      scope.launch {
+        withdraw()
+        navigateToLanding()
+      }
+    },
   )
 }
 
@@ -60,7 +73,8 @@ private fun WebViewRouteContent(
   popBackStack: () -> Unit,
   controller: CchWebViewController,
   onNavigateWebView: (String) -> Unit,
-  onRedirectToHome: () -> Unit,
+  onRedirectToHome: (reloadWebView: Boolean) -> Unit,
+  onWithdraw: () -> Unit,
 ) {
   PlatformBackHandler(enabled = controller.canGoBack) {
     controller.goBack()
@@ -99,7 +113,13 @@ private fun WebViewRouteContent(
             }
           }
 
-          is BridgeAction.RedirectToHome -> onRedirectToHome()
+          is BridgeAction.RedirectToHome -> onRedirectToHome(action.reloadWebView)
+
+          // 웹뷰가 더 뒤로 갈 수 있으면 웹뷰 뒤로가기, 아니면 네이티브 네비게이션 pop.
+          is BridgeAction.NavigateBack -> if (controller.canGoBack) controller.goBack() else popBackStack()
+
+          // 회원 탈퇴 → 로컬 토큰·세션 정리 후 로그인(랜딩) 화면으로 이동.
+          is BridgeAction.Withdraw -> onWithdraw()
 
           is BridgeAction.Unhandled -> Unit
         }

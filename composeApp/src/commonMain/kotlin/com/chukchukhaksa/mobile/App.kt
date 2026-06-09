@@ -22,6 +22,7 @@ import chukchukhaksa.composeapp.generated.resources.dialog_update_mandatory_head
 import chukchukhaksa.composeapp.generated.resources.word_confirm
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.component.toast.CchToast
+import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.webPortalLoginUrl
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
@@ -65,6 +66,7 @@ fun App(
             val appLifecycleObserver: AppLifecycleObserver = koinInject()
             val exchangeWebSession: ExchangeWebSessionUseCase = koinInject()
             val homeRedirectEventBus: HomeRedirectEventBus = koinInject()
+            val webViewHolder: WebViewHolder = koinInject()
             var startDestination by remember { mutableStateOf<String?>(null) }
 
             viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
@@ -84,7 +86,12 @@ fun App(
             }
 
             LaunchedEffect(Unit) {
-                homeRedirectEventBus.events.collect {
+                homeRedirectEventBus.events.collect { event ->
+                    // 신규로 진입할 HomeViewModel/WebViewGuideViewModel의 init refresh()가 재로드하도록
+                    // 네비게이션 이전에 홈 웹뷰 홀더를 먼저 리셋한다.
+                    if (event.reloadWebView) {
+                        webViewHolder.reset()
+                    }
                     navigator.navigateToHome()
                 }
             }
@@ -156,6 +163,7 @@ fun App(
                             webViewNavGraph(
                                 popBackStack = navigator::popBackStackIfNotHome,
                                 onNavigateWebView = navigator::navigateWebView,
+                                navigateToLanding = navigator::navigateToLanding,
                             )
                         }
 

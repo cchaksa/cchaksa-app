@@ -56,9 +56,27 @@ class BridgeActionTest {
   }
 
   @Test
-  fun `redirectToHome message becomes redirect to home action`() {
+  fun `redirectToHome message becomes redirect to home action without reload`() {
     val action = BridgeMessage.RedirectToHome.toAction(host)
-    assertEquals(BridgeAction.RedirectToHome, action)
+    assertEquals(BridgeAction.RedirectToHome(reloadWebView = false), action)
+  }
+
+  @Test
+  fun `portalLinkDone message becomes redirect to home action with reload`() {
+    val action = BridgeMessage.PortalLinkDone.toAction(host)
+    assertEquals(BridgeAction.RedirectToHome(reloadWebView = true), action)
+  }
+
+  @Test
+  fun `navigateBack message becomes navigate back action`() {
+    val action = BridgeMessage.NavigateBack.toAction(host)
+    assertEquals(BridgeAction.NavigateBack, action)
+  }
+
+  @Test
+  fun `withdraw message becomes withdraw action`() {
+    val action = BridgeMessage.Withdraw.toAction(host)
+    assertEquals(BridgeAction.Withdraw, action)
   }
 
   @Test

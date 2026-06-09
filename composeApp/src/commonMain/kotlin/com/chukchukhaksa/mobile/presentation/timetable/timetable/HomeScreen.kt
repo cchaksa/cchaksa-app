@@ -149,7 +149,8 @@ fun HomeScreen(
                 .padding(padding),
         ) {
             HomeTabBar(
-                selectedTab = uiState.selectedTab ?: HomeTab.EMPTY_TIMETABLE,
+                // 초기 로드 중(selectedTab == null)에는 어떤 탭도 강조하지 않는다.
+                selectedTab = uiState.selectedTab,
                 onClickHome = { onClickHome() },
                 onClickTimetable = { onClickTimetable() },
                 onClickMyPage = { onClickMyPage() }
@@ -229,6 +230,6 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
   CchTheme {
-      HomeScreen(padding = PaddingValues(0.dp))
+      HomeScreen(padding = PaddingValues(0.dp), uiState = HomeState(selectedTab = HomeTab.HOME))
   }
 }

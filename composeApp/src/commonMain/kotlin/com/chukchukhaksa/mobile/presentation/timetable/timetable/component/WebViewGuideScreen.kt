@@ -18,6 +18,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.webview.BridgeMess
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.CchHomeWebView
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.DebugWebViewBadge
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
+import com.chukchukhaksa.mobile.common.designsystem.component.webview.CchWebViewController
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.rememberCchWebViewController
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.PlatformBackHandler
@@ -34,17 +35,21 @@ fun WebViewGuideScreen(
   holder: WebViewHolder = koinInject(),
 ) {
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
+  val controller = rememberCchWebViewController()
 
   viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
     when (sideEffect) {
       WebViewGuideSideEffect.NavigateToLogin -> navigateToLogin()
       is WebViewGuideSideEffect.NavigateWebView -> navigateWebView(sideEffect.absoluteUrl)
+      // 홈 탭은 루트라 네이티브 pop 대상이 없으므로, 웹뷰가 뒤로 갈 수 있을 때만 웹뷰 뒤로가기.
+      WebViewGuideSideEffect.NavigateBack -> if (controller.canGoBack) controller.goBack()
     }
   }
 
   WebViewGuideContent(
     state = uiState,
     holder = holder,
+    controller = controller,
     onBridgeMessage = viewModel::onBridgeMessage,
   )
 }
@@ -53,9 +58,9 @@ fun WebViewGuideScreen(
 private fun WebViewGuideContent(
   state: WebViewGuideState,
   holder: WebViewHolder,
+  controller: CchWebViewController,
   onBridgeMessage: (BridgeMessage) -> Unit,
 ) {
-  val controller = rememberCchWebViewController()
   PlatformBackHandler(enabled = controller.canGoBack) {
     controller.goBack()
   }
@@ -65,7 +70,6 @@ private fun WebViewGuideContent(
     modifier = Modifier
       .fillMaxSize()
       .background(White100)
-      .windowInsetsPadding(WindowInsets.systemBars.union(WindowInsets.ime)),
    ) {
     when (state.exchangeStatus) {
       ExchangeStatus.Loading -> if (holder.isInitialLoaded()) {

@@ -17,6 +17,7 @@ fun NavController.navigateWebView(url: String) {
 fun NavGraphBuilder.webViewNavGraph(
   popBackStack: () -> Unit,
   onNavigateWebView: (String) -> Unit,
+  navigateToLanding: () -> Unit,
 ) {
   composable(
     route = WebViewRouteSpec.pattern(),
@@ -32,6 +33,7 @@ fun NavGraphBuilder.webViewNavGraph(
       url = url,
       popBackStack = popBackStack,
       onNavigateWebView = onNavigateWebView,
+      navigateToLanding = navigateToLanding,
     )
   }
 }
