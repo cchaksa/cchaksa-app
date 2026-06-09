@@ -91,11 +91,13 @@ actual fun CchWebView(
         webViewClient = object : WebViewClient() {
           override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
+            controller.isLoading = true
             Napier.d(tag = "CchWebView") { "onPageStarted url=$url" }
           }
 
           override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
+            controller.isLoading = false
             Napier.d(tag = "CchWebView") { "onPageFinished url=$url" }
           }
 

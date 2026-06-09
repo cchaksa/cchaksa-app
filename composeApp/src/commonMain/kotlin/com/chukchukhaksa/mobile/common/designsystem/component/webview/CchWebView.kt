@@ -11,6 +11,11 @@ class CchWebViewController {
   var canGoBack: Boolean by mutableStateOf(false)
     internal set
 
+  // 페이지 로딩 여부. 첫 로드부터 shimmer가 보이도록 true로 시작하고,
+  // onPageStarted/onPageFinished(또는 iOS 내비게이션 델리게이트)에서 갱신한다.
+  var isLoading: Boolean by mutableStateOf(true)
+    internal set
+
   internal var goBackAction: (() -> Unit)? = null
 
   fun goBack() {

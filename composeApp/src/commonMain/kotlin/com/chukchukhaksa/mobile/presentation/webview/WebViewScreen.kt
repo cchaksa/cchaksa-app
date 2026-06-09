@@ -24,6 +24,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.webview.CchWebView
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.DebugWebViewBadge
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewCookie
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.rememberCchWebViewController
+import com.chukchukhaksa.mobile.common.designsystem.component.loading.WebViewLoadingShimmer
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.PlatformBackHandler
 import com.chukchukhaksa.mobile.domain.auth.usecase.WithdrawUseCase
@@ -92,6 +93,7 @@ private fun WebViewRouteContent(
       .background(White100)
       .windowInsetsPadding(WindowInsets.systemBars.union(WindowInsets.ime)),
    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
     CchWebView(
       url = url,
       controller = controller,
@@ -126,6 +128,11 @@ private fun WebViewRouteContent(
       },
       modifier = Modifier.fillMaxSize(),
     )
+    // 페이지 로딩 중에는 웹뷰 위에 shimmer 스켈레톤을 덮어 보여준다.
+    if (controller.isLoading) {
+      WebViewLoadingShimmer()
+    }
+    }
    }
    DebugWebViewBadge()
   }

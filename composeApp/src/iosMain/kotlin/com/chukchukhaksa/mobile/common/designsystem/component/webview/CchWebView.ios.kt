@@ -75,11 +75,14 @@ actual fun CchWebView(
   }
 
   val navDelegate = remember {
-    WebViewNavigationDelegate { w ->
-      val canGoBack = w.canGoBack
-      controller.canGoBack = canGoBack
-      setComposeEdgeGestureEnabled(w, enabled = !canGoBack)
-    }
+    WebViewNavigationDelegate(
+      onNavigationStateChanged = { w ->
+        val canGoBack = w.canGoBack
+        controller.canGoBack = canGoBack
+        setComposeEdgeGestureEnabled(w, enabled = !canGoBack)
+      },
+      onLoadingChanged = { loading -> controller.isLoading = loading },
+    )
   }
 
   DisposableEffect(Unit) {
@@ -193,11 +196,13 @@ private class BridgeScriptMessageHandler(
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private class WebViewNavigationDelegate(
   private val onNavigationStateChanged: (WKWebView) -> Unit,
+  private val onLoadingChanged: (Boolean) -> Unit,
 ) : NSObject(), WKNavigationDelegateProtocol {
 
   @ObjCSignatureOverride
   override fun webView(webView: WKWebView, didStartProvisionalNavigation: WKNavigation?) {
     Napier.d(tag = "CchWebView") { "didStartProvisionalNavigation url=${webView.URL?.absoluteString}" }
+    onLoadingChanged(true)
     onNavigationStateChanged(webView)
   }
 
@@ -212,6 +217,7 @@ private class WebViewNavigationDelegate(
     Napier.d(tag = "CchWebView") {
       "didFinishNavigation url=${webView.URL?.absoluteString}, canGoBack=${webView.canGoBack}"
     }
+    onLoadingChanged(false)
     onNavigationStateChanged(webView)
   }
 
@@ -224,6 +230,7 @@ private class WebViewNavigationDelegate(
     Napier.w(tag = "CchWebView") {
       "didFailNavigation url=${webView.URL?.absoluteString}, error=${withError.localizedDescription}"
     }
+    onLoadingChanged(false)
     onNavigationStateChanged(webView)
   }
 
@@ -236,6 +243,7 @@ private class WebViewNavigationDelegate(
     Napier.w(tag = "CchWebView") {
       "didFailProvisionalNavigation url=${webView.URL?.absoluteString}, error=${withError.localizedDescription}"
     }
+    onLoadingChanged(false)
     onNavigationStateChanged(webView)
   }
 }

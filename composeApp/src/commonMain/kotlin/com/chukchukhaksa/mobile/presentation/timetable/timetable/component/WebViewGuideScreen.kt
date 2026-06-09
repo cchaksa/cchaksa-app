@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.chukchukhaksa.mobile.common.designsystem.component.loading.LoadingScreen
+import com.chukchukhaksa.mobile.common.designsystem.component.loading.WebViewLoadingShimmer
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.BridgeMessage
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.CchHomeWebView
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.DebugWebViewBadge
@@ -81,7 +81,7 @@ private fun WebViewGuideContent(
           modifier = Modifier.fillMaxSize(),
         )
       } else {
-        LoadingScreen()
+        WebViewLoadingShimmer()
       }
       ExchangeStatus.Failed400 -> Unit
       else -> CchHomeWebView(
