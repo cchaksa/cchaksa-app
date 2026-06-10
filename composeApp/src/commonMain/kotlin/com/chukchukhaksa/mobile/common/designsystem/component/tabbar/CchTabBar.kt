@@ -62,6 +62,7 @@ fun HomeTabBar(
     Icon(
       modifier = Modifier
         .padding(top = 4.dp, bottom = 4.dp, end = 10.dp)
+        .clip(RoundedCornerShape(8.dp))
         .cchClickable { onClickMyPage() },
       painter = painterResource(Res.drawable.ic_tabbar_mypage),
       contentDescription = "",

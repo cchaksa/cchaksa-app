@@ -47,14 +47,25 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 /**
  * 홈 웹뷰가 최초 로드되기 전 표시하는 스켈레톤 화면.
  * [CircularProgressIndicator] 대신 콘텐츠 형태의 shimmer를 보여줘 체감 로딩을 부드럽게 한다.
+ *
+ * @param applyStatusBarPadding 부모가 이미 인셋을 처리하거나 edge-to-edge 웹뷰를 덮을 때는 false로 끈다.
  */
 @Composable
-fun WebViewLoadingShimmer(modifier: Modifier = Modifier) {
+fun WebViewLoadingShimmer(
+  modifier: Modifier = Modifier,
+  applyStatusBarPadding: Boolean = true,
+) {
   Column(
     modifier = modifier
       .fillMaxSize()
       .background(White100)
-      .windowInsetsPadding(WindowInsets.statusBars)
+      .then(
+        if (applyStatusBarPadding) {
+          Modifier.windowInsetsPadding(WindowInsets.statusBars)
+        } else {
+          Modifier
+        },
+      )
       .padding(horizontal = 16.dp, vertical = 16.dp),
   ) {
     // 인사/타이틀

@@ -10,7 +10,11 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chukchukhaksa.mobile.common.designsystem.component.loading.WebViewLoadingShimmer
@@ -24,8 +28,12 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.PlatformBackHandler
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.domain.webview.ExchangeStatus
+import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+
+// 웹에서 rendered 브릿지 이벤트가 오지 않아도 shimmer를 강제로 숨기는 최대 대기 시간.
+private const val RENDERED_EVENT_TIMEOUT_MS = 5_000L
 
 @Composable
 fun WebViewGuideScreen(
@@ -65,14 +73,37 @@ private fun WebViewGuideContent(
     controller.goBack()
   }
 
+  // 세션 교환이 끝나(또는 프리로드되어) 웹뷰를 화면에 올릴 수 있는 상태인지.
+  val webViewVisible = when (state.exchangeStatus) {
+    ExchangeStatus.Failed400 -> false
+    ExchangeStatus.Loading -> holder.isInitialLoaded()
+    else -> true
+  }
+
+  // 웹뷰가 보이더라도 rendered 브릿지 이벤트가 올 때까지 shimmer를 덮어두고,
+  // 타임아웃 안에 이벤트가 오지 않으면 그냥 숨긴다.
+  var renderTimedOut by remember { mutableStateOf(false) }
+  LaunchedEffect(webViewVisible, state.isContentRendered) {
+    if (webViewVisible && !state.isContentRendered) {
+      renderTimedOut = false
+      delay(RENDERED_EVENT_TIMEOUT_MS)
+      renderTimedOut = true
+    }
+  }
+  val showShimmer = when {
+    state.exchangeStatus == ExchangeStatus.Failed400 -> false
+    !webViewVisible -> true
+    else -> !state.isContentRendered && !renderTimedOut
+  }
+
   Box(modifier = Modifier.fillMaxSize()) {
    Column(
     modifier = Modifier
       .fillMaxSize()
       .background(White100)
    ) {
-    when (state.exchangeStatus) {
-      ExchangeStatus.Loading -> if (holder.isInitialLoaded()) {
+    Box(modifier = Modifier.fillMaxSize()) {
+      if (webViewVisible) {
         CchHomeWebView(
           holder = holder,
           controller = controller,
@@ -80,17 +111,11 @@ private fun WebViewGuideContent(
           onBridgeMessage = onBridgeMessage,
           modifier = Modifier.fillMaxSize(),
         )
-      } else {
-        WebViewLoadingShimmer()
       }
-      ExchangeStatus.Failed400 -> Unit
-      else -> CchHomeWebView(
-        holder = holder,
-        controller = controller,
-        cookies = state.cookies,
-        onBridgeMessage = onBridgeMessage,
-        modifier = Modifier.fillMaxSize(),
-      )
+      if (showShimmer) {
+        // 홈 웹뷰는 edge-to-edge로 그려지므로 shimmer도 statusBar 패딩 없이 전체를 덮는다.
+        WebViewLoadingShimmer(applyStatusBarPadding = false)
+      }
     }
    }
    DebugWebViewBadge()

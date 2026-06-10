@@ -92,6 +92,8 @@ class WebViewGuideViewModel(
         mviStore.postSideEffect(WebViewGuideSideEffect.NavigateToLogin)
       }
 
+      is BridgeAction.ContentRendered -> mviStore.setState { copy(isContentRendered = true) }
+
       is BridgeAction.Unhandled -> Unit
     }
   }
@@ -105,6 +107,8 @@ class WebViewGuideViewModel(
       homeRedirectEventBus.events.collect { event ->
         if (event.reloadWebView) {
           webViewHolder.reset()
+          // 재로드되는 페이지의 rendered 이벤트를 다시 기다리도록 초기화한다.
+          mviStore.setState { copy(isContentRendered = false) }
           refresh()
         }
       }
@@ -129,6 +133,7 @@ class WebViewGuideViewModel(
             copy(
               exchangeStatus = ExchangeStatus.NotLoggedIn,
               cookies = persistentListOf(),
+              isContentRendered = false,
             )
           }
           mviStore.postSideEffect(WebViewGuideSideEffect.NavigateToLogin)
@@ -143,6 +148,8 @@ data class WebViewGuideState(
   val exchangeStatus: ExchangeStatus = ExchangeStatus.Loading,
   val cookies: ImmutableList<WebViewCookie> = persistentListOf(),
   val lastPushedUrl: String? = null,
+  // 웹의 rendered 브릿지 이벤트 수신 여부. 수신 전까지는 웹뷰 위에 shimmer를 덮는다.
+  val isContentRendered: Boolean = false,
 )
 
 sealed interface WebViewGuideSideEffect {

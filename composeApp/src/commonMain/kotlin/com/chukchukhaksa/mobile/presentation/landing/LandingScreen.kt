@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -168,44 +167,59 @@ private fun SocialLoginButton(
     Box(
         modifier = modifier
             .wrapContentHeight()
-            // 로그인 진행 중 비활성화된 버튼은 투명도를 낮춰 시각적으로 disabled 상태를 표시한다.
-            .alpha(if (enabled) 1f else 0.5f)
             .clip(RoundedCornerShape(10.dp))
             .then(clickableModifier)
-            .background(containerColor)
-            .padding(18.dp),
+            .background(containerColor),
         contentAlignment = Alignment.Center,
     ) {
-        // 로딩 중에도 버튼 높이가 흔들리지 않도록 아이콘과 동일한 32dp 높이를 유지한다.
-        if (loading) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(18.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            // 로딩 중에도 버튼 높이가 흔들리지 않도록 아이콘과 동일한 32dp 높이를 유지한다.
+            if (loading) {
+                Box(modifier = Modifier.height(32.dp))
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(
+                        painter = painterResource(iconRes),
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp),
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = text,
+                        color = contentColor,
+                        style = CchTheme.typography.bodyMdStrong,
+                    )
+                }
+            }
+        }
+
+        // 로그인 진행 중 비활성화된 버튼은 반투명 흰색을 덮어 클릭 불가 상태를 표시한다.
+        if (!enabled) {
             Box(
-                modifier = Modifier.height(32.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    color = contentColor,
-                    strokeWidth = 3.dp,
-                )
-            }
-        } else {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Image(
-                    painter = painterResource(iconRes),
-                    contentDescription = null,
-                    modifier = Modifier.size(32.dp),
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = text,
-                    color = contentColor,
-                    style = CchTheme.typography.bodyMdStrong,
-                )
-            }
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(White100.copy(alpha = 0.6f)),
+            )
+        }
+
+        // 로딩 인디케이터는 반투명 오버레이 위에 선명하게 보이도록 가장 마지막에 그린다.
+        if (loading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(24.dp),
+                color = contentColor,
+                strokeWidth = 3.dp,
+            )
         }
     }
 }

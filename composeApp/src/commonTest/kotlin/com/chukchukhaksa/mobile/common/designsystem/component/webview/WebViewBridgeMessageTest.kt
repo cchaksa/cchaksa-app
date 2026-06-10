@@ -56,6 +56,14 @@ class WebViewBridgeMessageTest {
   }
 
   @Test
+  fun `parses rendered`() {
+    assertEquals(
+      BridgeMessage.Rendered,
+      BridgeMessage.parse("rendered"),
+    )
+  }
+
+  @Test
   fun `treats other strings as unknown`() {
     assertEquals(
       BridgeMessage.Unknown(raw = "hello"),

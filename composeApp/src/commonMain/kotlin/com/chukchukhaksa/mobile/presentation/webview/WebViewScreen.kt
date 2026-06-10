@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -30,11 +31,15 @@ import com.chukchukhaksa.mobile.common.ui.PlatformBackHandler
 import com.chukchukhaksa.mobile.domain.auth.usecase.WithdrawUseCase
 import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import kotlin.time.TimeSource
 
 private const val DUPLICATE_PUSH_DEBOUNCE_MS = 500L
+
+// 웹에서 rendered 브릿지 이벤트가 오지 않아도 shimmer를 강제로 숨기는 최대 대기 시간.
+private const val RENDERED_EVENT_TIMEOUT_MS = 5_000L
 
 @Composable
 fun WebViewRoute(
@@ -86,6 +91,14 @@ private fun WebViewRouteContent(
   var lastPushedUrl by rememberSaveable { mutableStateOf<String?>(null) }
   val lastPushMarkHolder = remember { object { var mark: TimeSource.Monotonic.ValueTimeMark? = null } }
 
+  // 웹의 rendered 브릿지 이벤트가 올 때까지 shimmer를 유지하고,
+  // 타임아웃 안에 이벤트가 오지 않으면 그냥 숨긴다.
+  var showShimmer by remember { mutableStateOf(true) }
+  LaunchedEffect(Unit) {
+    delay(RENDERED_EVENT_TIMEOUT_MS)
+    showShimmer = false
+  }
+
   Box(modifier = Modifier.fillMaxSize()) {
    Column(
     modifier = Modifier
@@ -123,13 +136,15 @@ private fun WebViewRouteContent(
           // 회원 탈퇴 → 로컬 토큰·세션 정리 후 로그인(랜딩) 화면으로 이동.
           is BridgeAction.Withdraw -> onWithdraw()
 
+          is BridgeAction.ContentRendered -> showShimmer = false
+
           is BridgeAction.Unhandled -> Unit
         }
       },
       modifier = Modifier.fillMaxSize(),
     )
-    // 페이지 로딩 중에는 웹뷰 위에 shimmer 스켈레톤을 덮어 보여준다.
-    if (controller.isLoading) {
+    // rendered 브릿지 이벤트가 오기 전까지 웹뷰 위에 shimmer 스켈레톤을 덮어 보여준다.
+    if (showShimmer) {
       WebViewLoadingShimmer()
     }
     }

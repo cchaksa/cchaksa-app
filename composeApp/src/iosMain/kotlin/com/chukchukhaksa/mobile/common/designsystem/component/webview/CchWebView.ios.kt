@@ -54,11 +54,23 @@ actual fun CchWebView(
   val scriptMessageHandler = remember {
     BridgeScriptMessageHandler { message -> currentBridgeMessage.value(message) }
   }
+  val updateCanGoBack = remember<(WKWebView) -> Unit> {
+    { w ->
+      val canGoBack = w.canGoBack
+      controller.canGoBack = canGoBack
+      setComposeEdgeGestureEnabled(w, enabled = !canGoBack)
+    }
+  }
+  // SPA의 pushState/replaceState 이동은 내비게이션 델리게이트 콜백이 호출되지 않으므로
+  // history API 후킹 스크립트로 변경을 통지받아 canGoBack을 갱신한다.
+  val historyMessageHandler = remember { HistoryScriptMessageHandler(updateCanGoBack) }
 
   val webView = remember {
     val configuration = WKWebViewConfiguration().apply {
       userContentController = WKUserContentController().apply {
         addScriptMessageHandler(scriptMessageHandler, name = BRIDGE_HANDLER_NAME)
+        addScriptMessageHandler(historyMessageHandler, name = HISTORY_OBSERVER_HANDLER_NAME)
+        addUserScript(createHistoryObserverScript())
       }
       websiteDataStore = WKWebsiteDataStore.defaultDataStore()
     }
@@ -76,11 +88,7 @@ actual fun CchWebView(
 
   val navDelegate = remember {
     WebViewNavigationDelegate(
-      onNavigationStateChanged = { w ->
-        val canGoBack = w.canGoBack
-        controller.canGoBack = canGoBack
-        setComposeEdgeGestureEnabled(w, enabled = !canGoBack)
-      },
+      onNavigationStateChanged = updateCanGoBack,
       onLoadingChanged = { loading -> controller.isLoading = loading },
     )
   }
@@ -127,6 +135,7 @@ actual fun CchWebView(
       controller.goBackAction = null
       webView.navigationDelegate = null
       webView.configuration.userContentController.removeScriptMessageHandlerForName(BRIDGE_HANDLER_NAME)
+      webView.configuration.userContentController.removeScriptMessageHandlerForName(HISTORY_OBSERVER_HANDLER_NAME)
     }
   }
 

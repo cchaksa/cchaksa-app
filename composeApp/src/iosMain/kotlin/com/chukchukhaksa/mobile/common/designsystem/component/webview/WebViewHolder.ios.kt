@@ -47,6 +47,12 @@ actual class WebViewHolder {
     canGoBackListener?.invoke(canGoBack)
   }
 
+  // SPA의 pushState/replaceState 이동은 델리게이트 콜백이 없으므로
+  // history API 후킹 스크립트의 통지로 canGoBack을 보강 갱신한다.
+  private val historyHandler = HistoryScriptMessageHandler { w ->
+    canGoBackListener?.invoke(w.canGoBack)
+  }
+
   internal val webView: WKWebView by lazy { createPersistentWebView() }
 
   actual fun preload(url: String, cookies: List<WebViewCookie>) {
@@ -82,6 +88,8 @@ actual class WebViewHolder {
     val configuration = WKWebViewConfiguration().apply {
       userContentController = WKUserContentController().apply {
         addScriptMessageHandler(scriptHandler, name = BRIDGE_HANDLER_NAME)
+        addScriptMessageHandler(historyHandler, name = HISTORY_OBSERVER_HANDLER_NAME)
+        addUserScript(createHistoryObserverScript())
       }
       websiteDataStore = WKWebsiteDataStore.defaultDataStore()
     }

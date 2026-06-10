@@ -20,6 +20,9 @@ sealed interface BridgeAction {
 
   /** 회원 탈퇴 처리. 로그인(랜딩) 화면으로 이동한다. */
   data object Withdraw : BridgeAction
+
+  /** 웹 콘텐츠 렌더링 완료. shimmer 로딩 뷰를 제거한다. */
+  data object ContentRendered : BridgeAction
   data class Unhandled(val reason: String, val raw: String) : BridgeAction
 }
 
@@ -32,6 +35,8 @@ fun BridgeMessage.toAction(currentHost: String): BridgeAction = when (this) {
   is BridgeMessage.NavigateBack -> BridgeAction.NavigateBack
 
   is BridgeMessage.Withdraw -> BridgeAction.Withdraw
+
+  is BridgeMessage.Rendered -> BridgeAction.ContentRendered
 
   is BridgeMessage.Navigate -> {
     val invalidReason = validatePath(path)

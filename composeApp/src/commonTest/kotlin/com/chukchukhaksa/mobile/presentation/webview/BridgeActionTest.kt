@@ -80,6 +80,12 @@ class BridgeActionTest {
   }
 
   @Test
+  fun `rendered message becomes content rendered action`() {
+    val action = BridgeMessage.Rendered.toAction(host)
+    assertEquals(BridgeAction.ContentRendered, action)
+  }
+
+  @Test
   fun `unknown message becomes unsupported prefix`() {
     val action = BridgeMessage.Unknown(raw = "hello").toAction(host)
     assertIs<BridgeAction.Unhandled>(action)
