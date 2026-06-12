@@ -2,6 +2,9 @@ package com.chukchukhaksa.mobile.di
 
 import com.chukchukhaksa.mobile.domain.academic.usecase.GetAcademicRecordUseCase
 import com.chukchukhaksa.mobile.domain.academic.usecase.GetAcademicSummaryUseCase
+import com.chukchukhaksa.mobile.domain.analytics.usecase.ClearAnalyticsUserIdUseCase
+import com.chukchukhaksa.mobile.domain.analytics.usecase.SetAnalyticsUserIdUseCase
+import com.chukchukhaksa.mobile.domain.analytics.usecase.SetAnalyticsUserPropertiesUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.AppleLoginUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.CheckAuthStateUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.KakaoLoginUseCase
@@ -53,7 +56,12 @@ val domainModule = module {
     factory { AppleLoginUseCase(get(), get()) }
     factory { CheckAuthStateUseCase(get()) }
     factory { KakaoLoginUseCase(get(), get()) }
-    factory { WithdrawUseCase(get(), get(), get()) }
+    factory { WithdrawUseCase(get(), get(), get(), get()) }
+
+    // Analytics use cases
+    factory { SetAnalyticsUserIdUseCase(get(), get()) }
+    factory { ClearAnalyticsUserIdUseCase(get()) }
+    factory { SetAnalyticsUserPropertiesUseCase(get(), get(), get()) }
 
     // Profile use cases
     factory { GetProfileUseCase(get()) }

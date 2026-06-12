@@ -29,6 +29,7 @@ class HomeViewModel(
     private val getPortalLinkStatusUseCase: GetPortalLinkStatusUseCase,
     private val exchangeWebSessionUseCase: ExchangeWebSessionUseCase,
     private val homeRedirectEventBus: HomeRedirectEventBus,
+    private val showTimetableTabEventBus: ShowTimetableTabEventBus,
 ) : ViewModel() {
     val mviStore = mviStore<HomeState, HomeSideEffect>(HomeState())
 
@@ -38,6 +39,19 @@ class HomeViewModel(
         fetchPortalLinkStatus()
         refreshWebSession()
         observeHomeRedirect()
+        observeShowTimetableTab()
+    }
+
+    /**
+     * 시간표 생성·수정 완료 후, 홈 엔트리를 보존한 채 시간표 탭으로 전환하고 최신 시간표를 다시 불러온다.
+     * (홈을 재생성하지 않으므로 홈 웹뷰 상태가 초기화되지 않는다.)
+     */
+    private fun observeShowTimetableTab() {
+        viewModelScope.launch {
+            showTimetableTabEventBus.events.collect {
+                showTimetableTab()
+            }
+        }
     }
 
     private fun observeHomeRedirect() {

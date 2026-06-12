@@ -44,8 +44,15 @@ fun NavController.navigateSemesterSelect() {
 }
 
 fun NavController.navigateTimetable() {
-    navigate(HomeRoute.route) {
-      popUpTo(0)
+    // 홈 엔트리를 재생성하면 HomeViewModel/WebViewGuideViewModel이 함께 새로 만들어져
+    // 홈 웹뷰 상태(렌더 완료 여부 등)가 초기화되므로, 기존 홈까지만 pop해 엔트리를 보존한다.
+    // (시간표 탭 전환·재조회는 ShowTimetableTabEventBus 신호로 살아있는 HomeViewModel이 처리한다.)
+    val poppedToHome = popBackStack(HomeRoute.route, inclusive = false)
+    if (!poppedToHome) {
+        navigate(HomeRoute.route) {
+            popUpTo(0) { inclusive = true }
+            launchSingleTop = true
+        }
     }
 }
 

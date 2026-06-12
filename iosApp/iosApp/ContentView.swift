@@ -4,7 +4,10 @@ import ComposeApp
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.MainViewController(kakaoLoginBridge: KakaoLoginBridgeImpl())
+        MainViewControllerKt.MainViewController(
+            kakaoLoginBridge: KakaoLoginBridgeImpl(),
+            amplitudeBridge: AmplitudeBridgeImpl()
+        )
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

@@ -60,6 +60,7 @@ kotlin {
       implementation(libs.kakao.sdk.v2.user)
       implementation(libs.ktor.client.okhttp)
       implementation(libs.androidx.core.splashscreen)
+      implementation(libs.amplitude.analytics.android)
     }
     iosMain.dependencies {
       implementation(libs.ktor.client.darwin)
@@ -129,6 +130,9 @@ android {
 
     buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"${localProperties["KAKAO_NATIVE_APP_KEY"] ?: ""}\"")
     manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = localProperties["KAKAO_NATIVE_APP_KEY"] ?: ""
+
+    buildConfigField("String", "AMPLITUDE_API_KEY_DEV", "\"${localProperties["AMPLITUDE_API_KEY_DEV"] ?: ""}\"")
+    buildConfigField("String", "AMPLITUDE_API_KEY_PROD", "\"${localProperties["AMPLITUDE_API_KEY_PROD"] ?: ""}\"")
   }
   packaging {
     resources {

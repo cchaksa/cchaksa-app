@@ -30,6 +30,8 @@ import com.chukchukhaksa.mobile.common.kmp.AppLifecycleObserver
 import com.chukchukhaksa.mobile.common.kmp.Platform.*
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
+import com.chukchukhaksa.mobile.domain.analytics.usecase.SetAnalyticsUserIdUseCase
+import com.chukchukhaksa.mobile.domain.analytics.usecase.SetAnalyticsUserPropertiesUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.CheckAuthStateUseCase
 import com.chukchukhaksa.mobile.domain.webview.ExchangeStatus
 import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
@@ -45,6 +47,7 @@ import dev.gitlive.firebase.analytics.FirebaseAnalytics
 import dev.gitlive.firebase.analytics.analytics
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
@@ -67,6 +70,8 @@ fun App(
             val exchangeWebSession: ExchangeWebSessionUseCase = koinInject()
             val homeRedirectEventBus: HomeRedirectEventBus = koinInject()
             val webViewHolder: WebViewHolder = koinInject()
+            val setAnalyticsUserId: SetAnalyticsUserIdUseCase = koinInject()
+            val setAnalyticsUserProperties: SetAnalyticsUserPropertiesUseCase = koinInject()
             var startDestination by remember { mutableStateOf<String?>(null) }
 
             viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
@@ -81,6 +86,12 @@ fun App(
 //              startDestination = HomeRoute.route
                 if (isAuthenticated) {
                     webViewPreloader.preload()
+                    // 이미 로그인된 사용자: Amplitude 식별 + user properties.
+                    // onReady를 막지 않도록 별도 코루틴에서 id → properties 순으로 수행.
+                    launch {
+                        setAnalyticsUserId()
+                        setAnalyticsUserProperties()
+                    }
                 }
                 onReady()
             }
@@ -98,11 +109,14 @@ fun App(
 
             LaunchedEffect(Unit) {
                 appLifecycleObserver.onForeground.collect {
-                    val status = exchangeWebSession.refreshIfExpired() ?: return@collect
-                    if (status !is ExchangeStatus.Loaded) {
+                    val status = exchangeWebSession.refreshIfExpired()
+                    if (status != null && status !is ExchangeStatus.Loaded) {
                         Napier.w(tag = "App") { "Foreground refresh failed ($status) → navigating to Landing" }
                         navigator.navigateToLanding()
+                        return@collect
                     }
+                    // 포그라운드 복귀 시 Amplitude user properties 갱신 (시간표/과목 개수 등).
+                    setAnalyticsUserProperties()
                 }
             }
 

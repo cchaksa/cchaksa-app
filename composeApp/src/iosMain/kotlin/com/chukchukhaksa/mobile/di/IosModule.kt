@@ -1,5 +1,7 @@
 package com.chukchukhaksa.mobile.di
 
+import com.chukchukhaksa.mobile.common.analytics.AnalyticsClient
+import com.chukchukhaksa.mobile.common.analytics.IosAnalyticsClient
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
 import com.chukchukhaksa.mobile.common.kmp.AppLifecycleObserver
 import com.chukchukhaksa.mobile.common.kmp.AppleSignInClient
@@ -23,4 +25,5 @@ actual val platformModule
         single { KSafe() }
         single { WebViewHolder() }
         single<AppLifecycleObserver> { IosAppLifecycleObserver() }
+        single<AnalyticsClient> { IosAnalyticsClient(get()) }
     }

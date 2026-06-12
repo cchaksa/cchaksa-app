@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray100
-import com.chukchukhaksa.mobile.common.designsystem.theme.Gray200
+import com.chukchukhaksa.mobile.common.designsystem.theme.GrayFB
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -152,7 +152,7 @@ private fun Modifier.shimmer(shape: Shape = RoundedCornerShape(8.dp)): Modifier 
   clip(shape)
     .background(
       brush = Brush.linearGradient(
-        colors = listOf(Gray200, Gray100, Gray200),
+        colors = listOf(Gray100, GrayFB, Gray100),
         start = Offset(startOffsetX, 0f),
         end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat()),
       ),

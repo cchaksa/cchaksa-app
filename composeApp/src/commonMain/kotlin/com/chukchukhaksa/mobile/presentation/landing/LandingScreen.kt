@@ -39,6 +39,7 @@ import chukchukhaksa.composeapp.generated.resources.img_landing_4
 import chukchukhaksa.composeapp.generated.resources.img_landing_5
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
+import com.chukchukhaksa.mobile.common.designsystem.theme.Gray600
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.kmp.Platform
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
@@ -119,6 +120,8 @@ fun LandingScreen(
                 iconRes = Res.drawable.ic_kakao_logo,
                 containerColor = KakaoYellow,
                 contentColor = KakaoBlack,
+                // 노란 배경 위 진한 검정 스피너가 과해 보여, 로딩 인디케이터만 부드러운 회색으로 분리한다.
+                loadingColor = Gray600,
                 enabled = !uiState.isLoading,
                 loading = uiState.loadingProvider == LoginProvider.KAKAO,
                 onClick = onKakaoLogin,
@@ -154,6 +157,7 @@ private fun SocialLoginButton(
     iconRes: DrawableResource,
     containerColor: Color,
     contentColor: Color,
+    loadingColor: Color = contentColor,
     enabled: Boolean,
     loading: Boolean = false,
     onClick: () -> Unit,
@@ -217,7 +221,7 @@ private fun SocialLoginButton(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .size(24.dp),
-                color = contentColor,
+                color = loadingColor,
                 strokeWidth = 3.dp,
             )
         }
@@ -265,6 +269,7 @@ private fun SocialLoginButtonKakaoLoadingPreview() {
             iconRes = Res.drawable.ic_kakao_logo,
             containerColor = KakaoYellow,
             contentColor = KakaoBlack,
+            loadingColor = Gray600,
             enabled = false,
             loading = true,
             onClick = {},

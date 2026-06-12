@@ -65,6 +65,9 @@ actual class AppleSignInClient actual constructor() {
     }
 }
 
+// ASAuthorizationError.canceled (사용자가 애플 로그인 시트를 취소)
+private const val APPLE_AUTH_CANCELED_CODE = 1001L
+
 private class AppleSignInDelegate(
     private val continuation: CancellableContinuation<AppleSignInResult>,
     private val rawNonce: String,
@@ -145,9 +148,14 @@ private class AppleSignInDelegate(
         didCompleteWithError: NSError,
     ) {
         onComplete()
-        continuation.resumeWithException(
-            Exception("Apple Sign In failed: ${didCompleteWithError.localizedDescription}"),
-        )
+        // 사용자가 애플 로그인 시트를 직접 취소(ASAuthorizationError.canceled = 1001)한 경우는
+        // 실패가 아닌 취소로 전달해, 화면에서 오류 토스트가 뜨지 않도록 한다.
+        val error = if (didCompleteWithError.code == APPLE_AUTH_CANCELED_CODE) {
+            LoginCancelledException()
+        } else {
+            Exception("Apple Sign In failed: ${didCompleteWithError.localizedDescription}")
+        }
+        continuation.resumeWithException(error)
     }
 
     @OptIn(ExperimentalForeignApi::class)

@@ -38,6 +38,7 @@ kakao-sdk = "2.20.6"
 kinappbrowser = "1.0.0"
 ksafe = "1.6.0"
 androidx-splashscreen = "1.0.1"
+amplitude-android = "1.22.4"
 
 
 [libraries]
@@ -106,6 +107,8 @@ kinappbrowser = { group = "dev.yjyoon", name = "kinappbrowser", version.ref = "k
 ksafe = { group = "eu.anifantakis", name = "ksafe", version.ref = "ksafe" }
 
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-splashscreen" }
+
+amplitude-analytics-android = { group = "com.amplitude", name = "analytics-android", version.ref = "amplitude-android" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

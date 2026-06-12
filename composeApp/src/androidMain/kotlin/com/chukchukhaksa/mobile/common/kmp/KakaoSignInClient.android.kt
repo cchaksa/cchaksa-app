@@ -22,7 +22,13 @@ actual class KakaoSignInClient {
         return suspendCancellableCoroutine { continuation ->
             val callback: (OAuthToken?, Throwable?) -> Unit = callback@{ token, error ->
                 if (error != null) {
-                    continuation.resumeWithException(error)
+                    // 사용자가 카카오계정 로그인 창을 직접 닫은 경우는 실패가 아닌 취소로 전달한다.
+                    val mapped = if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        LoginCancelledException()
+                    } else {
+                        error
+                    }
+                    continuation.resumeWithException(mapped)
                     return@callback
                 }
                 val idToken = token?.idToken

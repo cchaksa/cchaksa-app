@@ -2,6 +2,7 @@ package com.chukchukhaksa.mobile.remote.user
 
 import com.chukchukhaksa.mobile.remote.common.ApiResponse
 import com.chukchukhaksa.mobile.remote.common.getDataOrThrow
+import com.chukchukhaksa.mobile.remote.user.dto.AnalyticsIdResponseData
 import com.chukchukhaksa.mobile.remote.user.dto.UserResponseData
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -21,7 +22,17 @@ class UserApiImpl(
     return UserInfo(isPortalLinked = data.isPortalLinked)
   }
 
+  override suspend fun getAnalyticsId(): String {
+    Napier.d(tag = "UserApi") { "GET $ANALYTICS_ID_PATH" }
+    val data = client.get(ANALYTICS_ID_PATH)
+      .body<ApiResponse<AnalyticsIdResponseData>>()
+      .getDataOrThrow()
+    Napier.d(tag = "UserApi") { "getAnalyticsId success" }
+    return data.analyticsId
+  }
+
   private companion object {
     const val USER_ME_PATH = "users/me"
+    const val ANALYTICS_ID_PATH = "users/analytics-id"
   }
 }
