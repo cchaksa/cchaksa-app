@@ -19,6 +19,7 @@ import platform.Foundation.NSHTTPCookieValue
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLRequest
 import platform.Foundation.dateWithTimeIntervalSince1970
+import platform.WebKit.WKAudiovisualMediaTypeNone
 import platform.WebKit.WKNavigation
 import platform.WebKit.WKNavigationDelegateProtocol
 import platform.WebKit.WKScriptMessage
@@ -92,6 +93,10 @@ actual class WebViewHolder {
         addUserScript(createHistoryObserverScript())
       }
       websiteDataStore = WKWebsiteDataStore.defaultDataStore()
+      // 인라인(비전체화면) 동영상 재생 허용 — iOS(iPhone) 기본값 false
+      allowsInlineMediaPlayback = true
+      // 사용자 제스처 없이 자동재생 허용 — muted 여부는 프론트의 <video> 속성으로 제어
+      mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone
     }
     return WKWebView(
       frame = CGRectMake(0.0, 0.0, 0.0, 0.0),
