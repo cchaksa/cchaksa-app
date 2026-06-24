@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -56,6 +58,7 @@ fun HomeRoute(
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
 
   val context = LocalAppContext.current
+  val clipboardManager = LocalClipboardManager.current
   viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
     when (sideEffect) {
       is HomeSideEffect.HandleException -> handleException(sideEffect.throwable)
@@ -64,6 +67,10 @@ fun HomeRoute(
       is HomeSideEffect.NavigateCellEditor -> navigateCellEditor(sideEffect.argument)
       HomeSideEffect.NavigateTimetableList -> navigateTimetableList()
       HomeSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
+      is HomeSideEffect.CopyIdfaToClipboard -> {
+        clipboardManager.setText(AnnotatedString(sideEffect.idfa))
+        onShowToast("IDFA가 복사되었습니다", 70.dp)
+      }
     }
   }
 

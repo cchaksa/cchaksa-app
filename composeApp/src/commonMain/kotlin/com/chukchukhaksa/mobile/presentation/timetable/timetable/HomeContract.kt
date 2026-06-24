@@ -28,6 +28,9 @@ sealed interface HomeSideEffect {
   data class NavigateCellEditor(val argument: CellEditorArgument) : HomeSideEffect
   data class HandleException(val throwable: Throwable) : HomeSideEffect
   data object NavigateSemesterSelect : HomeSideEffect
+
+  /** 디버그 전용: 시간표 탭 연타 제스처로 획득한 IDFA를 클립보드에 복사한다. */
+  data class CopyIdfaToClipboard(val idfa: String) : HomeSideEffect
 }
 
 enum class HomeTab {

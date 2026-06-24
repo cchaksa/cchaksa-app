@@ -77,7 +77,7 @@ fun BridgeMessage.toAction(currentHost: String): BridgeAction = when (this) {
  * 현재 원소는 1개이나 추후 경로 추가 확장을 위해 집합으로 둔다.
  * 노출 경로 변경은 앱 배포가 필요하다(웹이 동적으로 정하지 않음, D2).
  */
-private val AD_GATED_PATHS = setOf("/mpa/graduation-progress")
+private val AD_GATED_PATHS = setOf("/mpa/resync/login")
 
 private fun validatePath(path: String): String? {
   val pathOnly = path.substringBefore('?').substringBefore('#')

@@ -73,17 +73,26 @@ class AndroidAdManager(application: Application) : AdManager {
 
     override suspend fun showInterstitial(adUnitId: String?): AdShowResult = withContext(Dispatchers.Main) {
         val unitId = adUnitId ?: BuildConfig.ADMOB_INTERSTITIAL_AD_UNIT_ID
-        if (unitId.isBlank()) return@withContext AdShowResult.Failed(AdFailureReason.NotReady)
+        if (unitId.isBlank()) {
+            Napier.d(tag = TAG) { "전면 광고 실패: 광고단위 ID가 비어 있음(BuildConfig 미주입)" }
+            return@withContext AdShowResult.Failed(AdFailureReason.NotReady)
+        }
 
         // 프리로드분이 있으면 즉시 소비, 없으면 즉시 로드(10초 타임아웃) 시도.
         val ad = preloadedAd?.also { preloadedAd = null }
             ?: when (val outcome = loadInterstitial(unitId)) {
                 is LoadOutcome.Loaded -> outcome.ad
-                is LoadOutcome.Failed -> return@withContext AdShowResult.Failed(outcome.reason)
+                is LoadOutcome.Failed -> {
+                    Napier.d(tag = TAG) { "전면 광고 로드 실패: ${outcome.reason}" }
+                    return@withContext AdShowResult.Failed(outcome.reason)
+                }
             }
 
         val activity = activityRef?.get()
-            ?: return@withContext AdShowResult.Failed(AdFailureReason.NotReady)
+            ?: run {
+                Napier.d(tag = TAG) { "전면 광고 실패: 포그라운드 Activity 없음(NotReady)" }
+                return@withContext AdShowResult.Failed(AdFailureReason.NotReady)
+            }
 
         showLoadedAd(ad, activity)
     }
@@ -122,6 +131,7 @@ class AndroidAdManager(application: Application) : AdManager {
                 }
 
                 override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                    Napier.d(tag = TAG) { "전면 광고 표시 실패: ${adError.message}" }
                     if (continuation.isActive) continuation.resume(AdShowResult.Failed(AdFailureReason.NotReady))
                 }
             }

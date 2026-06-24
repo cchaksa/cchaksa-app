@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chukchukhaksa.mobile.common.model.Timetable
 import com.chukchukhaksa.mobile.common.model.TimetableCell
+import com.chukchukhaksa.mobile.common.kmp.AdvertisingIdProvider
+import com.chukchukhaksa.mobile.common.kmp.isDebug
 import com.chukchukhaksa.mobile.common.ui.mviStore
 import com.chukchukhaksa.mobile.domain.academic.usecase.GetAcademicSummaryUseCase
 import com.chukchukhaksa.mobile.domain.profile.usecase.GetProfileUseCase
@@ -30,6 +32,7 @@ class HomeViewModel(
     private val exchangeWebSessionUseCase: ExchangeWebSessionUseCase,
     private val homeRedirectEventBus: HomeRedirectEventBus,
     private val showTimetableTabEventBus: ShowTimetableTabEventBus,
+    private val advertisingIdProvider: AdvertisingIdProvider,
 ) : ViewModel() {
     val mviStore = mviStore<HomeState, HomeSideEffect>(HomeState())
 
@@ -139,6 +142,18 @@ class HomeViewModel(
     fun showTimetableTab() {
         mviStore.setState { copy(selectedTab = timetableSideTab(timetable)) }
         getMainTimetable()
+        if (isDebug) copyAdvertisingIdToClipboard()
+    }
+
+    /**
+     * 디버그 빌드에서 시간표 탭을 누를 때마다 IDFA를 클립보드에 복사하도록
+     * [HomeSideEffect.CopyIdfaToClipboard]를 발행한다(AdMob 테스트 기기 등록용).
+     * iOS만 IDFA가 조회되고 Android는 null이라 자연히 무동작이다.
+     */
+    private fun copyAdvertisingIdToClipboard() {
+        advertisingIdProvider.getAdvertisingId()?.let { idfa ->
+            mviStore.postSideEffect(HomeSideEffect.CopyIdfaToClipboard(idfa))
+        }
     }
 
     fun deleteCell(cell: TimetableCell) = viewModelScope.launch {

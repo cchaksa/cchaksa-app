@@ -5,6 +5,7 @@ import com.chukchukhaksa.mobile.common.ad.IosAdManager
 import com.chukchukhaksa.mobile.common.analytics.AnalyticsClient
 import com.chukchukhaksa.mobile.common.analytics.IosAnalyticsClient
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
+import com.chukchukhaksa.mobile.common.kmp.AdvertisingIdProvider
 import com.chukchukhaksa.mobile.common.kmp.AppLifecycleObserver
 import com.chukchukhaksa.mobile.common.kmp.AppleSignInClient
 import com.chukchukhaksa.mobile.common.kmp.IosAppLifecycleObserver
@@ -24,6 +25,7 @@ actual val platformModule
         single { ChukChukHaksaDataStoreFactory() }
         factory { AppleSignInClient() }
         factory { KakaoSignInClient(get()) }
+        factory { AdvertisingIdProvider() }
         single { KSafe() }
         single { WebViewHolder() }
         single<AdManager> { IosAdManager(get()) }

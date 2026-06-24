@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.chukchukhaksa.mobile.common.ad.AdShowResult
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.component.loading.LoadingScreen
@@ -38,17 +40,27 @@ fun AdGateDialog(
 
 /**
  * 광고 게이트 확인 후 전면 광고가 로드·표시되는 동안 덮는 로딩 오버레이.
- * 스크림 위에 중앙 스피너([LoadingScreen])를 올려 표시하고, 입력은 [LoadingScreen]이 소비해 차단한다.
- * 광고가 풀스크린으로 뜨면 그 아래에 가려지고, 로드 실패·광고 종료 후 이동이 일어나면 사라진다.
+ * [Dialog]로 감싸 별도 윈도우에 그려지므로, 호스트 화면의 appbar·시스템 바까지 포함한
+ * 전체 화면을 스크림으로 덮는다(웹뷰 content 영역만 차지하던 Box 방식의 한계 해소).
+ * 스크림 위에 중앙 스피너([LoadingScreen])를 올리고, 입력은 [LoadingScreen]이 소비해 차단한다.
+ * 광고가 풀스크린으로 뜨면 그 위에 가려지고, 로드 실패·광고 종료 후 이동이 일어나면 사라진다.
  */
 @Composable
 fun AdLoadingOverlay() {
-  Box(
-    modifier = Modifier
-      .fillMaxSize()
-      .background(Black100.copy(alpha = 0.2f)),
+  Dialog(
+    onDismissRequest = {},
+    properties = DialogProperties(
+      usePlatformDefaultWidth = false,
+      dismissOnBackPress = false,
+      dismissOnClickOutside = false,
+    ),
   ) {
-    LoadingScreen()
+    Box(
+      modifier = Modifier
+        .fillMaxSize(),
+    ) {
+      LoadingScreen()
+    }
   }
 }
 

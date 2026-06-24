@@ -20,18 +20,18 @@ class BridgeActionTest {
 
   @Test
   fun `ad gated path becomes navigate web view with ad`() {
-    val action = BridgeMessage.Navigate(path = "/mpa/graduation-progress").toAction(host)
+    val action = BridgeMessage.Navigate(path = "/mpa/resync/login").toAction(host)
     assertEquals(
-      BridgeAction.NavigateWebViewWithAd("https://dv.cchaksa.com/mpa/graduation-progress"),
+      BridgeAction.NavigateWebViewWithAd("https://dv.cchaksa.com/mpa/resync/login"),
       action,
     )
   }
 
   @Test
   fun `ad gated path with query and fragment still gates and preserves url`() {
-    val action = BridgeMessage.Navigate(path = "/mpa/graduation-progress?from=home#top").toAction(host)
+    val action = BridgeMessage.Navigate(path = "/mpa/resync/login?from=home#top").toAction(host)
     assertEquals(
-      BridgeAction.NavigateWebViewWithAd("https://dv.cchaksa.com/mpa/graduation-progress?from=home#top"),
+      BridgeAction.NavigateWebViewWithAd("https://dv.cchaksa.com/mpa/resync/login?from=home#top"),
       action,
     )
   }

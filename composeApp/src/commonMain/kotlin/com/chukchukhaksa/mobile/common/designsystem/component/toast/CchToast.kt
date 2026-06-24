@@ -21,9 +21,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
-import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -41,7 +38,8 @@ fun CchToast(
     Box(
       modifier = Modifier
         .fillMaxSize()
-        .padding(bottom = bottomPadding),
+        .padding(bottom = bottomPadding)
+        .padding(horizontal = 16.dp),
       contentAlignment = Alignment.BottomCenter,
     ) {
       CchToastContent(
