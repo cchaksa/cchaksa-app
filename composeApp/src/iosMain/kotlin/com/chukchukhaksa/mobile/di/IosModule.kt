@@ -1,5 +1,7 @@
 package com.chukchukhaksa.mobile.di
 
+import com.chukchukhaksa.mobile.common.ad.AdManager
+import com.chukchukhaksa.mobile.common.ad.IosAdManager
 import com.chukchukhaksa.mobile.common.analytics.AnalyticsClient
 import com.chukchukhaksa.mobile.common.analytics.IosAnalyticsClient
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
@@ -24,6 +26,7 @@ actual val platformModule
         factory { KakaoSignInClient(get()) }
         single { KSafe() }
         single { WebViewHolder() }
+        single<AdManager> { IosAdManager(get()) }
         single<AppLifecycleObserver> { IosAppLifecycleObserver() }
         single<AnalyticsClient> { IosAnalyticsClient(get()) }
     }

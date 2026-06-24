@@ -12,6 +12,8 @@
 	<string>$(AMPLITUDE_API_KEY_DEV)</string>
 	<key>AMPLITUDE_API_KEY_PROD</key>
 	<string>$(AMPLITUDE_API_KEY_PROD)</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>회원님께 더 관련성 높은 광고를 제공하기 위해 기기의 광고 식별자 사용 권한을 요청합니다. 허용하지 않아도 앱 이용에는 지장이 없으며, 맞춤형이 아닌 광고가 표시됩니다.</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>kakaokompassauth</string>

@@ -1,6 +1,8 @@
 package com.chukchukhaksa.mobile.di
 
 import com.chukchukhaksa.mobile.BuildConfig
+import com.chukchukhaksa.mobile.common.ad.AdManager
+import com.chukchukhaksa.mobile.common.ad.AndroidAdManager
 import com.chukchukhaksa.mobile.common.analytics.AnalyticsClient
 import com.chukchukhaksa.mobile.common.analytics.AndroidAnalyticsClient
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
@@ -26,6 +28,7 @@ actual val platformModule = module {
     factory { KakaoSignInClient() }
     single { KSafe(androidApplication()) }
     single { WebViewHolder(androidApplication()) }
+    single<AdManager> { AndroidAdManager(androidApplication()) }
     single<AppLifecycleObserver> { AndroidAppLifecycleObserver(androidApplication()) }
     single<AnalyticsClient> {
         AndroidAnalyticsClient(

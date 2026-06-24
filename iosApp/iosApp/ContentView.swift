@@ -6,7 +6,8 @@ struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         MainViewControllerKt.MainViewController(
             kakaoLoginBridge: KakaoLoginBridgeImpl(),
-            amplitudeBridge: AmplitudeBridgeImpl()
+            amplitudeBridge: AmplitudeBridgeImpl(),
+            adMobBridge: AdMobBridgeImpl()
         )
     }
 
