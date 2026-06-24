@@ -18,6 +18,7 @@ fun NavGraphBuilder.webViewNavGraph(
   popBackStack: () -> Unit,
   onNavigateWebView: (String) -> Unit,
   navigateToLanding: () -> Unit,
+  onShowToast: (String) -> Unit,
 ) {
   composable(
     route = WebViewRouteSpec.pattern(),
@@ -34,6 +35,7 @@ fun NavGraphBuilder.webViewNavGraph(
       popBackStack = popBackStack,
       onNavigateWebView = onNavigateWebView,
       navigateToLanding = navigateToLanding,
+      onShowToast = onShowToast,
     )
   }
 }

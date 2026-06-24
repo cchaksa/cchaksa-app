@@ -115,6 +115,8 @@ fun HomeRoute(
     },
     navigateToLanding = navigateToLanding,
     navigateWebView = navigateWebView,
+    // 광고 게이트 실패 토스트용. 홈 탭 기본 bottomPadding(70.dp)으로 전역 토스트를 재사용한다.
+    onShowToast = { onShowToast(it, 70.dp) },
   )
 }
 
@@ -138,6 +140,7 @@ fun HomeScreen(
   onClickWebView: () -> Unit = {},
   navigateToLanding: () -> Unit = {},
   navigateWebView: (String) -> Unit = {},
+  onShowToast: (String) -> Unit = {},
   onDismissPortalLinkDialog: () -> Unit = {},
   onConfirmPortalLinkDialog: () -> Unit = {},
 ) {
@@ -187,6 +190,7 @@ fun HomeScreen(
               WebViewGuideScreen(
                 navigateToLogin = navigateToLanding,
                 navigateWebView = navigateWebView,
+                onShowToast = onShowToast,
               )
             }
         }

@@ -11,9 +11,36 @@ class BridgeActionTest {
 
   @Test
   fun `simple navigate path becomes absolute url`() {
+    val action = BridgeMessage.Navigate(path = "/mpa/some-page").toAction(host)
+    assertEquals(
+      BridgeAction.NavigateWebView("https://dv.cchaksa.com/mpa/some-page"),
+      action,
+    )
+  }
+
+  @Test
+  fun `ad gated path becomes navigate web view with ad`() {
     val action = BridgeMessage.Navigate(path = "/mpa/graduation-progress").toAction(host)
     assertEquals(
-      BridgeAction.NavigateWebView("https://dv.cchaksa.com/mpa/graduation-progress"),
+      BridgeAction.NavigateWebViewWithAd("https://dv.cchaksa.com/mpa/graduation-progress"),
+      action,
+    )
+  }
+
+  @Test
+  fun `ad gated path with query and fragment still gates and preserves url`() {
+    val action = BridgeMessage.Navigate(path = "/mpa/graduation-progress?from=home#top").toAction(host)
+    assertEquals(
+      BridgeAction.NavigateWebViewWithAd("https://dv.cchaksa.com/mpa/graduation-progress?from=home#top"),
+      action,
+    )
+  }
+
+  @Test
+  fun `non gated path becomes plain navigate web view`() {
+    val action = BridgeMessage.Navigate(path = "/timetable").toAction(host)
+    assertEquals(
+      BridgeAction.NavigateWebView("https://dv.cchaksa.com/timetable"),
       action,
     )
   }

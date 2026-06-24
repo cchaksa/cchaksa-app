@@ -7,6 +7,12 @@ sealed interface BridgeAction {
   data class NavigateWebView(val absoluteUrl: String) : BridgeAction
 
   /**
+   * 광고 게이트 경로(AD_GATED_PATHS)로의 이동 요청.
+   * 화면이 "광고가 노출됩니다" 다이얼로그 → 전면 광고 → 이동 순서로 오케스트레이션한다.
+   */
+  data class NavigateWebViewWithAd(val absoluteUrl: String) : BridgeAction
+
+  /**
    * 앱 홈으로 이동한다.
    * @param reloadWebView true이면 홈 웹뷰를 다시 로드한다(예: 포털 연동 완료 후 최신 상태 반영).
    */
@@ -46,7 +52,14 @@ fun BridgeMessage.toAction(currentHost: String): BridgeAction = when (this) {
       }
       BridgeAction.Unhandled(reason = "InvalidPath", raw = path)
     } else {
-      BridgeAction.NavigateWebView(absoluteUrl = "https://$currentHost$path")
+      val absoluteUrl = "https://$currentHost$path"
+      // 쿼리·프래그먼트를 제외한 경로 부분으로 광고 게이트 여부를 판정한다(validatePath와 동일 기준).
+      val pathOnly = path.substringBefore('?').substringBefore('#')
+      if (pathOnly in AD_GATED_PATHS) {
+        BridgeAction.NavigateWebViewWithAd(absoluteUrl = absoluteUrl)
+      } else {
+        BridgeAction.NavigateWebView(absoluteUrl = absoluteUrl)
+      }
     }
   }
 
@@ -58,6 +71,13 @@ fun BridgeMessage.toAction(currentHost: String): BridgeAction = when (this) {
     BridgeAction.Unhandled(reason = "UnsupportedPrefix", raw = raw)
   }
 }
+
+/**
+ * 전면 광고 게이트를 적용할 경로 집합(쿼리·프래그먼트 제외 기준 비교).
+ * 현재 원소는 1개이나 추후 경로 추가 확장을 위해 집합으로 둔다.
+ * 노출 경로 변경은 앱 배포가 필요하다(웹이 동적으로 정하지 않음, D2).
+ */
+private val AD_GATED_PATHS = setOf("/mpa/graduation-progress")
 
 private fun validatePath(path: String): String? {
   val pathOnly = path.substringBefore('?').substringBefore('#')

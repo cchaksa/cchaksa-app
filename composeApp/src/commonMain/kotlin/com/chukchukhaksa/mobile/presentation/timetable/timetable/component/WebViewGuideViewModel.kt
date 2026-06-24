@@ -64,22 +64,12 @@ class WebViewGuideViewModel(
   fun onBridgeMessage(message: BridgeMessage) {
     Napier.w(tag = "BridgeAction") { "raw message: $message" }
     when (val action = message.toAction(currentHost)) {
-      is BridgeAction.NavigateWebView -> {
-        val previous = mviStore.uiState.value.lastPushedUrl
-        val mark = lastPushMark
-        if (previous == action.absoluteUrl &&
-          mark != null &&
-          mark.elapsedNow().inWholeMilliseconds < DUPLICATE_PUSH_DEBOUNCE_MS
-        ) {
-          Napier.w(tag = "BridgeAction") {
-            "Skipped duplicate push within ${mark.elapsedNow().inWholeMilliseconds}ms: ${action.absoluteUrl}"
-          }
-          return
-        }
-        lastPushMark = timeSource.markNow()
-        mviStore.setState { copy(lastPushedUrl = action.absoluteUrl) }
-        mviStore.postSideEffect(WebViewGuideSideEffect.NavigateWebView(absoluteUrl = action.absoluteUrl))
-      }
+      is BridgeAction.NavigateWebView -> pushWebView(action.absoluteUrl)
+
+      // 광고 게이트 경로: 즉시 이동하지 않고 "광고가 노출됩니다" 다이얼로그 상태를 켠다.
+      // 다이얼로그·광고 표시·이동은 화면(WebViewGuideScreen)이 오케스트레이션한다.
+      is BridgeAction.NavigateWebViewWithAd ->
+        mviStore.setState { copy(pendingAdNavUrl = action.absoluteUrl) }
 
       is BridgeAction.RedirectToHome -> homeRedirectEventBus.redirectToHome(action.reloadWebView)
 
@@ -96,6 +86,34 @@ class WebViewGuideViewModel(
 
       is BridgeAction.Unhandled -> Unit
     }
+  }
+
+  // 중복 push 디바운스를 통과시켜 새 웹뷰 화면으로 이동 요청을 발행한다.
+  private fun pushWebView(absoluteUrl: String) {
+    val previous = mviStore.uiState.value.lastPushedUrl
+    val mark = lastPushMark
+    if (previous == absoluteUrl &&
+      mark != null &&
+      mark.elapsedNow().inWholeMilliseconds < DUPLICATE_PUSH_DEBOUNCE_MS
+    ) {
+      Napier.w(tag = "BridgeAction") {
+        "Skipped duplicate push within ${mark.elapsedNow().inWholeMilliseconds}ms: $absoluteUrl"
+      }
+      return
+    }
+    lastPushMark = timeSource.markNow()
+    mviStore.setState { copy(lastPushedUrl = absoluteUrl) }
+    mviStore.postSideEffect(WebViewGuideSideEffect.NavigateWebView(absoluteUrl = absoluteUrl))
+  }
+
+  /** 광고 게이트 다이얼로그를 닫는다(확인 시작·취소 공통). */
+  fun dismissAdGate() {
+    mviStore.setState { copy(pendingAdNavUrl = null) }
+  }
+
+  /** 전면 광고 표시가 끝난 뒤(또는 실패 후) 게이트 경로로 이동한다. 일반 navigate와 동일한 디바운스 가드를 공유한다. */
+  fun navigateAfterAdGate(absoluteUrl: String) {
+    pushWebView(absoluteUrl)
   }
 
   /**
@@ -150,6 +168,8 @@ data class WebViewGuideState(
   val lastPushedUrl: String? = null,
   // 웹의 rendered 브릿지 이벤트 수신 여부. 수신 전까지는 웹뷰 위에 shimmer를 덮는다.
   val isContentRendered: Boolean = false,
+  // 광고 게이트 다이얼로그 대상 URL. null이면 다이얼로그를 표시하지 않는다.
+  val pendingAdNavUrl: String? = null,
 )
 
 sealed interface WebViewGuideSideEffect {

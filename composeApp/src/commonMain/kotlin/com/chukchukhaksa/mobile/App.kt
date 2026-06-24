@@ -178,6 +178,7 @@ fun App(
                                 popBackStack = navigator::popBackStackIfNotHome,
                                 onNavigateWebView = navigator::navigateWebView,
                                 navigateToLanding = navigator::navigateToLanding,
+                                onShowToast = viewModel::onShowToast,
                             )
                         }
 
