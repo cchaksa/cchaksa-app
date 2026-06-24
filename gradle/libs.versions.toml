@@ -39,6 +39,7 @@ kinappbrowser = "1.0.0"
 ksafe = "1.6.0"
 androidx-splashscreen = "1.0.1"
 amplitude-android = "1.22.4"
+play-services-ads = "25.4.0"
 
 
 [libraries]
@@ -109,6 +110,7 @@ ksafe = { group = "eu.anifantakis", name = "ksafe", version.ref = "ksafe" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-splashscreen" }
 
 amplitude-analytics-android = { group = "com.amplitude", name = "analytics-android", version.ref = "amplitude-android" }
+play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "play-services-ads" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

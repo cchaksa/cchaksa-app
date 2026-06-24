@@ -61,6 +61,7 @@ kotlin {
       implementation(libs.ktor.client.okhttp)
       implementation(libs.androidx.core.splashscreen)
       implementation(libs.amplitude.analytics.android)
+      implementation(libs.play.services.ads)
     }
     iosMain.dependencies {
       implementation(libs.ktor.client.darwin)
@@ -140,8 +141,14 @@ android {
     }
   }
   buildTypes {
+    getByName("debug") {
+      manifestPlaceholders["ADMOB_APP_ID"] = localProperties["ADMOB_APP_ID_TEST"] ?: ""
+      buildConfigField("String", "ADMOB_INTERSTITIAL_AD_UNIT_ID", "\"${localProperties["ADMOB_INTERSTITIAL_AD_UNIT_ID_TEST"] ?: ""}\"")
+    }
     getByName("release") {
       isMinifyEnabled = false
+      manifestPlaceholders["ADMOB_APP_ID"] = localProperties["ADMOB_APP_ID_PROD"] ?: ""
+      buildConfigField("String", "ADMOB_INTERSTITIAL_AD_UNIT_ID", "\"${localProperties["ADMOB_INTERSTITIAL_AD_UNIT_ID_PROD"] ?: ""}\"")
     }
   }
   compileOptions {

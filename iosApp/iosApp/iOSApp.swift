@@ -3,6 +3,7 @@ import SwiftUI
 import ComposeApp
 import KakaoSDKCommon
 import KakaoSDKAuth
+import GoogleMobileAds
 
 @main
 struct iOSApp: App {
@@ -14,6 +15,7 @@ struct iOSApp: App {
             fatalError("KAKAO_NATIVE_APP_KEY not found in Info.plist. Check Config.xcconfig.")
         }
         KakaoSDK.initSDK(appKey: kakaoAppKey)
+        MobileAds.shared.start()
     }
 
     var body: some Scene {

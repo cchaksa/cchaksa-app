@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		493345CE2FEB60F60015235F /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 493345CD2FEB60F60015235F /* GoogleMobileAds */; };
 		4944EC2F2FDC305500F49AF7 /* AmplitudeSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4944EC2E2FDC305500F49AF7 /* AmplitudeSwift */; };
 		499266BD2F44825A001C8119 /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 499266BC2F44825A001C8119 /* KakaoSDKAuth */; };
 		499266BF2F44825A001C8119 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 499266BE2F44825A001C8119 /* KakaoSDKCommon */; };
@@ -55,6 +56,7 @@
 				4944EC2F2FDC305500F49AF7 /* AmplitudeSwift in Frameworks */,
 				9BBB8DC62DE8BBBF00DB2EE0 /* FirebaseDatabase in Frameworks */,
 				9B49E59D2DEF0C7300F3EF63 /* FirebaseCrashlytics in Frameworks */,
+				493345CE2FEB60F60015235F /* GoogleMobileAds in Frameworks */,
 				9B49E59B2DEF0C7300F3EF63 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				499266C12F44825A001C8119 /* KakaoSDKUser in Frameworks */,
 				9BBB8DC42DE8BBBF00DB2EE0 /* FirebaseAnalytics in Frameworks */,
@@ -113,6 +115,7 @@
 				499266BE2F44825A001C8119 /* KakaoSDKCommon */,
 				499266C02F44825A001C8119 /* KakaoSDKUser */,
 				4944EC2E2FDC305500F49AF7 /* AmplitudeSwift */,
+				493345CD2FEB60F60015235F /* GoogleMobileAds */,
 			);
 			productName = iosApp;
 			productReference = B9DA97B12DC1472C00A4DA20 /* ChukChukHaksa.app */;
@@ -146,6 +149,7 @@
 				9BBB8DC22DE8BBBF00DB2EE0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				499266BB2F44825A001C8119 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 				4944EC2D2FDC305500F49AF7 /* XCRemoteSwiftPackageReference "Amplitude-Swift" */,
+				493345CC2FEB60F60015235F /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B9DA97B22DC1472C00A4DA20 /* Products */;
@@ -450,6 +454,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		493345CC2FEB60F60015235F /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.5.0;
+			};
+		};
 		4944EC2D2FDC305500F49AF7 /* XCRemoteSwiftPackageReference "Amplitude-Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/amplitude/Amplitude-Swift";
@@ -477,6 +489,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		493345CD2FEB60F60015235F /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 493345CC2FEB60F60015235F /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
 		4944EC2E2FDC305500F49AF7 /* AmplitudeSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4944EC2D2FDC305500F49AF7 /* XCRemoteSwiftPackageReference "Amplitude-Swift" */;

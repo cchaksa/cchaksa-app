@@ -4,6 +4,7 @@ import android.app.Application
 import com.chukchukhaksa.mobile.common.kmp.isDebug
 import com.chukchukhaksa.mobile.di.initKoin
 import com.kakao.sdk.common.KakaoSdk
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.Firebase
 import com.google.firebase.initialize
 import io.github.aakira.napier.DebugAntilog
@@ -24,5 +25,6 @@ class ChukChukHaksaApplication : Application() {
 
         Firebase.initialize(this)
         KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY)
+        MobileAds.initialize(this)
     }
 }
