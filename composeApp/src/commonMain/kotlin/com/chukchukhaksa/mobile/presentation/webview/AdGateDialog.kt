@@ -16,7 +16,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 private const val AD_UNAVAILABLE_MESSAGE = "지금은 광고가 없어 바로 학업 정보 업데이트 화면으로 이동합니다."
 
 /**
- * 광고 게이트 경로 진입 시 "광고가 노출됩니다"를 고지하는 확인/취소 다이얼로그.
+ * 광고 게이트 경로 진입 시 광고 재생 후 이동을 고지하는 확인/취소 다이얼로그.
  * 디자인 시스템 [CchDialog](2버튼 구성)를 래핑한다.
  *
  * - [onConfirm]: 전면 광고 표시 → 이동 흐름을 시작한다.
@@ -28,8 +28,8 @@ fun AdGateDialog(
   onCancel: () -> Unit,
 ) {
   CchDialog(
-    headerText = "광고가 노출됩니다",
-    bodyText = "확인을 누르면 광고가 표시된 후 이동합니다.",
+    headerText = "안내",
+    bodyText = "척척학사를 위한 짧은 광고가 재생된 후,\n최신 학업 정보 업데이트 화면으로 이동합니다.",
     confirmButtonText = "확인",
     dismissButtonText = "취소",
     onDismissRequest = onCancel,
