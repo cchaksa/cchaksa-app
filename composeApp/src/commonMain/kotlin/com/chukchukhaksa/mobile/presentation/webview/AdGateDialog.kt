@@ -4,16 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.chukchukhaksa.mobile.common.ad.AdShowResult
+import com.chukchukhaksa.mobile.common.analytics.AnalyticsClient
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.component.loading.LoadingScreen
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
+import org.koin.compose.koinInject
 
 // 전면 광고 로드·표시 실패 시 이동 직전에 노출하는 안내 토스트 문구(D5).
 private const val AD_UNAVAILABLE_MESSAGE = "지금은 광고가 없어 바로 학업 정보 업데이트 화면으로 이동합니다."
+
+// 광고 안내 팝업이 노출될 때 Amplitude로 전송하는 이벤트 이름.
+private const val AD_CONFIRM_POPUP_EVENT = "ad_confirm_popup"
 
 /**
  * 광고 게이트 경로 진입 시 광고 재생 후 이동을 고지하는 확인/취소 다이얼로그.
@@ -21,15 +27,23 @@ private const val AD_UNAVAILABLE_MESSAGE = "지금은 광고가 없어 바로 �
  *
  * - [onConfirm]: 전면 광고 표시 → 이동 흐름을 시작한다.
  * - [onCancel]: 광고·이동 없이 현재 화면을 유지한다(다이얼로그 닫기).
+ *
+ * 다이얼로그가 컴포지션에 진입(= 팝업 노출)할 때마다 [AD_CONFIRM_POPUP_EVENT]를 1회 전송한다.
+ * 게이트를 띄우는 두 경로(보조 웹뷰 [WebViewRoute]·홈 탭 웹뷰 WebViewGuideScreen)가 이 컴포저블을
+ * 공유하므로, 노출 계측을 여기서 처리하면 양쪽 모두 누락 없이 커버된다.
  */
 @Composable
 fun AdGateDialog(
   onConfirm: () -> Unit,
   onCancel: () -> Unit,
+  analyticsClient: AnalyticsClient = koinInject(),
 ) {
+  LaunchedEffect(Unit) {
+    analyticsClient.track(AD_CONFIRM_POPUP_EVENT)
+  }
   CchDialog(
     headerText = "안내",
-    bodyText = "척척학사를 위한 짧은 광고가 재생된 후,\n최신 학업 정보 업데이트 화면으로 이동합니다.",
+    bodyText = "척척학사를 위한 짧은 광고가 재생된 후,\n학업 정보 업데이트 화면으로 이동합니다.",
     confirmButtonText = "확인",
     dismissButtonText = "취소",
     onDismissRequest = onCancel,
