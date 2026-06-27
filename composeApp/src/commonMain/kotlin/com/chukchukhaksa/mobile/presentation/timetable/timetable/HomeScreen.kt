@@ -24,6 +24,7 @@ import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.EditTimetableCellBottomSheet
+import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.IdfaDebugDialog
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.TimetableAppbar
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.TimetableEmptyColumn
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.Timetable
@@ -67,10 +68,6 @@ fun HomeRoute(
       is HomeSideEffect.NavigateCellEditor -> navigateCellEditor(sideEffect.argument)
       HomeSideEffect.NavigateTimetableList -> navigateTimetableList()
       HomeSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
-      is HomeSideEffect.CopyIdfaToClipboard -> {
-        clipboardManager.setText(AnnotatedString(sideEffect.idfa))
-        onShowToast("IDFA가 복사되었습니다", 70.dp)
-      }
     }
   }
 
@@ -112,7 +109,7 @@ fun HomeRoute(
         viewModel.showHomeScreen()
       }
     },
-    onClickTimetable = viewModel::showTimetableTab,
+    onClickTimetable = viewModel::onClickTimetableTab,
     onClickMyPage = { navigateWebView(webMyPageUrl) },
     onClickWebView = { navigateWebView("https://www.cchaksa.com/") },
     onDismissPortalLinkDialog = viewModel::hidePortalLinkDialog,
@@ -125,6 +122,27 @@ fun HomeRoute(
     // 광고 게이트 실패 토스트용. 홈 탭 기본 bottomPadding(70.dp)으로 전역 토스트를 재사용한다.
     onShowToast = { onShowToast(it, 70.dp) },
   )
+
+  // 디버그 전용: 시간표 탭 3연타 제스처로 노출되는 IDFA 진단 다이얼로그.
+  uiState.idfaDebugInfo?.let { info ->
+    IdfaDebugDialog(
+      info = info,
+      onClickCopy = {
+        // 성공 시 순수 IDFA, 실패 시 값(0값 등)+원인을 함께 담아 공유·추적에 쓰도록 한다.
+        val copyText = when {
+          info.isValid -> info.id.orEmpty()
+          info.id != null -> "${info.id}\n${info.diagnostics}"
+          else -> info.diagnostics
+        }
+        clipboardManager.setText(AnnotatedString(copyText))
+        onShowToast(
+          if (info.isValid) "IDFA가 복사되었습니다" else "IDFA 진단 정보가 복사되었습니다",
+          70.dp,
+        )
+      },
+      onDismiss = viewModel::hideIdfaDebugDialog,
+    )
+  }
 }
 
 @Composable

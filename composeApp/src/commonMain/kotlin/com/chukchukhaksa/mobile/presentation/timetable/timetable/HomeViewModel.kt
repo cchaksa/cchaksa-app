@@ -20,6 +20,9 @@ import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEvent
 import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEventBus
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell.TimetableCellType
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
 
 class HomeViewModel(
     private val getMainTimetableUseCase: GetMainTimetableUseCase,
@@ -35,6 +38,10 @@ class HomeViewModel(
     private val advertisingIdProvider: AdvertisingIdProvider,
 ) : ViewModel() {
     val mviStore = mviStore<HomeState, HomeSideEffect>(HomeState())
+
+    // 디버그 전용: 시간표 탭 연타 제스처 추적 상태.
+    private var debugTapCount = 0
+    private var lastTabTapMark: TimeMark? = null
 
     init {
         getProfile()
@@ -139,21 +146,39 @@ class HomeViewModel(
             }
     }
 
+    /**
+     * 사용자가 시간표 탭을 직접 눌렀을 때의 진입점.
+     * 탭 전환과 함께 디버그 빌드에서는 연타 제스처를 감지한다.
+     * ([showTimetableTab]은 이벤트버스·진입 경로에서도 호출되므로 연타 카운트는 이쪽에서만 센다.)
+     */
+    fun onClickTimetableTab() {
+        showTimetableTab()
+        if (isDebug) handleDebugTabTap()
+    }
+
     fun showTimetableTab() {
         mviStore.setState { copy(selectedTab = timetableSideTab(timetable)) }
         getMainTimetable()
-        if (isDebug) copyAdvertisingIdToClipboard()
     }
 
     /**
-     * 디버그 빌드에서 시간표 탭을 누를 때마다 IDFA를 클립보드에 복사하도록
-     * [HomeSideEffect.CopyIdfaToClipboard]를 발행한다(AdMob 테스트 기기 등록용).
-     * iOS만 IDFA가 조회되고 Android는 null이라 자연히 무동작이다.
+     * 디버그 빌드에서 시간표 탭을 [DEBUG_TAP_WINDOW] 안에 [DEBUG_TAP_THRESHOLD]회 연타하면
+     * IDFA 진단 다이얼로그를 띄운다(AdMob 테스트 기기 등록·실패 원인 추적용).
      */
-    private fun copyAdvertisingIdToClipboard() {
-        advertisingIdProvider.getAdvertisingId()?.let { idfa ->
-            mviStore.postSideEffect(HomeSideEffect.CopyIdfaToClipboard(idfa))
+    private fun handleDebugTabTap() {
+        val withinWindow = lastTabTapMark?.let { it.elapsedNow() <= DEBUG_TAP_WINDOW } ?: false
+        debugTapCount = if (withinWindow) debugTapCount + 1 else 1
+        lastTabTapMark = TimeSource.Monotonic.markNow()
+
+        if (debugTapCount >= DEBUG_TAP_THRESHOLD) {
+            debugTapCount = 0
+            lastTabTapMark = null
+            mviStore.setState { copy(idfaDebugInfo = advertisingIdProvider.getAdvertisingIdInfo()) }
         }
+    }
+
+    fun hideIdfaDebugDialog() {
+        mviStore.setState { copy(idfaDebugInfo = null) }
     }
 
     fun deleteCell(cell: TimetableCell) = viewModelScope.launch {
@@ -246,5 +271,10 @@ class HomeViewModel(
         } else {
             mviStore.postSideEffect(HomeSideEffect.NavigateAddTimetableCell)
         }
+    }
+
+    private companion object {
+        const val DEBUG_TAP_THRESHOLD = 3
+        val DEBUG_TAP_WINDOW = 1500.milliseconds
     }
 }

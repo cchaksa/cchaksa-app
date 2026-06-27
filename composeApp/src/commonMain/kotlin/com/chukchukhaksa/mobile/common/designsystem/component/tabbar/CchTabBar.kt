@@ -25,6 +25,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray400
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
+import com.chukchukhaksa.mobile.common.kmp.isDebug
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.HomeTab
 import org.jetbrains.compose.resources.painterResource
@@ -54,6 +55,8 @@ fun HomeTabBar(
       modifier = Modifier.padding(bottom = 2.dp),
       text = "시간표",
       isSelected = (selectedTab == HomeTab.EMPTY_TIMETABLE || selectedTab == HomeTab.TIMETABLE),
+      // 디버그 빌드에서는 IDFA 진단용 3연타 제스처가 씹히지 않도록 클릭 쓰로틀을 해제한다.
+      singleClick = !isDebug,
       onClick = { onClickTimetable() }
     )
 
@@ -76,6 +79,7 @@ fun TimetableTabBarItem(
   modifier: Modifier = Modifier,
   text: String,
   isSelected: Boolean,
+  singleClick: Boolean = true,
   onClick: () -> Unit,
 ) {
   val textColor = if (isSelected) Black100 else Gray400
@@ -83,7 +87,7 @@ fun TimetableTabBarItem(
   Column(
     modifier = modifier
       .clip(RoundedCornerShape(8.dp))
-      .cchClickable { onClick() },
+      .cchClickable(singleClick = singleClick) { onClick() },
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     Icon(

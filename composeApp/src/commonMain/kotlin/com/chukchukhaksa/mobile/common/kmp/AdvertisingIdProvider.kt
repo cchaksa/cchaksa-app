@@ -7,10 +7,23 @@ package com.chukchukhaksa.mobile.common.kmp
  */
 expect class AdvertisingIdProvider() {
     /**
-     * 광고 식별자를 반환한다.
+     * 디버그 진단용 IDFA 조회 결과를 반환한다.
      *
-     * - iOS: IDFA(`ASIdentifierManager.advertisingIdentifier`). ATT 미허용 시 0값 UUID가 나온다.
-     * - Android 및 그 외: null(미지원).
+     * - iOS: IDFA(`ASIdentifierManager.advertisingIdentifier`)와 ATT 권한 상태. ATT 미허용 시 0값 UUID가 나온다.
+     * - Android 및 그 외: 미지원(id=null).
      */
-    fun getAdvertisingId(): String?
+    fun getAdvertisingIdInfo(): AdvertisingIdInfo
 }
+
+/**
+ * IDFA 조회 진단 결과.
+ *
+ * @param id 조회된 IDFA. iOS ATT 미허용 시 0값 UUID, Android·미지원 시 null.
+ * @param isValid 광고 추적에 쓸 수 있는 유효 IDFA인지(null·0값 UUID이면 false).
+ * @param diagnostics 실패 원인 추적용으로 사람이 읽는 상태 문자열(ATT 권한 등).
+ */
+data class AdvertisingIdInfo(
+    val id: String?,
+    val isValid: Boolean,
+    val diagnostics: String,
+)

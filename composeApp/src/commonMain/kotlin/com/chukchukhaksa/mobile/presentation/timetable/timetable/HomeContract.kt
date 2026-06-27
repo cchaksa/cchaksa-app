@@ -1,5 +1,6 @@
 package com.chukchukhaksa.mobile.presentation.timetable.timetable
 
+import com.chukchukhaksa.mobile.common.kmp.AdvertisingIdInfo
 import com.chukchukhaksa.mobile.common.model.Timetable
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.model.TimetableCellColor
@@ -19,6 +20,8 @@ data class HomeState(
   val academicSummary: AcademicSummary? = null,
   val isPortalLinked: Boolean = false,
   val showPortalLinkDialog: Boolean = false,
+  /** 디버그 전용: 시간표 탭 3연타로 조회한 IDFA 진단 결과. null이면 다이얼로그 숨김. */
+  val idfaDebugInfo: AdvertisingIdInfo? = null,
 )
 
 sealed interface HomeSideEffect {
@@ -28,9 +31,6 @@ sealed interface HomeSideEffect {
   data class NavigateCellEditor(val argument: CellEditorArgument) : HomeSideEffect
   data class HandleException(val throwable: Throwable) : HomeSideEffect
   data object NavigateSemesterSelect : HomeSideEffect
-
-  /** 디버그 전용: 시간표 탭 연타 제스처로 획득한 IDFA를 클립보드에 복사한다. */
-  data class CopyIdfaToClipboard(val idfa: String) : HomeSideEffect
 }
 
 enum class HomeTab {
