@@ -1,6 +1,6 @@
 package com.chukchukhaksa.mobile.local.database.common.di
 
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.chukchukhaksa.mobile.local.database.common.createSqliteDriver
 import com.chukchukhaksa.mobile.local.database.timetable.database.TimetableDatabase
 import com.chukchukhaksa.mobile.local.database.timetable.database.TimetableDatabaseFactory
 import com.chukchukhaksa.mobile.local.common.database.timetable.migration.TIMETABLE_MIGRATION_1_2
@@ -25,7 +25,7 @@ val timetableDatabaseModule = module {
       .create()
       .addMigrations(TIMETABLE_MIGRATION_1_2)
       .fallbackToDestructiveMigration(true)
-      .setDriver(BundledSQLiteDriver())
+      .setDriver(createSqliteDriver())
       .build()
   }
   single { get<TimetableDatabase>().timetableDao() }
@@ -36,7 +36,7 @@ val openMajorDatabaseModule = module {
     get<OpenMajorDatabaseFactory>()
       .create()
       .fallbackToDestructiveMigration(true)
-      .setDriver(BundledSQLiteDriver())
+      .setDriver(createSqliteDriver())
       .build()
   }
   single { get<OpenMajorDatabase>().openMajorDao() }
@@ -47,7 +47,7 @@ val openLectureDatabaseModule = module {
     get<OpenLectureDatabaseFactory>()
       .create()
       .fallbackToDestructiveMigration(true)
-      .setDriver(BundledSQLiteDriver())
+      .setDriver(createSqliteDriver())
       .build()
   }
   single { get<OpenLectureDatabase>().openLectureDao() }

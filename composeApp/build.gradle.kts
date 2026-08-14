@@ -62,9 +62,11 @@ kotlin {
       implementation(libs.androidx.core.splashscreen)
       implementation(libs.amplitude.analytics.android)
       implementation(libs.play.services.ads)
+      implementation(libs.androidx.graphics.path)
     }
     iosMain.dependencies {
       implementation(libs.ktor.client.darwin)
+      implementation(libs.sqlite.bundled)
     }
     commonMain.dependencies {
       implementation(compose.runtime)
@@ -87,7 +89,6 @@ kotlin {
       implementation(libs.koin.compose.viewmodel.navigation)
 
       implementation(libs.androidx.room.runtime)
-      implementation(libs.sqlite.bundled)
 
       implementation(libs.androidx.datastore.preferences)
 
@@ -136,6 +137,11 @@ android {
     buildConfigField("String", "AMPLITUDE_API_KEY_PROD", "\"${localProperties["AMPLITUDE_API_KEY_PROD"] ?: ""}\"")
   }
   packaging {
+    jniLibs {
+      useLegacyPackaging = false
+      // Bundled SQLite is iOS-only; keep the prebuilt .so out of the Android APK.
+      excludes += "**/libsqliteJni.so"
+    }
     resources {
       excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }

@@ -11,7 +11,9 @@ androidx-espresso = "3.6.1"
 androidx-lifecycle = "2.8.4"
 androidx-testExt = "1.2.1"
 composeMultiplatform = "1.10.0"
-datastorePreferences = "1.1.7"
+datastorePreferences = "1.2.1"
+androidx-graphics-path = "1.1.0"
+androidx-sqlite = "2.6.2"
 firebaseDatabaseKtx = "21.0.0"
 junit = "4.13.2"
 kotlin = "2.2.21"
@@ -73,7 +75,8 @@ koin-compose-viewmodel-navigation = { group = "io.insert-koin", name = "koin-com
 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled" }
+sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "androidx-sqlite" }
+androidx-graphics-path = { module = "androidx.graphics:graphics-path", version.ref = "androidx-graphics-path" }
 
 kmp-firebase-database = { group = "dev.gitlive", name = "firebase-database", version.ref = "kotlin-firebase" }
 kmp-firebase-config = { group = "dev.gitlive", name = "firebase-config", version.ref = "kotlin-firebase" }
