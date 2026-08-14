@@ -9,18 +9,12 @@ package com.chukchukhaksa.mobile.common.ad
  */
 interface AdManager {
   /**
-   * 전면 광고를 표시한다. 준비된 광고가 있으면 즉시, 없으면 로드를 시도한다.
+   * 전면 광고를 로드한 뒤 표시한다(사전 로드 캐시 없음 — 호출 시점에 로드한다).
    * 로드·표시 실패는 예외로 전파하지 않고 [AdShowResult.Failed]로 환원한다.
    *
    * @param adUnitId 사용할 광고단위 ID. null이면 구현체가 빌드 설정(BuildConfig / Info.plist)의 기본 ID로 폴백한다.
    */
   suspend fun showInterstitial(adUnitId: String? = null): AdShowResult
-
-  /**
-   * 전면 광고를 미리 로드해 표시 대기 시간을 줄인다(다이얼로그 표시 시점에 호출).
-   * 전용 프리로드 캐시 시스템은 두지 않으며, 구현에서 no-op을 허용한다.
-   */
-  fun preloadInterstitial(adUnitId: String? = null)
 }
 
 /** 전면 광고 표시 결과. */

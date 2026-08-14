@@ -83,7 +83,6 @@ fun WebViewRoute(
     onShowInterstitial = {
       koin.getOrNull<AdManager>()?.showInterstitial() ?: AdShowResult.Failed(AdFailureReason.NotReady)
     },
-    onPreloadInterstitial = { koin.getOrNull<AdManager>()?.preloadInterstitial() },
   )
 }
 
@@ -98,7 +97,6 @@ private fun WebViewRouteContent(
   onWithdraw: () -> Unit,
   onShowToast: (String) -> Unit,
   onShowInterstitial: suspend () -> AdShowResult,
-  onPreloadInterstitial: () -> Unit,
 ) {
   PlatformBackHandler(enabled = controller.canGoBack) {
     controller.goBack()
@@ -157,10 +155,9 @@ private fun WebViewRouteContent(
           is BridgeAction.NavigateWebView -> pushWebView(action.absoluteUrl)
 
           // 광고 게이트 경로: 즉시 이동하지 않고 "광고가 노출됩니다" 다이얼로그를 띄운다.
-          // 다이얼로그가 떠 있는 동안 전면 광고를 선택적으로 사전 로드한다(D7).
+          // 전면 광고 로드는 확인 시점에 시작한다(사전 로드 없음 — 취소 시 낭비 요청 방지).
           is BridgeAction.NavigateWebViewWithAd -> {
             pendingAdNavUrl = action.absoluteUrl
-            onPreloadInterstitial()
           }
 
           is BridgeAction.RedirectToHome -> onRedirectToHome(action.reloadWebView)

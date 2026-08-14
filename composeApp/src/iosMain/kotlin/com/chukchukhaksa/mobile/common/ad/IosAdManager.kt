@@ -15,11 +15,6 @@ class IosAdManager(
     private val bridge: AdMobBridge,
 ) : AdManager {
 
-    override fun preloadInterstitial(adUnitId: String?) {
-        // 선택적 사전 로드: 다이얼로그 표시 시점에 미리 로드해 확인 시 대기를 줄인다(실패는 무시).
-        bridge.loadInterstitial(adUnitId, onLoaded = {}, onFailure = {})
-    }
-
     override suspend fun showInterstitial(adUnitId: String?): AdShowResult {
         // 1) 로드(10초 타임아웃). 타임아웃·실패 시 표시 없이 환원한다.
         val loadResult = withTimeoutOrNull(LOAD_TIMEOUT_MS) {

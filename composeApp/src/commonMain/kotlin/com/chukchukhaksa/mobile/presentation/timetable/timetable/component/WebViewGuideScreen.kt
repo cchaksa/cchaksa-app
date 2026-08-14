@@ -71,13 +71,6 @@ fun WebViewGuideScreen(
   // 확인 후 전면 광고가 로드·표시되는 동안 로딩 오버레이를 덮는다.
   var isAdLoading by remember { mutableStateOf(false) }
 
-  // 다이얼로그가 떠 있는 동안 전면 광고를 선택적으로 사전 로드한다(D7, best-effort).
-  LaunchedEffect(uiState.pendingAdNavUrl) {
-    if (uiState.pendingAdNavUrl != null) {
-      koin.getOrNull<AdManager>()?.preloadInterstitial()
-    }
-  }
-
   Box(modifier = Modifier.fillMaxSize()) {
     WebViewGuideContent(
       state = uiState,

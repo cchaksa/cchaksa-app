@@ -12,10 +12,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
@@ -35,10 +32,8 @@ import kotlin.coroutines.resume
 class AndroidAdManager(application: Application) : AdManager {
 
     private val appContext: Context = application.applicationContext
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private var activityRef: WeakReference<Activity>? = null
-    private var preloadedAd: InterstitialAd? = null
 
     init {
         application.registerActivityLifecycleCallbacks(
@@ -60,17 +55,6 @@ class AndroidAdManager(application: Application) : AdManager {
         )
     }
 
-    override fun preloadInterstitial(adUnitId: String?) {
-        val unitId = adUnitId ?: BuildConfig.ADMOB_INTERSTITIAL_AD_UNIT_ID
-        if (unitId.isBlank() || preloadedAd != null) return
-        scope.launch {
-            when (val outcome = loadInterstitial(unitId)) {
-                is LoadOutcome.Loaded -> preloadedAd = outcome.ad
-                is LoadOutcome.Failed -> Napier.d(tag = TAG) { "전면 광고 preload 실패: ${outcome.reason}" }
-            }
-        }
-    }
-
     override suspend fun showInterstitial(adUnitId: String?): AdShowResult = withContext(Dispatchers.Main) {
         val unitId = adUnitId ?: BuildConfig.ADMOB_INTERSTITIAL_AD_UNIT_ID
         if (unitId.isBlank()) {
@@ -78,15 +62,14 @@ class AndroidAdManager(application: Application) : AdManager {
             return@withContext AdShowResult.Failed(AdFailureReason.NotReady)
         }
 
-        // 프리로드분이 있으면 즉시 소비, 없으면 즉시 로드(10초 타임아웃) 시도.
-        val ad = preloadedAd?.also { preloadedAd = null }
-            ?: when (val outcome = loadInterstitial(unitId)) {
-                is LoadOutcome.Loaded -> outcome.ad
-                is LoadOutcome.Failed -> {
-                    Napier.d(tag = TAG) { "전면 광고 로드 실패: ${outcome.reason}" }
-                    return@withContext AdShowResult.Failed(outcome.reason)
-                }
+        // 표시 시점에 로드(10초 타임아웃)한다. 사전 로드 캐시는 두지 않는다.
+        val ad = when (val outcome = loadInterstitial(unitId)) {
+            is LoadOutcome.Loaded -> outcome.ad
+            is LoadOutcome.Failed -> {
+                Napier.d(tag = TAG) { "전면 광고 로드 실패: ${outcome.reason}" }
+                return@withContext AdShowResult.Failed(outcome.reason)
             }
+        }
 
         val activity = activityRef?.get()
             ?: run {

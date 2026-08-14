@@ -18,12 +18,6 @@ class AdMobBridgeImpl: AdMobBridge {
         onLoaded: @escaping () -> Void,
         onFailure: @escaping (KotlinThrowable) -> Void
     ) {
-        // 이미 로드된 광고가 있으면 즉시 성공 통지(선택적 사전 로드 재사용).
-        if interstitial != nil {
-            onLoaded()
-            return
-        }
-
         let resolvedId = adUnitId
             ?? (Bundle.main.object(forInfoDictionaryKey: "ADMOB_INTERSTITIAL_AD_UNIT_ID") as? String)
             ?? ""
