@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**ChukChukHaksa** (formerly Suwiki) is a Kotlin Multiplatform Compose project for timetable and course evaluation services for Suwon University students. The project uses a single `composeApp` module with Clean Architecture and MVI pattern. Supports Android and iOS with platform-specific widgets.
+**ChukChukHaksa** (formerly Suwiki) is a Kotlin Multiplatform Compose project of timetable and academic services for Suwon University students. The project uses a single `composeApp` module with Clean Architecture and MVI pattern. Supports Android and iOS with platform-specific widgets.
+
+Native Compose screens cover the timetable feature set (`presentation/timetable`: editor, cell editor,
+open-lecture search, semester select, …) plus landing/login and the tab host. Most other surfaces —
+including academic info — are served by an embedded web app driven through the WebView bridge.
 
 ## Build System and Commands
 
@@ -25,7 +29,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ./gradlew linkDebugFrameworkIosSimulatorArm64    # iOS Simulator
 ./gradlew linkReleaseFrameworkIosArm64           # iOS Device
 ./gradlew embedAndSignAppleFrameworkForXcode     # Xcode integration
+
+# iOS app build (verifies the Swift side too; use the project, not the workspace)
+cd iosApp && xcodebuild -project iosApp.xcodeproj -scheme iosApp \
+  -destination 'generic/platform=iOS Simulator' -configuration Debug build
 ```
+
+When a change touches both platforms, verify with `./gradlew testDebugUnitTest assembleDebug`,
+`./gradlew linkDebugFrameworkIosSimulatorArm64`, and the `xcodebuild` command above.
 
 ### Testing Commands
 ```bash
@@ -49,10 +60,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Key Architectural Components
 - **State Management**: Unidirectional Data Flow (UDF) with StateFlow
 - **Dependency Injection**: Koin 4.1.0-Beta10 with feature-based modules
-- **Navigation**: Jetpack Navigation Compose 2.9.0-beta02 with type-safe routes (kotlinx.serialization for argument passing)
+- **Navigation**: Jetpack Navigation Compose 2.9.1 with type-safe routes (kotlinx.serialization for argument passing)
 - **Database**: Room 2.7.1 with SQLite for local storage (schema in `composeApp/schemas`)
-- **Remote Data**: Firebase via GitLive KMP wrappers 2.1.0
+- **Remote Data**: Ktor 3.3.1 REST client (primary) + Firebase via GitLive KMP wrappers 2.1.0 (Remote Config, Realtime Database, Crashlytics, Analytics)
+- **WebView**: Much of the product surface is served by an embedded web app. See "WebView Bridge" below.
 - **Widgets**: Android (Glance 1.1.1) / iOS (Native WidgetKit) timetable widgets
+
+### WebView Bridge
+Several screens (`presentation/webview`, home tab's `WebViewGuideScreen`) host a web app that talks
+to native through a **one-way** bridge — the web posts messages, native reacts. There is no reverse
+JS-callback channel.
+
+- `WebViewBridgeMessage` (raw message) → `BridgeAction` (`presentation/webview/BridgeAction.kt`) via `toAction(host)`
+- Actions: `NavigateWebView`, `NavigateWebViewWithAd`, `RedirectToHome`, `NavigateBack`, `Withdraw`, `ContentRendered`, `Unhandled`
+- **Ad gate**: paths listed in `AD_GATED_PATHS` map to `NavigateWebViewWithAd`, which shows a confirm
+  dialog → interstitial ad → navigation. Ad load starts on confirm (no preloading). Load/show failure
+  still navigates (graceful degradation) with a notice toast.
+- Ads go through `common/ad/AdManager` (Android: `AndroidAdManager`; iOS: `IosAdManager` + Swift
+  `AdMobBridgeImpl`). It is resolved lazily via `getOrNull<AdManager>()` so a missing binding never crashes the screen.
 
 ## Design System
 
@@ -67,7 +92,7 @@ The project uses two parallel design systems:
    - Colors: Organized palette with Gray (100-600), Purple (100-600), Red (100-400), Yellow (100-200), Green (100-200)
 
 ### Design System Components
-appbar, badge, bottomsheet, button, chip, container, dialog, loading, searchbar, tabbar, textfield, toast
+appbar, badge, bottomsheet, button, chip, container, dialog, loading, searchbar, tabbar, textfield, toast, webview
 
 ### Design System Location
 - **Components**: `composeApp/src/commonMain/kotlin/com/chukchukhaksa/mobile/common/designsystem/component/`
@@ -77,28 +102,39 @@ appbar, badge, bottomsheet, button, chip, container, dialog, loading, searchbar,
 ## Project Structure
 
 ### Multiplatform Targets
-- **Android**: Primary target (minSdk 28, targetSdk 35, compileSdk 35)
-- **iOS**: Framework generation via `iosApp.xcworkspace` (iosX64, iosArm64, iosSimulatorArm64)
+- **Android**: Primary target (minSdk 28, targetSdk 36, compileSdk 36)
+- **iOS**: Framework generation for iosX64, iosArm64, iosSimulatorArm64. The Xcode side is
+  `iosApp/iosApp.xcodeproj` with **Swift Package Manager** dependencies — build/test with
+  `-project iosApp.xcodeproj -scheme iosApp`, not the workspace (`iosApp.xcworkspace` is empty and
+  `iosApp/Pods/` is a leftover; CocoaPods is not used).
 
 ### Key Dependencies
 - **Kotlin**: 2.2.21
 - **KSP**: 2.2.21-2.0.4
+- **AGP**: 8.10.1
 - **Compose Multiplatform**: 1.10.0
 - **Koin DI**: 4.1.0-Beta10
 - **Room Database**: 2.7.1
+- **Ktor (HTTP client)**: 3.3.1 (okhttp on Android / darwin on iOS)
 - **Firebase**: GitLive KMP 2.1.0 (Android BOM 33.2.0)
 - **kotlinx-coroutines**: 1.10.1
 - **kotlinx-serialization**: 1.8.1
 - **kotlinx-datetime**: 0.7.1
 - **kotlinx-immutable**: 0.3.8
 - **Datastore Preferences**: 1.1.7
+- **KSafe (secure storage)**: 1.6.0
 - **Napier (logging)**: 2.7.1
 - **Glance (Android Widgets)**: 1.1.1
+- **Kakao SDK (login)**: 2.20.6
+- **Amplitude (analytics)**: 1.22.4
+- **Google Mobile Ads (Android)**: play-services-ads 25.4.0 / iOS uses GoogleMobileAds via SPM
 
 ### Package Organization
 ```
 com.chukchukhaksa.mobile/
 ├── common/
+│   ├── ad/                   # Interstitial ad abstraction (AdManager + platform impls)
+│   ├── analytics/            # Analytics client (Amplitude / Firebase)
 │   ├── designsystem/         # UI components and themes
 │   ├── extension/            # Kotlin extensions
 │   ├── kmp/                  # KMP platform-specific code
@@ -120,10 +156,29 @@ com.chukchukhaksa.mobile/
 ## Development Workflow
 
 ### Current Project State
-- **Main Branch**: `develop`
+- **Main Branch**: `main` (the only branch on the remote)
 - **Application ID**: `com.kunize.uswtimetable`
-- **Version**: 3.0.1 (versionCode 51)
+- **Version**: 3.2.1 (versionCode 57 / iOS build 4)
 - **Java Compatibility**: Java 17
+
+### Bumping the App Version
+Four values, two files — keep them in sync:
+- `composeApp/build.gradle.kts`: `versionCode`, `versionName`
+- `iosApp/iosApp.xcodeproj/project.pbxproj`: `CURRENT_PROJECT_VERSION`, `MARKETING_VERSION` (**two
+  occurrences each** — Debug and Release configs)
+
+`iosApp/Configuration/Config.xcconfig` also defines `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION`, but
+those are **dead values** — the target-level settings in `project.pbxproj` win. Edit the pbxproj.
+
+### Secrets and Build-Config IDs
+Never hardcode keys or ad unit IDs in source. They live in git-ignored files and flow in through build config:
+- **Android**: `local.properties` → `buildConfigField` / `manifestPlaceholders` in `composeApp/build.gradle.kts`
+  (`KAKAO_NATIVE_APP_KEY`, `AMPLITUDE_API_KEY_DEV`/`_PROD`, `ADMOB_APP_ID_TEST`/`_PROD`,
+  `ADMOB_INTERSTITIAL_AD_UNIT_ID_TEST`/`_PROD`). Debug/release `buildTypes` pick test vs. production IDs.
+- **iOS**: `iosApp/Configuration/Config.xcconfig` → `Info.plist` keys, read at runtime via `Bundle.main`.
+
+Missing values fall back to empty strings rather than failing the build, so a blank ad unit ID surfaces
+as `AdShowResult.Failed(NotReady)` at runtime, not a compile error.
 
 ### MVI Implementation Pattern
 Each screen follows this pattern:
