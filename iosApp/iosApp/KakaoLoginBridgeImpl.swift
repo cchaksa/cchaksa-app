@@ -55,6 +55,9 @@ class KakaoLoginBridgeImpl: KakaoLoginBridge {
             URLQueryItem(name: "nonce", value: nonce),
             URLQueryItem(name: "code_challenge", value: codeChallenge),
             URLQueryItem(name: "code_challenge_method", value: "S256"),
+            // SDK 식별 헤더. 카카오 SDK가 authorize 요청에 항상 붙이는 값으로,
+            // 빠지면 미지원 SDK로 판정되어 KOE033이 내려온다.
+            URLQueryItem(name: "ka", value: KakaoSDK.shared.kaHeader()),
         ]
 
         return KakaoOAuthUrlInfo(url: components.url!.absoluteString, codeVerifier: codeVerifier)
