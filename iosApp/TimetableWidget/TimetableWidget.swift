@@ -18,16 +18,16 @@ struct TimetableWidget: Widget {
                     .containerBackground(.fill.tertiary, for: .widget)
             }
             .contentMarginsDisabled() // remove default widget inner margins (iOS 17+)
-            .configurationDisplayName("시간표")
-            .description("척척학사 시간표를 확인하세요.")
+            .configurationDisplayName("척척학사 시간표")
+            .description("홈 화면에서 한 주 시간표를 바로 확인하세요.")
             .supportedFamilies([.systemLarge])
         } else {
             return StaticConfiguration(kind: kind, provider: TimetableTimelineProvider()) { entry in
                 // Avoid extra padding to minimize whitespace on iOS 16
                 TimetableWidgetView(entry: entry)
             }
-            .configurationDisplayName("시간표")
-            .description("척척학사 시간표를 확인하세요.")
+            .configurationDisplayName("척척학사 시간표")
+            .description("홈 화면에서 한 주 시간표를 바로 확인하세요.")
             .supportedFamilies([.systemLarge])
         }
     }
