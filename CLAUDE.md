@@ -79,6 +79,23 @@ JS-callback channel.
 - Ads go through `common/ad/AdManager` (Android: `AndroidAdManager`; iOS: `IosAdManager` + Swift
   `AdMobBridgeImpl`). It is resolved lazily via `getOrNull<AdManager>()` so a missing binding never crashes the screen.
 
+### Timetable Widgets
+Both platforms render the main timetable, driven from one common entry point: `HomeScreen`'s
+`LaunchedEffect` calls `sendWidgetUpdateCommand(context)` (expect/actual in `widget/`) whenever
+`uiState.timetable` changes.
+
+- **Android**: Glance. The actual implementation updates `TimetableWidget` directly.
+- **iOS**: WidgetKit extension in `iosApp/TimetableWidget/` (target `TimetableWidgetExtension`,
+  `systemLarge` only). There is no direct call channel, so the two sides meet at an **App Group**:
+  the actual serializes `Timetable` to JSON into `NSUserDefaults(suiteName:)` under key
+  `timetable_data`, then posts a `TimetableDataUpdated` notification. `TimetableDataManager`
+  (registered in `iOSApp.swift`'s `init`) observes it and calls `WidgetCenter.reloadTimelines`;
+  `TimetableTimelineProvider` reads the same suite/key back.
+- **App Group ID**: `group.com.kunize.uswtimetable.shared`, declared in **three** entitlements files —
+  `iosApp/iosApp/iosApp.entitlements`, `iosApp/TimetableWidgetExtension.entitlements` (the one the
+  extension target actually signs with), and `iosApp/TimetableWidget/TimetableWidget.entitlements`.
+  Changing the suite name means changing the Kotlin actual, the Swift reader, and all three files.
+
 ## Design System
 
 ### Dual Theme System

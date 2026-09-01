@@ -17,6 +17,9 @@ struct iOSApp: App {
         }
         KakaoSDK.initSDK(appKey: kakaoAppKey)
         MobileAds.shared.start()
+
+        // 시간표 갱신 알림을 받아 위젯 타임라인을 리로드하는 옵저버를 등록한다.
+        _ = TimetableDataManager.shared
     }
 
     var body: some Scene {
