@@ -24,7 +24,9 @@ import kotlin.math.max
 private const val MIN_MAX_PERIOD = 8
 
 internal fun List<TimetableCell>.maxPeriod(): Int {
-    return max((maxOfOrNull { it.endPeriod }?.plus(1)) ?: MIN_MAX_PERIOD, MIN_MAX_PERIOD)
+    // 토요일과 이러닝 수업은 그리드가 아닌 하단 목록으로 표시되므로 시간축 길이에 반영하지 않는다.
+    val gridCellList = filterNot { it.day == TimetableDay.SAT || it.day == TimetableDay.E_LEARNING }
+    return max((gridCellList.maxOfOrNull { it.endPeriod }?.plus(1)) ?: MIN_MAX_PERIOD, MIN_MAX_PERIOD)
 }
 
 @Composable

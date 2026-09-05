@@ -79,7 +79,11 @@ struct TimetableContent: View {
     private let weekdays: [TimetableDay] = [.monday, .tuesday, .wednesday, .thursday, .friday]
 
     private var maxDisplayPeriods: Int {
-        let lastEnd = timetableData.cellList.map { $0.endPeriod }.max() ?? 0
+        // Saturday and e-learning cells are listed below the grid, so they must not stretch the time axis.
+        let lastEnd = timetableData.cellList
+            .filter { weekdays.contains($0.day) }
+            .map { $0.endPeriod }
+            .max() ?? 0
         return max(8, lastEnd + 1) // Align with Compose maxPeriod()
     }
 
