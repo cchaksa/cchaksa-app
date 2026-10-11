@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.chukchukhaksa.mobile.common.designsystem.component.button.TextFieldClearButton
 import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
@@ -34,6 +35,8 @@ fun CchRegularTextField(
   placeholder: String = "",
   isActive: Boolean = false,
   isError: Boolean = false,
+  keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+  visualTransformation: VisualTransformation = VisualTransformation.None,
   onValueChanged: (String) -> Unit = {},
   onClickClearButton: () -> Unit = {}
 ) {
@@ -49,7 +52,8 @@ fun CchRegularTextField(
     singleLine = true,
     textStyle = textStyle,
     cursorBrush = SolidColor(Purple600),
-    keyboardOptions = KeyboardOptions.Default,
+    keyboardOptions = keyboardOptions,
+    visualTransformation = visualTransformation,
     decorationBox = { innerTextField ->
       Row(
         modifier = Modifier

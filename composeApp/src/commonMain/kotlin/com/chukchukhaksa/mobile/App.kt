@@ -38,6 +38,7 @@ import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import com.chukchukhaksa.mobile.domain.webview.WebViewPreloader
 import com.chukchukhaksa.mobile.presentation.landing.navigation.LandingRoute
 import com.chukchukhaksa.mobile.presentation.landing.navigation.landingNavGraph
+import com.chukchukhaksa.mobile.presentation.portalscrape.navigation.portalScrapeNavGraph
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.HomeRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.timetableNavGraph
 import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEventBus
@@ -156,6 +157,7 @@ fun App(
                                       navigator.navigateFromLandingToHome()
                                     }
                                 },
+                                navigatePortalScrapeTest = navigator::navigatePortalScrapeTest,
                             )
 
                             timetableNavGraph(
@@ -172,12 +174,18 @@ fun App(
                                 navigateTimetable = navigator::navigateTimetable,
                                 navigateWebView = navigator::navigateWebView,
                                 navigateToLanding = navigator::navigateToLanding,
+                                navigatePortalScrapeTest = navigator::navigatePortalScrapeTest,
                             )
 
                             webViewNavGraph(
                                 popBackStack = navigator::popBackStackIfNotHome,
                                 onNavigateWebView = navigator::navigateWebView,
                                 navigateToLanding = navigator::navigateToLanding,
+                                onShowToast = viewModel::onShowToast,
+                            )
+
+                            portalScrapeNavGraph(
+                                popBackStack = navigator::popBackStackIfNotHome,
                                 onShowToast = viewModel::onShowToast,
                             )
                         }

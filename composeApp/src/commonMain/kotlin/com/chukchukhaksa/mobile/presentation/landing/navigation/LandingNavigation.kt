@@ -13,12 +13,14 @@ fun NavGraphBuilder.landingNavGraph(
     handleException: (Throwable) -> Unit,
     onShowToast: (String, Dp) -> Unit,
     navigateToHome: (isPortalLinked: Boolean) -> Unit,
+    navigatePortalScrapeTest: () -> Unit,
 ) {
     composable(route = LandingRoute.route) {
         LandingRoute(
             handleException = handleException,
             onShowToast = onShowToast,
             navigateToHome = navigateToHome,
+            navigatePortalScrapeTest = navigatePortalScrapeTest,
         )
     }
 }

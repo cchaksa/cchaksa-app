@@ -10,6 +10,7 @@ import com.chukchukhaksa.mobile.domain.auth.usecase.CheckAuthStateUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.KakaoLoginUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.WithdrawUseCase
 import com.chukchukhaksa.mobile.domain.config.usecase.CheckNeedForceUpdateUseCase
+import com.chukchukhaksa.mobile.domain.portalscrape.usecase.ScrapePortalUseCase
 import com.chukchukhaksa.mobile.domain.profile.usecase.GetProfileUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableUseCase
@@ -72,4 +73,7 @@ val domainModule = module {
     // Academic use cases
     factory { GetAcademicSummaryUseCase(get()) }
     factory { GetAcademicRecordUseCase(get()) }
+
+    // Portal scrape use cases
+    factory { ScrapePortalUseCase(get()) }
 }
