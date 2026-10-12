@@ -1,0 +1,6 @@
+apk: composeApp/build/outputs/apk/release/composeApp-release-unsigned.apk
+lib entries: 8
+libsqliteJni.so: 0
+assets/composeResources files: 51
+resource names: 3474
+manifest elements: 155

@@ -1,0 +1,2 @@
+# 빌드 로그는 로컬에만 둔다. xcodebuild 로그는 스크립트 단계마다 빌드 설정을 export로 출력해 Config.xcconfig의 키 값이 들어간다.
+logs/
