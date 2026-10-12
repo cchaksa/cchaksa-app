@@ -4,9 +4,11 @@ import java.util.Properties
 val localProperties = Properties().apply {
   val localPropertiesFile = rootProject.file("local.properties")
   if (localPropertiesFile.exists()) {
-    load(localPropertiesFile.inputStream())
+    localPropertiesFile.inputStream().use { load(it) }
   }
 }
+
+fun localProperty(key: String): String = localProperties.getProperty(key, "")
 
 plugins {
   alias(libs.plugins.androidApplication)
@@ -34,11 +36,11 @@ android {
     versionCode = 58
     versionName = "3.2.2"
 
-    buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"${localProperties["KAKAO_NATIVE_APP_KEY"] ?: ""}\"")
-    manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = localProperties["KAKAO_NATIVE_APP_KEY"] ?: ""
+    buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"${localProperty("KAKAO_NATIVE_APP_KEY")}\"")
+    manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = localProperty("KAKAO_NATIVE_APP_KEY")
 
-    buildConfigField("String", "AMPLITUDE_API_KEY_DEV", "\"${localProperties["AMPLITUDE_API_KEY_DEV"] ?: ""}\"")
-    buildConfigField("String", "AMPLITUDE_API_KEY_PROD", "\"${localProperties["AMPLITUDE_API_KEY_PROD"] ?: ""}\"")
+    buildConfigField("String", "AMPLITUDE_API_KEY_DEV", "\"${localProperty("AMPLITUDE_API_KEY_DEV")}\"")
+    buildConfigField("String", "AMPLITUDE_API_KEY_PROD", "\"${localProperty("AMPLITUDE_API_KEY_PROD")}\"")
   }
   packaging {
     jniLibs {
@@ -52,13 +54,13 @@ android {
   }
   buildTypes {
     getByName("debug") {
-      manifestPlaceholders["ADMOB_APP_ID"] = localProperties["ADMOB_APP_ID_TEST"] ?: ""
-      buildConfigField("String", "ADMOB_INTERSTITIAL_AD_UNIT_ID", "\"${localProperties["ADMOB_INTERSTITIAL_AD_UNIT_ID_TEST"] ?: ""}\"")
+      manifestPlaceholders["ADMOB_APP_ID"] = localProperty("ADMOB_APP_ID_TEST")
+      buildConfigField("String", "ADMOB_INTERSTITIAL_AD_UNIT_ID", "\"${localProperty("ADMOB_INTERSTITIAL_AD_UNIT_ID_TEST")}\"")
     }
     getByName("release") {
       isMinifyEnabled = false
-      manifestPlaceholders["ADMOB_APP_ID"] = localProperties["ADMOB_APP_ID_PROD"] ?: ""
-      buildConfigField("String", "ADMOB_INTERSTITIAL_AD_UNIT_ID", "\"${localProperties["ADMOB_INTERSTITIAL_AD_UNIT_ID_PROD"] ?: ""}\"")
+      manifestPlaceholders["ADMOB_APP_ID"] = localProperty("ADMOB_APP_ID_PROD")
+      buildConfigField("String", "ADMOB_INTERSTITIAL_AD_UNIT_ID", "\"${localProperty("ADMOB_INTERSTITIAL_AD_UNIT_ID_PROD")}\"")
     }
   }
   compileOptions {
