@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**ChukChukHaksa** (formerly Suwiki) is a Kotlin Multiplatform Compose project of timetable and academic services for Suwon University students. The project is split into an Android app module `androidApp` (entry points, launcher resources, applicationId/version/build-type keys) and a shared KMP module `composeApp` (all Android/iOS shared code, the Android widget, the iOS `ComposeApp` framework), with Clean Architecture and MVI pattern. Supports Android and iOS with platform-specific widgets.
+**ChukChukHaksa** (formerly Suwiki) is a Kotlin Multiplatform Compose project of timetable and academic services for Suwon University students. The project is split into an Android app module `androidApp` (entry points, launcher resources, applicationId/version/build-type keys) and a shared KMP module `shared` (all Android/iOS shared code, the Android widget, the iOS `ComposeApp` framework), with Clean Architecture and MVI pattern. Supports Android and iOS with platform-specific widgets.
 
 Native Compose screens cover the timetable feature set (`presentation/timetable`: editor, cell editor,
 open-lecture search, semester select, …) plus landing/login and the tab host. Most other surfaces —
@@ -35,14 +35,14 @@ cd iosApp && xcodebuild -project iosApp.xcodeproj -scheme iosApp \
   -destination 'generic/platform=iOS Simulator' -configuration Debug build
 ```
 
-When a change touches both platforms, verify with `./gradlew :composeApp:testAndroidHostTest :androidApp:assembleDebug`,
-`./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64`, and the `xcodebuild` command above.
+When a change touches both platforms, verify with `./gradlew :shared:testAndroidHostTest :androidApp:assembleDebug`,
+`./gradlew :shared:linkDebugFrameworkIosSimulatorArm64`, and the `xcodebuild` command above.
 
 ### Testing Commands
 ```bash
 # Run shared-module unit tests (commonTest) on the JVM.
 # The root `testDebugUnitTest` only runs :androidApp's (empty) tests and skips these.
-./gradlew :composeApp:testAndroidHostTest
+./gradlew :shared:testAndroidHostTest
 
 # Run Android instrumented tests
 ./gradlew connectedDebugAndroidTest
@@ -63,7 +63,7 @@ When a change touches both platforms, verify with `./gradlew :composeApp:testAnd
 - **State Management**: Unidirectional Data Flow (UDF) with StateFlow
 - **Dependency Injection**: Koin 4.1.0-Beta10 with feature-based modules
 - **Navigation**: Jetpack Navigation Compose 2.9.1 with type-safe routes (kotlinx.serialization for argument passing)
-- **Database**: Room 2.8.5 with SQLite for local storage (schema in `composeApp/schemas`)
+- **Database**: Room 2.8.5 with SQLite for local storage (schema in `shared/schemas`)
 - **Remote Data**: Ktor 3.3.1 REST client (primary) + Firebase via GitLive KMP wrappers 2.1.0 (Remote Config, Realtime Database, Crashlytics, Analytics)
 - **WebView**: Much of the product surface is served by an embedded web app. See "WebView Bridge" below.
 - **Widgets**: Android (Glance 1.1.1) / iOS (Native WidgetKit) timetable widgets
@@ -114,9 +114,9 @@ The project uses two parallel design systems:
 appbar, badge, bottomsheet, button, chip, container, dialog, loading, searchbar, tabbar, textfield, toast, webview
 
 ### Design System Location
-- **Components**: `composeApp/src/commonMain/kotlin/com/chukchukhaksa/mobile/common/designsystem/component/`
-- **Themes**: `composeApp/src/commonMain/kotlin/com/chukchukhaksa/mobile/common/designsystem/theme/`
-- **Previews**: `composeApp/src/androidMain/kotlin/com/chukchukhaksa/mobile/preview/designsystem/`
+- **Components**: `shared/src/commonMain/kotlin/com/chukchukhaksa/mobile/common/designsystem/component/`
+- **Themes**: `shared/src/commonMain/kotlin/com/chukchukhaksa/mobile/common/designsystem/theme/`
+- **Previews**: `shared/src/androidMain/kotlin/com/chukchukhaksa/mobile/preview/designsystem/`
 
 ## Project Structure
 
@@ -130,7 +130,7 @@ appbar, badge, bottomsheet, button, chip, container, dialog, loading, searchbar,
 ### Key Dependencies
 - **Kotlin**: 2.4.21
 - **KSP**: 2.3.12
-- **AGP**: 9.4.1 (`:composeApp` uses the Android-KMP library plugin `com.android.kotlin.multiplatform.library`)
+- **AGP**: 9.4.1 (`:shared` uses the Android-KMP library plugin `com.android.kotlin.multiplatform.library`)
 - **Gradle**: 9.7.1
 - **Compose Multiplatform**: 1.10.0
 - **Koin DI**: 4.1.0-Beta10
@@ -227,9 +227,11 @@ Use cases use `runCatchingIgnoreCancelled` for error handling.
 - Nested navigation for complex flows (e.g., timetable → editor → cell editor → lecture search)
 
 ### Resource Management
-- **Fonts**: Compose Resources in `composeApp/src/commonMain/composeResources/font/`
+- **Fonts**: Compose Resources in `shared/src/commonMain/composeResources/font/`
 - **Strings**: Localized resources via Compose Resources
 - **Images**: Drawable resources managed through Compose Resources
+- **`Res` package**: pinned to `chukchukhaksa.composeapp.generated.resources` with `packageOfResClass` in
+  `shared/build.gradle.kts`, so imports keep the old module name. Changing it means rewriting every `Res` import.
 
 ### Testing Strategy
 - **Unit Tests**: Use cases and business logic

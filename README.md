@@ -17,10 +17,10 @@ Kotlin Multiplatform (Android + iOS) 기반으로 개발되고 있습니다.
 
 ## Project Structure
 
-Android 앱 모듈 `androidApp`과 공유 KMP 모듈 `composeApp`으로 구성됩니다.
+Android 앱 모듈 `androidApp`과 공유 KMP 모듈 `shared`로 구성됩니다.
 
 - `androidApp`: Android 진입점(`MainActivity`, `ChukChukHaksaApplication`), 런처 아이콘·테마, 앱 설정(applicationId, 버전, 빌드 타입별 키·광고 ID)
-- `composeApp`: Android·iOS 공유 코드, Android 위젯, iOS 프레임워크(`ComposeApp`)
+- `shared`: Android·iOS 공유 코드, Android 위젯, iOS 프레임워크(`ComposeApp`)
 
 공유 모듈의 패키지 구조:
 
