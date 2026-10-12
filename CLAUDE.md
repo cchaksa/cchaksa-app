@@ -14,7 +14,8 @@ including academic info — are served by an embedded web app driven through the
 
 ### Core Build Commands
 ```bash
-# Build entire project (all platforms)
+# Build entire project (all platforms). Runs `check` too, so it currently fails the same way
+# `./gradlew check` does (see Testing Commands).
 ./gradlew build
 
 # Clean build directory
