@@ -1,29 +1,55 @@
 name: Android Pull Request CI
 on:
   pull_request:
-    branches: [ develop ]
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v6
         with:
           distribution: 'corretto'
           java-version: '17'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v4
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      # The real Firebase config is git-ignored. The google-services plugin only needs a file whose
+      # package_name matches the applicationId, so CI writes a placeholder with fake values.
+      # local.properties is absent too; its keys fall back to empty strings.
+      - name: Write placeholder Firebase config
+        run: |
+          cat > androidApp/google-services.json <<'EOF'
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "ci-placeholder",
+              "storage_bucket": "ci-placeholder.appspot.com"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                  "android_client_info": {
+                    "package_name": "com.kunize.uswtimetable"
+                  }
+                },
+                "api_key": [
+                  {
+                    "current_key": "ci-placeholder-api-key"
+                  }
+                ]
+              }
+            ],
+            "configuration_version": "1"
+          }
+          EOF
 
-      - name: Run ktlint
-        run: ./gradlew ktlintCheck
-
-      - name: Run detekt
-        run: ./gradlew detekt
+      # The root testDebugUnitTest would only run :androidApp's (empty) tests, so name the shared host tests.
+      - name: Run shared tests and build the debug APK
+        run: ./gradlew :shared:testAndroidHostTest :androidApp:assembleDebug

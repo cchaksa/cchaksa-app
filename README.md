@@ -61,7 +61,15 @@ cd cchaksa-kmp
 
 ```properties
 KAKAO_NATIVE_APP_KEY=노션에서_확인한_키_값
+AMPLITUDE_API_KEY_DEV=노션에서_확인한_키_값
+AMPLITUDE_API_KEY_PROD=노션에서_확인한_키_값
+ADMOB_APP_ID_TEST=노션에서_확인한_값
+ADMOB_APP_ID_PROD=노션에서_확인한_값
+ADMOB_INTERSTITIAL_AD_UNIT_ID_TEST=노션에서_확인한_값
+ADMOB_INTERSTITIAL_AD_UNIT_ID_PROD=노션에서_확인한_값
 ```
+
+debug 빌드는 `_TEST`·`_DEV` 값을, release 빌드는 `_PROD` 값을 씁니다. 값이 없으면 빈 문자열로 빌드됩니다.
 
 #### iOS
 
