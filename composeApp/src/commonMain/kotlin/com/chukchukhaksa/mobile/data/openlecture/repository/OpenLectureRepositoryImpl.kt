@@ -28,7 +28,14 @@ class OpenLectureRepositoryImpl(
         )
     }
 
+    /**
+     * 저장된 버전이 최신이더라도 캐시가 비어 있으면 다시 받아야 한다. 데이터베이스가 초기화되는
+     * 경로(스키마 변경에 따른 destructive 마이그레이션 등)에서도 버전 값은 Datastore 에 그대로
+     * 남기 때문에, 버전만 비교하면 목록이 빈 채로 유지된다.
+     */
     override suspend fun checkNeedUpdate(): Boolean {
+        if (!localOpenLectureDataSource.hasCachedLectures()) return true
+
         val localVersion =
             localOpenLectureDataSource.getOpenLectureListVersion().firstOrNull() ?: return true
         val remoteVersion = remoteOpenLectureDataSource.getOpenLectureListVersion()

@@ -25,6 +25,9 @@ interface OpenLectureDao {
         grade: Int? = null
     ): List<OpenLectureEntity>
 
+    @Query("SELECT COUNT(*) FROM OpenLectureEntity")
+    suspend fun countLectures(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLectures(lectures: List<OpenLectureEntity>)
 

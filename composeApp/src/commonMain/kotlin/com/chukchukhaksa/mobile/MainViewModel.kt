@@ -61,12 +61,15 @@ class MainViewModel(
         }
     }
 
+    /**
+     * 네트워크와 무관한 예외까지 네트워크 오류로 안내하면 사용자가 원인을 오해한다. 실제로 로컬
+     * 데이터베이스 마이그레이션이 실패했을 때도 이 분기를 타므로, 원인을 특정하지 않는 문구를 쓴다.
+     */
     fun handleException(throwable: Throwable) {
         when (throwable) {
             is NetworkException -> { mviStore.setState { copy(showNetworkErrorDialog = true) } }
-//            is ConnectException -> { mviStore.setState { copy(showNetworkErrorDialog = true) } }
             else -> {
-                onShowToast("네트워크 오류가 발생했습니다.")
+                onShowToast("일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.")
                 throwable.record()
             }
         }

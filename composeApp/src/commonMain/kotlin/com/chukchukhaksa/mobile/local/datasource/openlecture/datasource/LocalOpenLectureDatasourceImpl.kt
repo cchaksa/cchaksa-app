@@ -50,6 +50,10 @@ class LocalOpenLectureDatasourceImpl(
       ).map { list -> list.toModel() }
   }
 
+  override suspend fun hasCachedLectures(): Boolean = withContext(ioDispatcher) {
+    openLectureDatabase.openLectureDao().countLectures() > 0
+  }
+
   override suspend fun updateAllLectures(lectures: List<OpenLecture>) = withContext(ioDispatcher) {
     openLectureDatabase
       .openLectureDao()

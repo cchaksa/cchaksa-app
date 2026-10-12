@@ -2,7 +2,6 @@ package com.chukchukhaksa.mobile.local.database.openlecture.database
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.chukchukhaksa.mobile.local.database.common.DatabaseName
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
@@ -15,7 +14,7 @@ actual class OpenLectureDatabaseFactory {
         return Room
             .databaseBuilder<OpenLectureDatabase>(
                 name = dbFilePath
-            ).setDriver(BundledSQLiteDriver())
+            )
     }
 
     @OptIn(ExperimentalForeignApi::class)

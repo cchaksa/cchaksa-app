@@ -14,5 +14,7 @@ interface LocalOpenLectureDataSource {
     grade: Int? = null
   ): List<OpenLecture>
 
+  suspend fun hasCachedLectures(): Boolean
+
   suspend fun updateAllLectures(lectures: List<OpenLecture>)
 }
