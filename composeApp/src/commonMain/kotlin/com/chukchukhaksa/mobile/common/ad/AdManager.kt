@@ -12,7 +12,7 @@ interface AdManager {
    * 전면 광고를 로드한 뒤 표시한다(사전 로드 캐시 없음 — 호출 시점에 로드한다).
    * 로드·표시 실패는 예외로 전파하지 않고 [AdShowResult.Failed]로 환원한다.
    *
-   * @param adUnitId 사용할 광고단위 ID. null이면 구현체가 빌드 설정(BuildConfig / Info.plist)의 기본 ID로 폴백한다.
+   * @param adUnitId 사용할 광고단위 ID. null이면 구현체가 빌드 설정(AndroidAppConfig / Info.plist)의 기본 ID로 폴백한다.
    */
   suspend fun showInterstitial(adUnitId: String? = null): AdShowResult
 }

@@ -73,7 +73,8 @@ private suspend fun buildResponseLog(response: HttpResponse): String = buildStri
     }
 }
 
-private val BASE_URL = if (isDebug) "https://dev.api.cchaksa.com/api/" else "https://api.cchaksa.com/api/"
+private val BASE_URL: String
+    get() = if (isDebug) "https://dev.api.cchaksa.com/api/" else "https://api.cchaksa.com/api/"
 
 internal val AUTH_EXCLUDED_PATHS = listOf(
     "auth/refresh",
