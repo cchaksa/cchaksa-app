@@ -44,6 +44,6 @@ build/
 .idea/dictionaries
 .idea/libraries
 app/.idea/
-/composeApp/google-services.json
+/androidApp/google-services.json
 /iosApp/iosApp/GoogleService-Info.plist
 /iosApp/Configuration/Config.xcconfig
