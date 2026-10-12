@@ -47,7 +47,8 @@ When a change touches both platforms, verify with `./gradlew :composeApp:testAnd
 # Run Android instrumented tests
 ./gradlew connectedDebugAndroidTest
 
-# Run all tests
+# Run all checks (lint + every target's tests). Currently fails at linkDebugTestIosSimulatorArm64
+# (`framework 'FirebaseCore' not found`): the iOS test binary cannot link the native Firebase frameworks.
 ./gradlew check
 ```
 
@@ -140,7 +141,7 @@ appbar, badge, bottomsheet, button, chip, container, dialog, loading, searchbar,
 - **kotlinx-serialization**: 1.8.1
 - **kotlinx-datetime**: 0.7.1
 - **kotlinx-immutable**: 0.3.8
-- **Datastore Preferences**: 1.1.7
+- **Datastore Preferences**: 1.2.1
 - **KSafe (secure storage)**: 1.6.0
 - **Napier (logging)**: 2.7.1
 - **Glance (Android Widgets)**: 1.1.1
