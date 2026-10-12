@@ -76,7 +76,7 @@ android {
 }
 
 dependencies {
-  implementation(projects.composeApp)
+  implementation(projects.shared)
 
   implementation(compose.runtime)
   implementation(compose.ui)
