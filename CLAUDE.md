@@ -21,15 +21,15 @@ including academic info — are served by an embedded web app driven through the
 # Clean build directory
 ./gradlew clean
 
-# Android-specific builds
-./gradlew assembleDebug        # Debug APK
-./gradlew assembleRelease      # Release APK
-./gradlew installDebug         # Install debug APK to connected device
+# Android-specific builds (the APK comes from :androidApp; :shared only builds a library)
+./gradlew :androidApp:assembleDebug        # Debug APK
+./gradlew :androidApp:assembleRelease      # Release APK
+./gradlew :androidApp:installDebug         # Install debug APK to connected device
 
 # iOS Framework builds
-./gradlew linkDebugFrameworkIosSimulatorArm64    # iOS Simulator
-./gradlew linkReleaseFrameworkIosArm64           # iOS Device
-./gradlew embedAndSignAppleFrameworkForXcode     # Xcode integration
+./gradlew :shared:linkDebugFrameworkIosSimulatorArm64    # iOS Simulator
+./gradlew :shared:linkReleaseFrameworkIosArm64           # iOS Device
+./gradlew :shared:embedAndSignAppleFrameworkForXcode     # Xcode integration (run by the Xcode build phase)
 
 # iOS app build (verifies the Swift side too; use the project, not the workspace)
 cd iosApp && xcodebuild -project iosApp.xcodeproj -scheme iosApp \
@@ -45,8 +45,8 @@ When a change touches both platforms, verify with `./gradlew :shared:testAndroid
 # The root `testDebugUnitTest` only runs :androidApp's (empty) tests and skips these.
 ./gradlew :shared:testAndroidHostTest
 
-# Run Android instrumented tests
-./gradlew connectedDebugAndroidTest
+# There are no instrumented (device) tests yet. :shared uses the Android-KMP library plugin, so adding
+# them first needs `withDeviceTest {}` inside `kotlin { android {} }` in shared/build.gradle.kts.
 
 # Run all checks (lint + every target's tests). Currently fails at linkDebugTestIosSimulatorArm64
 # (`framework 'FirebaseCore' not found`): the iOS test binary cannot link the native Firebase frameworks.
@@ -87,7 +87,10 @@ Both platforms render the main timetable, driven from one common entry point: `H
 `LaunchedEffect` calls `sendWidgetUpdateCommand(context)` (expect/actual in `widget/`) whenever
 `uiState.timetable` changes.
 
-- **Android**: Glance. The actual implementation updates `TimetableWidget` directly.
+- **Android**: Glance. The actual implementation updates `TimetableWidget` directly. The receiver is
+  declared in the shared module's manifest (`shared/src/androidMain/AndroidManifest.xml`, provider XML in
+  `res/xml/timetable_widget_info.xml`), so `androidResources { enable = true }` in `shared/build.gradle.kts`
+  must stay on. Turning it off breaks the widget XML link and silently drops Compose resources from the APK.
 - **iOS**: WidgetKit extension in `iosApp/TimetableWidget/` (target `TimetableWidgetExtension`,
   `systemLarge` only). There is no direct call channel, so the two sides meet at an **App Group**:
   the actual serializes `Timetable` to JSON into `NSUserDefaults(suiteName:)` under key
@@ -122,7 +125,10 @@ appbar, badge, bottomsheet, button, chip, container, dialog, loading, searchbar,
 ## Project Structure
 
 ### Multiplatform Targets
-- **Android**: Primary target (minSdk 28, targetSdk 36, compileSdk 36)
+- **Android**: Primary target (minSdk 28, targetSdk 36, compileSdk 36). The app module `:androidApp`
+  (`com.android.application`, namespace `com.chukchukhaksa.mobile`) depends on the shared module `:shared`
+  (`com.android.kotlin.multiplatform.library`, namespace `com.chukchukhaksa.mobile.shared`). Syncing AGP 9.4
+  needs Android Studio Quail 4 (2026.1.4) or newer.
 - **iOS**: Framework generation for iosX64, iosArm64, iosSimulatorArm64. The Xcode side is
   `iosApp/iosApp.xcodeproj` with **Swift Package Manager** dependencies — build/test with
   `-project iosApp.xcodeproj -scheme iosApp`, not the workspace (`iosApp.xcworkspace` is empty and
@@ -177,9 +183,9 @@ com.chukchukhaksa.mobile/
 ## Development Workflow
 
 ### Current Project State
-- **Main Branch**: `main` (the only branch on the remote)
+- **Main Branch**: `main`
 - **Application ID**: `com.kunize.uswtimetable`
-- **Version**: 3.2.1 (versionCode 57 / iOS build 4)
+- **Version**: Android 3.2.2 (versionCode 58) / iOS 3.2.3 (build 6)
 - **Java Compatibility**: Java 17
 
 ### Bumping the App Version
@@ -245,7 +251,8 @@ Use cases use `runCatchingIgnoreCancelled` for error handling.
 - Gradle configuration cache and build cache enabled
 - Kotlin daemon: 3GB heap / Gradle JVM: 4GB heap
 - Non-transitive R classes enabled
-- Core library desugaring enabled for Android
+- Core library desugaring enabled in the app module (`androidApp`); the shared library does not set it, since
+  the app desugars every class it packages
 
 ### Code Style
 - Kotlin official code style
