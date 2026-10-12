@@ -49,7 +49,6 @@ kotlin {
       implementation(libs.compose.runtime)
       implementation(libs.kakao.sdk.v2.user)
       implementation(libs.ktor.client.okhttp)
-      implementation(libs.androidx.core.splashscreen)
       implementation(libs.amplitude.analytics.android)
       implementation(libs.play.services.ads)
       implementation(libs.androidx.graphics.path)
@@ -122,6 +121,8 @@ android {
   }
 
   lint {
+    // A library has no targetSdk of its own; lint against the app's target, as before the split.
+    targetSdk = libs.versions.android.targetSdk.get().toInt()
     disable += "NullSafeMutableLiveData"
   }
 }
