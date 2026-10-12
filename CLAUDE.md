@@ -35,13 +35,14 @@ cd iosApp && xcodebuild -project iosApp.xcodeproj -scheme iosApp \
   -destination 'generic/platform=iOS Simulator' -configuration Debug build
 ```
 
-When a change touches both platforms, verify with `./gradlew testDebugUnitTest assembleDebug`,
-`./gradlew linkDebugFrameworkIosSimulatorArm64`, and the `xcodebuild` command above.
+When a change touches both platforms, verify with `./gradlew :composeApp:testAndroidHostTest :androidApp:assembleDebug`,
+`./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64`, and the `xcodebuild` command above.
 
 ### Testing Commands
 ```bash
-# Run Android unit tests
-./gradlew testDebugUnitTest
+# Run shared-module unit tests (commonTest) on the JVM.
+# The root `testDebugUnitTest` only runs :androidApp's (empty) tests and skips these.
+./gradlew :composeApp:testAndroidHostTest
 
 # Run Android instrumented tests
 ./gradlew connectedDebugAndroidTest
@@ -61,7 +62,7 @@ When a change touches both platforms, verify with `./gradlew testDebugUnitTest a
 - **State Management**: Unidirectional Data Flow (UDF) with StateFlow
 - **Dependency Injection**: Koin 4.1.0-Beta10 with feature-based modules
 - **Navigation**: Jetpack Navigation Compose 2.9.1 with type-safe routes (kotlinx.serialization for argument passing)
-- **Database**: Room 2.7.1 with SQLite for local storage (schema in `composeApp/schemas`)
+- **Database**: Room 2.8.5 with SQLite for local storage (schema in `composeApp/schemas`)
 - **Remote Data**: Ktor 3.3.1 REST client (primary) + Firebase via GitLive KMP wrappers 2.1.0 (Remote Config, Realtime Database, Crashlytics, Analytics)
 - **WebView**: Much of the product surface is served by an embedded web app. See "WebView Bridge" below.
 - **Widgets**: Android (Glance 1.1.1) / iOS (Native WidgetKit) timetable widgets
@@ -126,14 +127,15 @@ appbar, badge, bottomsheet, button, chip, container, dialog, loading, searchbar,
   `iosApp/Pods/` is a leftover; CocoaPods is not used).
 
 ### Key Dependencies
-- **Kotlin**: 2.2.21
-- **KSP**: 2.2.21-2.0.4
-- **AGP**: 8.10.1
+- **Kotlin**: 2.4.21
+- **KSP**: 2.3.12
+- **AGP**: 9.4.1 (`:composeApp` uses the Android-KMP library plugin `com.android.kotlin.multiplatform.library`)
+- **Gradle**: 9.7.1
 - **Compose Multiplatform**: 1.10.0
 - **Koin DI**: 4.1.0-Beta10
-- **Room Database**: 2.7.1
+- **Room Database**: 2.8.5
 - **Ktor (HTTP client)**: 3.3.1 (okhttp on Android / darwin on iOS)
-- **Firebase**: GitLive KMP 2.1.0 (Android BOM 33.2.0)
+- **Firebase**: GitLive KMP 2.1.0 (Android BOM 33.2.0); Gradle plugins google-services 4.5.0, Crashlytics 3.0.8
 - **kotlinx-coroutines**: 1.10.1
 - **kotlinx-serialization**: 1.8.1
 - **kotlinx-datetime**: 0.7.1
