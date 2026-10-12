@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
-import com.chukchukhaksa.mobile.BuildConfig
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -29,7 +28,10 @@ import kotlin.coroutines.resume
  *
  * 로드·표시는 Google Mobile Ads SDK 요구사항에 따라 메인 스레드에서 수행한다.
  */
-class AndroidAdManager(application: Application) : AdManager {
+class AndroidAdManager(
+    application: Application,
+    private val defaultAdUnitId: String,
+) : AdManager {
 
     private val appContext: Context = application.applicationContext
 
@@ -56,9 +58,9 @@ class AndroidAdManager(application: Application) : AdManager {
     }
 
     override suspend fun showInterstitial(adUnitId: String?): AdShowResult = withContext(Dispatchers.Main) {
-        val unitId = adUnitId ?: BuildConfig.ADMOB_INTERSTITIAL_AD_UNIT_ID
+        val unitId = adUnitId ?: defaultAdUnitId
         if (unitId.isBlank()) {
-            Napier.d(tag = TAG) { "전면 광고 실패: 광고단위 ID가 비어 있음(BuildConfig 미주입)" }
+            Napier.d(tag = TAG) { "전면 광고 실패: 광고단위 ID가 비어 있음(AndroidAppConfig 미주입)" }
             return@withContext AdShowResult.Failed(AdFailureReason.NotReady)
         }
 

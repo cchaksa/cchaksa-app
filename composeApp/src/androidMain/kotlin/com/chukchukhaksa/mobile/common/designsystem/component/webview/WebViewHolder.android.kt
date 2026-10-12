@@ -13,7 +13,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.chukchukhaksa.mobile.BuildConfig
+import com.chukchukhaksa.mobile.common.kmp.isDebug
 import io.github.aakira.napier.Napier
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -51,7 +51,7 @@ actual class WebViewHolder(private val context: Context) {
   }
 
   private fun createPersistentWebView(): WebView = WebView(context.applicationContext).apply {
-    if (BuildConfig.DEBUG) {
+    if (isDebug) {
       WebView.setWebContentsDebuggingEnabled(true)
     }
     settings.javaScriptEnabled = true

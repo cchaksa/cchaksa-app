@@ -20,8 +20,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import com.chukchukhaksa.mobile.BuildConfig
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.toLogString
+import com.chukchukhaksa.mobile.common.kmp.isDebug
 import io.github.aakira.napier.Napier
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -57,7 +57,7 @@ actual fun CchWebView(
     modifier = modifier,
     factory = { context ->
       WebView(context).apply {
-        if (BuildConfig.DEBUG) {
+        if (isDebug) {
           WebView.setWebContentsDebuggingEnabled(true)
         }
         layoutParams = ViewGroup.LayoutParams(
