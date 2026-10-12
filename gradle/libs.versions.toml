@@ -1,5 +1,5 @@
 [versions]
-agp = "8.10.1"
+agp = "9.4.1"
 android-compileSdk = "36"
 android-minSdk = "28"
 android-targetSdk = "36"
@@ -16,20 +16,20 @@ androidx-graphics-path = "1.1.0"
 androidx-sqlite = "2.6.2"
 firebaseDatabaseKtx = "21.0.0"
 junit = "4.13.2"
-kotlin = "2.2.21"
+kotlin = "2.4.21"
 kotlinx-coroutines = "1.10.1"
 kotlinx-immutable = "0.3.8"
 kotlinx-serialization = "1.8.1"
 kotlinx-datetime = "0.7.1"
 jetbrains-androidx-navigation = "2.9.1"
 koin = "4.1.0-Beta10"
-androidx-room = "2.7.1"
-ksp = "2.2.21-2.0.4"
+androidx-room = "2.8.5"
+ksp = "2.3.12"
 kotlin-firebase = "2.1.0"
 firebase-common = "21.0.0"
 firebase-bom = "33.2.0"
-firebaseCrashlytics = "2.9.9"
-google-service = "4.4.2"
+firebaseCrashlytics = "3.0.8"
+google-service = "4.5.0"
 desugar-jdk-libs = "2.1.5"
 napier = "2.7.1"
 
@@ -117,11 +117,10 @@ play-services-ads = { group = "com.google.android.gms", name = "play-services-ad
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
+androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "androidx-room" }

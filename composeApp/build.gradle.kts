@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.androidLibrary)
+  alias(libs.plugins.androidMultiplatformLibrary)
   alias(libs.plugins.composeMultiplatform)
   alias(libs.plugins.composeCompiler)
   alias(libs.plugins.kotlinSerialization)
@@ -11,9 +11,25 @@ plugins {
 }
 
 kotlin {
-  androidTarget {
+  android {
+    namespace = "com.chukchukhaksa.mobile.shared"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    minSdk = libs.versions.android.minSdk.get().toInt()
+
     compilerOptions {
       jvmTarget.set(JvmTarget.JVM_17)
+    }
+    // Widget XML and Compose resources are packaged only when Android resources are enabled.
+    androidResources {
+      enable = true
+    }
+    // Without a host test compilation, commonTest does not run on Android.
+    withHostTest {}
+
+    lint {
+      // A library has no targetSdk of its own; lint against the app's target, as before the split.
+      targetSdk = libs.versions.android.targetSdk.get().toInt()
+      disable += "NullSafeMutableLiveData"
     }
   }
 
@@ -108,27 +124,13 @@ room {
   schemaDirectory("$projectDir/schemas")
 }
 
-android {
-  namespace = "com.chukchukhaksa.mobile.shared"
-  compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-  defaultConfig {
-    minSdk = libs.versions.android.minSdk.get().toInt()
-  }
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-  }
-
-  lint {
-    // A library has no targetSdk of its own; lint against the app's target, as before the split.
-    targetSdk = libs.versions.android.targetSdk.get().toInt()
-    disable += "NullSafeMutableLiveData"
-  }
+compose.resources {
+  // Keep the Res package independent of the module name.
+  packageOfResClass = "chukchukhaksa.composeapp.generated.resources"
 }
 
 dependencies {
-  debugImplementation(compose.uiTooling)
+  "androidRuntimeClasspath"(compose.uiTooling)
   kspKmp(libs.androidx.room.compiler)
 }
 

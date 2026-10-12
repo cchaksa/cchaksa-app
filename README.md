@@ -7,11 +7,11 @@ Kotlin Multiplatform (Android + iOS) 기반으로 개발되고 있습니다.
 
 | Category | Stack |
 |----------|-------|
-| Language | Kotlin 2.2, Swift |
+| Language | Kotlin 2.4, Swift |
 | UI | Compose Multiplatform 1.10 |
 | Architecture | MVI + Clean Architecture |
 | DI | Koin 4.1 |
-| Database | Room 2.7 (KMP) |
+| Database | Room 2.8 (KMP) |
 | Remote | Firebase (GitLive KMP) |
 | Widget | Glance (Android), WidgetKit (iOS) |
 
@@ -37,6 +37,12 @@ com.chukchukhaksa.mobile/
 ```
 
 ## Setup
+
+### 요구 사항
+
+- Android Studio Quail 4(2026.1.4) 이상. AGP 9.4를 동기화하려면 이 버전이 필요하며, Rabbit 1(2026.2.1)을 권장합니다.
+- 명령줄 빌드: JDK 17 이상
+- Xcode: Kotlin 프레임워크를 빌드하는 단계에도 JDK 17 이상이 필요합니다. Xcode 설정(Settings → Locations → Custom Paths)에 Java Path를 지정했다면 그 JDK가 쓰이며, Android Studio 내장 JBR을 지정해도 됩니다.
 
 ### 1. 프로젝트 클론
 
