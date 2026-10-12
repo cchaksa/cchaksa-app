@@ -15,7 +15,9 @@ including academic info — are served by an embedded web app driven through the
 ### Core Build Commands
 ```bash
 # Build entire project (all platforms). Runs `check` too, so it currently fails the same way
-# `./gradlew check` does (see Testing Commands).
+# `./gradlew check` does (see Testing Commands). From a clean state it can also stop with "JVM garbage
+# collector is thrashing": compiling every iOS target in the 4 GiB Gradle daemon runs out of heap (this
+# predates AGP 9). For day-to-day verification use the targeted commands below.
 ./gradlew build
 
 # Clean build directory
