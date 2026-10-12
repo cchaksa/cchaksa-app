@@ -17,7 +17,12 @@ Kotlin Multiplatform (Android + iOS) 기반으로 개발되고 있습니다.
 
 ## Project Structure
 
-단일 `composeApp` 모듈 구조:
+Android 앱 모듈 `androidApp`과 공유 KMP 모듈 `composeApp`으로 구성됩니다.
+
+- `androidApp`: Android 진입점(`MainActivity`, `ChukChukHaksaApplication`), 런처 아이콘·테마, 앱 설정(applicationId, 버전, 빌드 타입별 키·광고 ID)
+- `composeApp`: Android·iOS 공유 코드, Android 위젯, iOS 프레임워크(`ComposeApp`)
+
+공유 모듈의 패키지 구조:
 
 ```
 com.chukchukhaksa.mobile/
@@ -60,15 +65,26 @@ KAKAO_NATIVE_APP_KEY=노션에서_확인한_키_값
 KAKAO_NATIVE_APP_KEY=노션에서_확인한_키_값
 ```
 
-### 3. Build
+### 3. Firebase 설정 파일
+
+Firebase 콘솔에서 내려받은 설정 파일을 아래 위치에 둡니다. 두 파일 모두 gitignore 대상입니다.
+
+| 플랫폼 | 위치 |
+|--------|------|
+| Android | `androidApp/` 아래의 `google-services` JSON |
+| iOS | `iosApp/iosApp/GoogleService-Info.plist` |
+
+Android 설정 파일이 없으면 google-services 플러그인이 빌드를 실패시킵니다. 예전 체크아웃에서 `composeApp/`에 두었던 파일은 `androidApp/`으로 옮깁니다.
+
+### 4. Build
 
 ```bash
 # Android
-./gradlew assembleDebug
+./gradlew :androidApp:assembleDebug
 
 # iOS (Simulator)
 ./gradlew linkDebugFrameworkIosSimulatorArm64
-# 이후 Xcode에서 iosApp.xcworkspace 열고 빌드
+# 이후 Xcode에서 iosApp/iosApp.xcodeproj 열고 빌드
 ```
 
 ## Architecture

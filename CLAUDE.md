@@ -180,7 +180,7 @@ com.chukchukhaksa.mobile/
 
 ### Bumping the App Version
 Four values, two files — keep them in sync:
-- `composeApp/build.gradle.kts`: `versionCode`, `versionName`
+- `androidApp/build.gradle.kts`: `versionCode`, `versionName`
 - `iosApp/iosApp.xcodeproj/project.pbxproj`: `CURRENT_PROJECT_VERSION`, `MARKETING_VERSION` (**two
   occurrences each** — Debug and Release configs)
 
@@ -189,9 +189,12 @@ those are **dead values** — the target-level settings in `project.pbxproj` win
 
 ### Secrets and Build-Config IDs
 Never hardcode keys or ad unit IDs in source. They live in git-ignored files and flow in through build config:
-- **Android**: `local.properties` → `buildConfigField` / `manifestPlaceholders` in `composeApp/build.gradle.kts`
+- **Android**: `local.properties` → `buildConfigField` / `manifestPlaceholders` in `androidApp/build.gradle.kts`
   (`KAKAO_NATIVE_APP_KEY`, `AMPLITUDE_API_KEY_DEV`/`_PROD`, `ADMOB_APP_ID_TEST`/`_PROD`,
   `ADMOB_INTERSTITIAL_AD_UNIT_ID_TEST`/`_PROD`). Debug/release `buildTypes` pick test vs. production IDs.
+  The shared module has no BuildConfig: `ChukChukHaksaApplication` builds an `AndroidAppConfig` from the app's
+  BuildConfig and hands it to `initKoinAndroid`, and shared code reads it through `isDebug` / Koin.
+  The Android Firebase config (`google-services` JSON) also lives in `androidApp/`.
 - **iOS**: `iosApp/Configuration/Config.xcconfig` → `Info.plist` keys, read at runtime via `Bundle.main`.
 
 Missing values fall back to empty strings rather than failing the build, so a blank ad unit ID surfaces
