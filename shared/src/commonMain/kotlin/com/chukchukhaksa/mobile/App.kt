@@ -20,6 +20,7 @@ import chukchukhaksa.composeapp.generated.resources.dialog_network_header
 import chukchukhaksa.composeapp.generated.resources.dialog_update_mandatory_body
 import chukchukhaksa.composeapp.generated.resources.dialog_update_mandatory_header
 import chukchukhaksa.composeapp.generated.resources.word_confirm
+import com.chukchukhaksa.mobile.common.analytics.AnalyticsUserSync
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.component.toast.CchToast
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
@@ -30,8 +31,6 @@ import com.chukchukhaksa.mobile.common.kmp.AppLifecycleObserver
 import com.chukchukhaksa.mobile.common.kmp.Platform.*
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import com.chukchukhaksa.mobile.domain.analytics.usecase.SetAnalyticsUserIdUseCase
-import com.chukchukhaksa.mobile.domain.analytics.usecase.SetAnalyticsUserPropertiesUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.CheckAuthStateUseCase
 import com.chukchukhaksa.mobile.domain.webview.ExchangeStatus
 import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
@@ -70,8 +69,7 @@ fun App(
             val exchangeWebSession: ExchangeWebSessionUseCase = koinInject()
             val homeRedirectEventBus: HomeRedirectEventBus = koinInject()
             val webViewHolder: WebViewHolder = koinInject()
-            val setAnalyticsUserId: SetAnalyticsUserIdUseCase = koinInject()
-            val setAnalyticsUserProperties: SetAnalyticsUserPropertiesUseCase = koinInject()
+            val analyticsUserSync: AnalyticsUserSync = koinInject()
             var startDestination by remember { mutableStateOf<String?>(null) }
 
             viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
@@ -89,8 +87,8 @@ fun App(
                     // 이미 로그인된 사용자: Amplitude 식별 + user properties.
                     // onReady를 막지 않도록 별도 코루틴에서 id → properties 순으로 수행.
                     launch {
-                        setAnalyticsUserId()
-                        setAnalyticsUserProperties()
+                        analyticsUserSync.identify()
+                        analyticsUserSync.syncUserProperties()
                     }
                 }
                 onReady()
@@ -116,7 +114,7 @@ fun App(
                         return@collect
                     }
                     // 포그라운드 복귀 시 Amplitude user properties 갱신 (시간표/과목 개수 등).
-                    setAnalyticsUserProperties()
+                    analyticsUserSync.syncUserProperties()
                 }
             }
 

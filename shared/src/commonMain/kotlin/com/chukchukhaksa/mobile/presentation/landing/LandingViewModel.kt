@@ -2,11 +2,10 @@ package com.chukchukhaksa.mobile.presentation.landing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chukchukhaksa.mobile.common.analytics.AnalyticsUserSync
 import com.chukchukhaksa.mobile.common.kmp.LoginCancelledException
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
-import com.chukchukhaksa.mobile.domain.analytics.usecase.SetAnalyticsUserIdUseCase
-import com.chukchukhaksa.mobile.domain.analytics.usecase.SetAnalyticsUserPropertiesUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.AppleLoginUseCase
 import com.chukchukhaksa.mobile.domain.auth.usecase.KakaoLoginUseCase
 import com.chukchukhaksa.mobile.domain.webview.WebViewPreloader
@@ -16,8 +15,7 @@ class LandingViewModel(
     private val kakaoLoginUseCase: KakaoLoginUseCase,
     private val appleLoginUseCase: AppleLoginUseCase,
     private val webViewPreloader: WebViewPreloader,
-    private val setAnalyticsUserId: SetAnalyticsUserIdUseCase,
-    private val setAnalyticsUserProperties: SetAnalyticsUserPropertiesUseCase,
+    private val analyticsUserSync: AnalyticsUserSync,
 ) : ViewModel() {
 
     val mviStore: MviStore<LandingState, LandingSideEffect> = mviStore(LandingState())
@@ -34,8 +32,8 @@ class LandingViewModel(
                         // 그 전까지는 로딩 표시를 유지해 빈 쿠키로 WebView가 먼저 로드되는 race를 막는다.
                         webViewPreloader.preloadAndAwait()
                         // Amplitude 사용자 식별 + user properties. 실패해도 로그인/네비게이션을 막지 않는다.
-                        setAnalyticsUserId()
-                        setAnalyticsUserProperties()
+                        analyticsUserSync.identify()
+                        analyticsUserSync.syncUserProperties()
                         mviStore.postSideEffect(LandingSideEffect.NavigateHome(signInResult.isPortalLinked))
                     }
                     .onFailure { throwable ->
@@ -61,8 +59,8 @@ class LandingViewModel(
                         // 세션 쿠키 교환·WebView preload(setCookie 포함)가 끝난 뒤에 화면을 전환한다.
                         webViewPreloader.preloadAndAwait()
                         // Amplitude 사용자 식별 + user properties. 실패해도 로그인/네비게이션을 막지 않는다.
-                        setAnalyticsUserId()
-                        setAnalyticsUserProperties()
+                        analyticsUserSync.identify()
+                        analyticsUserSync.syncUserProperties()
                         mviStore.postSideEffect(LandingSideEffect.NavigateHome(signInResult.isPortalLinked))
                     }
                     .onFailure { throwable ->

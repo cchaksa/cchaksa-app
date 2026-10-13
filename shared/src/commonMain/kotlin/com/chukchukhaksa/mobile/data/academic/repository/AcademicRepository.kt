@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.domain.academic.repository
+package com.chukchukhaksa.mobile.data.academic.repository
 
 import com.chukchukhaksa.mobile.common.model.academic.AcademicRecord
 import com.chukchukhaksa.mobile.common.model.academic.AcademicSummary

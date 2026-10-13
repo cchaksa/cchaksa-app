@@ -1,5 +1,6 @@
 package com.chukchukhaksa.mobile.di
 
+import com.chukchukhaksa.mobile.common.analytics.di.analyticsModule
 import com.chukchukhaksa.mobile.data.academic.di.AcademicRepositoryModule
 import com.chukchukhaksa.mobile.data.auth.di.authRepositoryModule
 import com.chukchukhaksa.mobile.data.config.di.appConfigRepositoryModule
@@ -49,6 +50,7 @@ internal fun initKoin(config: KoinAppDeclaration? = null) {
             ProfileRepositoryModule,
             AcademicRepositoryModule,
             webViewModule,
+            analyticsModule,
         )
     }
 }
