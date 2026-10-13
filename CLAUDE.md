@@ -212,6 +212,9 @@ Never hardcode keys or ad unit IDs in source. They live in git-ignored files and
 Missing values fall back to empty strings rather than failing the build, so a blank ad unit ID surfaces
 as `AdShowResult.Failed(NotReady)` at runtime, not a compile error.
 
+A new git worktree has none of these files. `.claude/scripts/setup-worktree.sh` symlinks them (plus the iOS
+`GoogleService-Info.plist`) from the main checkout; it runs as the repo's Orca setup hook, or rerun it by hand.
+
 ### MVI Implementation Pattern
 Each screen follows this pattern:
 ```kotlin
