@@ -7,7 +7,8 @@ import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.kmp.AdvertisingIdProvider
 import com.chukchukhaksa.mobile.common.kmp.isDebug
 import com.chukchukhaksa.mobile.common.ui.mviStore
-import com.chukchukhaksa.mobile.domain.academic.usecase.GetAcademicSummaryUseCase
+import com.chukchukhaksa.mobile.data.academic.repository.AcademicRepository
+import com.chukchukhaksa.mobile.domain.common.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.domain.profile.usecase.GetProfileUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.GetMainTimetableUseCase
@@ -30,7 +31,7 @@ class HomeViewModel(
     private val deleteTimetableCellUseCase: DeleteTimetableCellUseCase,
     private val setTimetableCellTypeUseCase: SetTimetableCellTypeUseCase,
     private val getProfileUseCase: GetProfileUseCase,
-    private val getAcademicSummaryUseCase: GetAcademicSummaryUseCase,
+    private val academicRepository: AcademicRepository,
     private val getPortalLinkStatusUseCase: GetPortalLinkStatusUseCase,
     private val exchangeWebSessionUseCase: ExchangeWebSessionUseCase,
     private val homeRedirectEventBus: HomeRedirectEventBus,
@@ -220,7 +221,7 @@ class HomeViewModel(
 
     fun getAcademicSummary() {
       viewModelScope.launch {
-        getAcademicSummaryUseCase()
+        runCatchingIgnoreCancelled { academicRepository.getAcademicSummary() }
           .onSuccess { academicSummary ->
             mviStore.setState { copy(academicSummary = academicSummary) }
           }
