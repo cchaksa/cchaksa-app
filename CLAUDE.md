@@ -65,7 +65,7 @@ When a change touches both platforms, verify with `./gradlew :shared:testAndroid
 ### Key Architectural Components
 - **State Management**: Unidirectional Data Flow (UDF) with StateFlow
 - **Dependency Injection**: Koin 4.1.0-Beta10 with feature-based modules
-- **Navigation**: Jetpack Navigation Compose 2.9.1 with type-safe routes (kotlinx.serialization for argument passing)
+- **Navigation**: Jetpack Navigation Compose 2.9.2 with type-safe routes (kotlinx.serialization for argument passing)
 - **Database**: Room 2.8.5 with SQLite for local storage (schema in `shared/schemas`)
 - **Remote Data**: Ktor 3.3.1 REST client (primary) + Firebase via GitLive KMP wrappers 2.1.0 (Remote Config, Realtime Database, Crashlytics, Analytics)
 - **WebView**: Much of the product surface is served by an embedded web app. See "WebView Bridge" below.
@@ -127,11 +127,11 @@ appbar, badge, bottomsheet, button, chip, container, dialog, loading, searchbar,
 ## Project Structure
 
 ### Multiplatform Targets
-- **Android**: Primary target (minSdk 28, targetSdk 36, compileSdk 36). The app module `:androidApp`
+- **Android**: Primary target (minSdk 28, targetSdk 36, compileSdk 37). The app module `:androidApp`
   (`com.android.application`, namespace `com.chukchukhaksa.mobile`) depends on the shared module `:shared`
   (`com.android.kotlin.multiplatform.library`, namespace `com.chukchukhaksa.mobile.shared`). Syncing AGP 9.4
   needs Android Studio Quail 4 (2026.1.4) or newer.
-- **iOS**: Framework generation for iosX64, iosArm64, iosSimulatorArm64. The Xcode side is
+- **iOS**: Framework generation for iosArm64, iosSimulatorArm64 (Compose Multiplatform 1.11+ dropped `iosX64`). The Xcode side is
   `iosApp/iosApp.xcodeproj` with **Swift Package Manager** dependencies — build/test with
   `-project iosApp.xcodeproj -scheme iosApp`, not the workspace (`iosApp.xcworkspace` is empty and
   `iosApp/Pods/` is a leftover; CocoaPods is not used).
@@ -141,7 +141,7 @@ appbar, badge, bottomsheet, button, chip, container, dialog, loading, searchbar,
 - **KSP**: 2.3.12
 - **AGP**: 9.4.1 (`:shared` uses the Android-KMP library plugin `com.android.kotlin.multiplatform.library`)
 - **Gradle**: 9.7.1
-- **Compose Multiplatform**: 1.10.0
+- **Compose Multiplatform**: 1.12.1
 - **Koin DI**: 4.1.0-Beta10
 - **Room Database**: 2.8.5
 - **Ktor (HTTP client)**: 3.3.1 (okhttp on Android / darwin on iOS)

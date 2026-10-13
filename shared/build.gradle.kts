@@ -36,7 +36,6 @@ kotlin {
   }
 
   listOf(
-    iosX64(),
     iosArm64(),
     iosSimulatorArm64(),
   ).forEach { iosTarget ->
@@ -140,7 +139,6 @@ fun DependencyHandlerScope.kspKmp(
   artifact: Provider<MinimalExternalModuleDependency>,
 ) {
   add("kspAndroid", artifact)
-  add("kspIosX64", artifact)
   add("kspIosArm64", artifact)
   add("kspIosSimulatorArm64", artifact)
 }
