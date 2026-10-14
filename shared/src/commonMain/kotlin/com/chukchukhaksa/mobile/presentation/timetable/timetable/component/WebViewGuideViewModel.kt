@@ -8,11 +8,11 @@ import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHol
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.webHomeUrl
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
-import com.chukchukhaksa.mobile.domain.auth.usecase.WithdrawUseCase
 import com.chukchukhaksa.mobile.domain.webview.ExchangeStatus
 import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import com.chukchukhaksa.mobile.presentation.webview.BridgeAction
 import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEventBus
+import com.chukchukhaksa.mobile.presentation.webview.WithdrawHandler
 import com.chukchukhaksa.mobile.presentation.webview.toAction
 import com.chukchukhaksa.mobile.remote.auth.AuthEvent
 import com.chukchukhaksa.mobile.remote.auth.AuthEventBus
@@ -28,7 +28,7 @@ class WebViewGuideViewModel(
   private val authEventBus: AuthEventBus,
   private val webViewHolder: WebViewHolder,
   private val homeRedirectEventBus: HomeRedirectEventBus,
-  private val withdraw: WithdrawUseCase,
+  private val withdraw: WithdrawHandler,
 ) : ViewModel() {
 
   val mviStore: MviStore<WebViewGuideState, WebViewGuideSideEffect> =

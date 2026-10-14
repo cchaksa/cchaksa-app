@@ -7,6 +7,7 @@ import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import com.chukchukhaksa.mobile.domain.webview.WebViewPreloader
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.WebViewGuideViewModel
 import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEventBus
+import com.chukchukhaksa.mobile.presentation.webview.WithdrawHandler
 import com.chukchukhaksa.mobile.remote.auth.SessionApi
 import com.chukchukhaksa.mobile.remote.auth.SessionApiImpl
 import com.chukchukhaksa.mobile.remote.user.UserApi
@@ -73,6 +74,8 @@ val webViewModule = module {
   single { WebViewPreloader(exchangeWebSession = get(), webViewHolder = get()) }
 
   single { HomeRedirectEventBus() }
+
+  factory { WithdrawHandler(get(), get(), get(), get()) }
 
   viewModelOf(::WebViewGuideViewModel)
 }

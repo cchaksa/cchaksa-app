@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.domain.auth.model
+package com.chukchukhaksa.mobile.data.auth.model
 
 data class SignInResult(
     val accessToken: String,

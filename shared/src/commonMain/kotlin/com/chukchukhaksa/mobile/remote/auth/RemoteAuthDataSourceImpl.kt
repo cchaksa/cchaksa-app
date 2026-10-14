@@ -1,8 +1,8 @@
 package com.chukchukhaksa.mobile.remote.auth
 
 import com.chukchukhaksa.mobile.data.auth.datasource.RemoteAuthDataSource
-import com.chukchukhaksa.mobile.domain.auth.model.RefreshTokenResult
-import com.chukchukhaksa.mobile.domain.auth.model.SignInResult
+import com.chukchukhaksa.mobile.data.auth.model.RefreshTokenResult
+import com.chukchukhaksa.mobile.data.auth.model.SignInResult
 import com.chukchukhaksa.mobile.remote.auth.model.RefreshRequest
 import com.chukchukhaksa.mobile.remote.auth.model.RefreshResponse
 import com.chukchukhaksa.mobile.remote.auth.model.SignInRequest

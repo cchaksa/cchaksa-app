@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.domain.openmajor.repository
+package com.chukchukhaksa.mobile.data.openmajor.repository
 
 import kotlinx.coroutines.flow.Flow
 

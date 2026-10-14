@@ -6,12 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chukchukhaksa.mobile.common.extension.record
 import com.chukchukhaksa.mobile.common.kmp.getAppVersionName
-import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.model.NetworkException
 import com.chukchukhaksa.mobile.common.model.UnknownException
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
-import com.chukchukhaksa.mobile.domain.config.usecase.CheckNeedForceUpdateUseCase
+import com.chukchukhaksa.mobile.data.config.repository.AppConfigRepository
+import com.chukchukhaksa.mobile.domain.common.runCatchingIgnoreCancelled
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -19,7 +19,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class MainViewModel(
-    val checkNeedForceUpdateUseCase: CheckNeedForceUpdateUseCase
+    private val appConfigRepository: AppConfigRepository,
 ) : ViewModel() {
     val mviStore: MviStore<MainState, MainSideEffect> = mviStore(MainState())
 
@@ -30,10 +30,9 @@ class MainViewModel(
     fun checkNeedForceUpdate() = viewModelScope.launch {
         if (isFirstVisit.not()) return@launch
 
-        checkNeedForceUpdateUseCase(
-            platform = getPlatform(),
-            currentVersion = getAppVersionName(),
-        ).onSuccess { (needForceUpdate, storeUrl) ->
+        runCatchingIgnoreCancelled {
+            appConfigRepository.getForceUpdateInfo(currentVersion = getAppVersionName())
+        }.onSuccess { (needForceUpdate, storeUrl) ->
             if (needForceUpdate.not()) return@onSuccess
             this@MainViewModel.storeUrl = storeUrl
 

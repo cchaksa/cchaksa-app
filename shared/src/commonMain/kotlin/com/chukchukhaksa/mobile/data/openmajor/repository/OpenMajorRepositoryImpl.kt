@@ -3,7 +3,6 @@ package com.chukchukhaksa.mobile.data.openmajor.repository
 import com.chukchukhaksa.mobile.common.model.OpenMajor
 import com.chukchukhaksa.mobile.data.openmajor.datasource.LocalOpenMajorDataSource
 import com.chukchukhaksa.mobile.data.openmajor.datasource.RemoteOpenMajorDataSource
-import com.chukchukhaksa.mobile.domain.openmajor.repository.OpenMajorRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
