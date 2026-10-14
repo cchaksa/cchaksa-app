@@ -12,6 +12,7 @@ import com.chukchukhaksa.mobile.remote.auth.SessionApi
 import com.chukchukhaksa.mobile.remote.auth.SessionApiImpl
 import com.chukchukhaksa.mobile.remote.user.UserApi
 import com.chukchukhaksa.mobile.remote.user.UserApiImpl
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
@@ -75,7 +76,7 @@ val webViewModule = module {
 
   single { HomeRedirectEventBus() }
 
-  factory { WithdrawHandler(get(), get(), get(), get()) }
+  factoryOf(::WithdrawHandler)
 
   viewModelOf(::WebViewGuideViewModel)
 }
