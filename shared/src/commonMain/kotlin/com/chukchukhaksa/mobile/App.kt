@@ -31,7 +31,8 @@ import com.chukchukhaksa.mobile.common.kmp.AppLifecycleObserver
 import com.chukchukhaksa.mobile.common.kmp.Platform.*
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import com.chukchukhaksa.mobile.domain.auth.usecase.CheckAuthStateUseCase
+import com.chukchukhaksa.mobile.data.auth.repository.AuthRepository
+import com.chukchukhaksa.mobile.domain.common.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.domain.webview.ExchangeStatus
 import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import com.chukchukhaksa.mobile.domain.webview.WebViewPreloader
@@ -63,7 +64,7 @@ fun App(
         KoinContext {
             val uiState = viewModel.mviStore.uiState.collectAsState().value
             val uriHandler = LocalUriHandler.current
-            val checkAuthStateUseCase: CheckAuthStateUseCase = koinInject()
+            val authRepository: AuthRepository = koinInject()
             val webViewPreloader: WebViewPreloader = koinInject()
             val appLifecycleObserver: AppLifecycleObserver = koinInject()
             val exchangeWebSession: ExchangeWebSessionUseCase = koinInject()
@@ -79,7 +80,7 @@ fun App(
             }
 
             LaunchedEffect(Unit) {
-                val isAuthenticated = checkAuthStateUseCase().getOrDefault(false)
+                val isAuthenticated = runCatchingIgnoreCancelled { authRepository.restoreSession() }.getOrDefault(false)
                 startDestination = if (isAuthenticated) HomeRoute.route else LandingRoute.route
 //              startDestination = HomeRoute.route
                 if (isAuthenticated) {

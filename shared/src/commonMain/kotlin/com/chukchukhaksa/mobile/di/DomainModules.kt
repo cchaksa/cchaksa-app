@@ -1,10 +1,5 @@
 package com.chukchukhaksa.mobile.di
 
-import com.chukchukhaksa.mobile.domain.auth.usecase.AppleLoginUseCase
-import com.chukchukhaksa.mobile.domain.auth.usecase.CheckAuthStateUseCase
-import com.chukchukhaksa.mobile.domain.auth.usecase.KakaoLoginUseCase
-import com.chukchukhaksa.mobile.domain.auth.usecase.WithdrawUseCase
-import com.chukchukhaksa.mobile.domain.config.usecase.CheckNeedForceUpdateUseCase
 import com.chukchukhaksa.mobile.domain.profile.usecase.GetProfileUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseCase
 import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableUseCase
@@ -44,14 +39,6 @@ val domainModule = module {
     // Open lecture use cases
     factory { GetOpenLectureListUseCase(get()) }
     factory { UpdateOpenLectureIfNeedUseCase(get())}
-
-    factory { CheckNeedForceUpdateUseCase(get())}
-
-    // Auth use cases
-    factory { AppleLoginUseCase(get(), get()) }
-    factory { CheckAuthStateUseCase(get()) }
-    factory { KakaoLoginUseCase(get(), get()) }
-    factory { WithdrawUseCase(get(), get(), get(), get()) }
 
     // Profile use cases
     factory { GetProfileUseCase(get()) }
