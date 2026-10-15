@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.domain.timetable.repository
+package com.chukchukhaksa.mobile.data.openlecture.repository
 
 import com.chukchukhaksa.mobile.common.model.OpenLecture
 import kotlinx.coroutines.flow.Flow
@@ -10,9 +10,8 @@ interface OpenLectureRepository {
         grade: Int? = null,
     ): List<OpenLecture>
 
-    suspend fun checkNeedUpdate(): Boolean
-
-    suspend fun updateAllLectures()
+    /** 원격 개설강좌 목록이 로컬 캐시보다 새롭거나 캐시가 비어 있으면 전체 목록을 다시 받는다. */
+    suspend fun updateAllLecturesIfNeeded()
 
     suspend fun getLastUpdatedDate(): String?
 

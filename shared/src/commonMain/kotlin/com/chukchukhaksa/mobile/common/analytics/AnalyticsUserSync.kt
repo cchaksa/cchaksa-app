@@ -1,9 +1,9 @@
 package com.chukchukhaksa.mobile.common.analytics
 
+import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.kmp.getAppVersionName
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
-import com.chukchukhaksa.mobile.domain.common.runCatchingIgnoreCancelled
-import com.chukchukhaksa.mobile.domain.timetable.repository.TimetableRepository
+import com.chukchukhaksa.mobile.data.timetable.repository.TimetableRepository
 import com.chukchukhaksa.mobile.remote.user.UserApi
 
 /**

@@ -4,36 +4,30 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chukchukhaksa.mobile.common.model.Timetable
 import com.chukchukhaksa.mobile.common.model.TimetableCell
+import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.kmp.AdvertisingIdProvider
 import com.chukchukhaksa.mobile.common.kmp.isDebug
 import com.chukchukhaksa.mobile.common.ui.mviStore
 import com.chukchukhaksa.mobile.data.academic.repository.AcademicRepository
-import com.chukchukhaksa.mobile.domain.common.runCatchingIgnoreCancelled
-import com.chukchukhaksa.mobile.domain.profile.usecase.GetProfileUseCase
-import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableCellUseCase
-import com.chukchukhaksa.mobile.domain.timetable.usecase.GetMainTimetableUseCase
-import com.chukchukhaksa.mobile.domain.timetable.usecase.GetTimetableCellTypeUseCase
-import com.chukchukhaksa.mobile.domain.timetable.usecase.SetTimetableCellTypeUseCase
-import com.chukchukhaksa.mobile.domain.user.usecase.GetPortalLinkStatusUseCase
-import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
+import com.chukchukhaksa.mobile.data.profile.repository.ProfileRepository
+import com.chukchukhaksa.mobile.data.timetable.repository.TimetableRepository
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.toCellEditorArgument
 import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEvent
 import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEventBus
+import com.chukchukhaksa.mobile.presentation.webview.WebSessionManager
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.timetable.cell.TimetableCellType
+import com.chukchukhaksa.mobile.remote.user.UserApi
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 
 class HomeViewModel(
-    private val getMainTimetableUseCase: GetMainTimetableUseCase,
-    private val getTimetableCellTypeUseCase: GetTimetableCellTypeUseCase,
-    private val deleteTimetableCellUseCase: DeleteTimetableCellUseCase,
-    private val setTimetableCellTypeUseCase: SetTimetableCellTypeUseCase,
-    private val getProfileUseCase: GetProfileUseCase,
+    private val timetableRepository: TimetableRepository,
+    private val profileRepository: ProfileRepository,
     private val academicRepository: AcademicRepository,
-    private val getPortalLinkStatusUseCase: GetPortalLinkStatusUseCase,
-    private val exchangeWebSessionUseCase: ExchangeWebSessionUseCase,
+    private val userApi: UserApi,
+    private val webSessionManager: WebSessionManager,
     private val homeRedirectEventBus: HomeRedirectEventBus,
     private val showTimetableTabEventBus: ShowTimetableTabEventBus,
     private val advertisingIdProvider: AdvertisingIdProvider,
@@ -92,7 +86,7 @@ class HomeViewModel(
 
     private fun fetchPortalLinkStatus() {
         viewModelScope.launch {
-            getPortalLinkStatusUseCase()
+            runCatchingIgnoreCancelled { userApi.getMe().isPortalLinked }
                 .onSuccess { linked ->
                     mviStore.setState {
                         copy(
@@ -118,14 +112,16 @@ class HomeViewModel(
 
     private fun refreshWebSession() {
         viewModelScope.launch {
-            exchangeWebSessionUseCase.refresh()
+            webSessionManager.refresh()
         }
     }
 
     fun getMainTimetable() = viewModelScope.launch {
-        val cellType = TimetableCellType.getType(getTimetableCellTypeUseCase().getOrNull())
+        val cellType = TimetableCellType.getType(
+            runCatchingIgnoreCancelled { timetableRepository.getTimetableCellType() }.getOrNull(),
+        )
 
-        getMainTimetableUseCase()
+        runCatchingIgnoreCancelled { timetableRepository.getMainTimetable() }
             .onSuccess { timetable ->
                 mviStore.setState {
                     copy(
@@ -183,7 +179,7 @@ class HomeViewModel(
     }
 
     fun deleteCell(cell: TimetableCell) = viewModelScope.launch {
-        deleteTimetableCellUseCase(cell)
+        runCatchingIgnoreCancelled { timetableRepository.deleteTimetableCell(cell) }
             .onSuccess {
                 mviStore.setState {
                     copy(
@@ -206,13 +202,13 @@ class HomeViewModel(
 
     fun updateCellType(position: Int) = viewModelScope.launch {
         val cellType = TimetableCellType.entries[position]
-        setTimetableCellTypeUseCase(cellType.name)
+        runCatchingIgnoreCancelled { timetableRepository.setTimetableCellType(cellType.name) }
             .onSuccess { mviStore.setState { copy(cellType = cellType) } }
     }
 
     fun getProfile() {
       viewModelScope.launch {
-        getProfileUseCase()
+        runCatchingIgnoreCancelled { profileRepository.getProfileInfo() }
           .onSuccess { profile ->
             mviStore.setState { copy(profile = profile) }
           }

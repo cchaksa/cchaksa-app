@@ -59,8 +59,10 @@ When a change touches both platforms, verify with `./gradlew :shared:testAndroid
 
 ### MVI + Clean Architecture Pattern
 - **Presentation Layer**: MVI with custom `MviStore` implementation using StateFlow/Flow
-- **Domain Layer**: Use cases with `suspend operator fun invoke()`, returns `Result<T>`
-- **Data Layer**: Repository pattern with local (Room/Datastore) and remote (Firebase) data sources
+- **Data Layer**: Repository pattern with local (Room/Datastore) and remote (Firebase) data sources.
+  Repository interfaces live next to their implementations in `data/<feature>/repository`.
+- There is no domain/use-case layer: ViewModels call repositories directly. Multi-step data rules (e.g.
+  picking a new main timetable after a delete) belong in the repository implementation.
 
 ### Key Architectural Components
 - **State Management**: Unidirectional Data Flow (UDF) with StateFlow
@@ -170,9 +172,8 @@ com.chukchukhaksa.mobile/
 │   ├── model/                # Shared data models
 │   ├── provider/             # Platform providers
 │   └── ui/                   # Common UI utilities (MviStore)
-├── data/                     # Repository implementations
+├── data/                     # Repository interfaces and implementations
 ├── di/                       # Dependency injection modules
-├── domain/                   # Use cases and repository interfaces
 ├── local/                    # Local data sources
 │   ├── database/             # Room database
 │   ├── datasource/           # Local data source implementations
@@ -224,13 +225,13 @@ sealed interface [Feature]SideEffect
 
 // ViewModel with MviStore delegate
 class [Feature]ViewModel(
-    private val someUseCase: SomeUseCase
+    private val someRepository: SomeRepository
 ) : ViewModel(), MviStore<State, SideEffect> by mviStore(initialState) {
     fun onAction(action: ...) { ... }
 }
 ```
 
-Use cases use `runCatchingIgnoreCancelled` for error handling.
+ViewModels wrap repository calls in `runCatchingIgnoreCancelled` (`common/extension`) for error handling.
 
 ### Navigation Structure
 - Feature-based navigation graphs
@@ -246,7 +247,7 @@ Use cases use `runCatchingIgnoreCancelled` for error handling.
   `shared/build.gradle.kts`, so imports keep the old module name. Changing it means rewriting every `Res` import.
 
 ### Testing Strategy
-- **Unit Tests**: Use cases and business logic
+- **Unit Tests**: Repositories and business logic
 - **UI Tests**: Screen-level testing with Compose Test
 - **Integration Tests**: Repository and database layer testing
 
@@ -262,7 +263,6 @@ Use cases use `runCatchingIgnoreCancelled` for error handling.
 ### Code Style
 - Kotlin official code style
 - Clean Architecture principles
-- Single responsibility for use cases
 - Immutable state with data classes
 
 ### Design System Usage

@@ -1,6 +1,6 @@
 package com.chukchukhaksa.mobile.data.openlecture.di
 
-import com.chukchukhaksa.mobile.domain.timetable.repository.OpenLectureRepository
+import com.chukchukhaksa.mobile.data.openlecture.repository.OpenLectureRepository
 import com.chukchukhaksa.mobile.data.openlecture.repository.OpenLectureRepositoryImpl
 import org.koin.dsl.module
 

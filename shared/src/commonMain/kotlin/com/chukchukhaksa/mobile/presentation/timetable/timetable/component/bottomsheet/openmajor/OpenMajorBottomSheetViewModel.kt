@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
-import com.chukchukhaksa.mobile.domain.timetable.repository.OpenLectureRepository
+import com.chukchukhaksa.mobile.data.openlecture.repository.OpenLectureRepository
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor.model.toOpenMajorList
 import kotlinx.coroutines.launch
 

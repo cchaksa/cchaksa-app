@@ -28,7 +28,6 @@ internal fun initKoin(config: KoinAppDeclaration? = null) {
         config?.invoke(this)
         modules(
             platformModule,
-            domainModule,
             dataStoreModule,
             timetableDatabaseModule,
             openMajorDatabaseModule,

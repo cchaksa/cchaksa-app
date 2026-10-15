@@ -3,11 +3,11 @@ package com.chukchukhaksa.mobile.presentation.timetable.timetableeditor
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.decodeFromUri
 import com.chukchukhaksa.mobile.common.ui.mviStore
-import com.chukchukhaksa.mobile.domain.timetable.usecase.InsertTimetableUseCase
-import com.chukchukhaksa.mobile.domain.timetable.usecase.UpdateTimetableUseCase
+import com.chukchukhaksa.mobile.data.timetable.repository.TimetableRepository
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.TimetableRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import kotlinx.coroutines.launch
@@ -15,8 +15,7 @@ import kotlinx.serialization.json.Json
 
 
 class TimetableEditorViewModel(
-    private val insertTimetableUseCase: InsertTimetableUseCase,
-    private val updateTimetableUseCase: UpdateTimetableUseCase,
+    private val timetableRepository: TimetableRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val argument = savedStateHandle.get<String>(TimetableRoute.TIMETABLE_EDITOR_ARGUMENT)!!
@@ -49,32 +48,27 @@ class TimetableEditorViewModel(
             return@launch
         }
 
-        val useCase = if (isEditMode) {
-            updateTimetableUseCase(
-                param = UpdateTimetableUseCase.Param(
+        runCatchingIgnoreCancelled {
+            if (isEditMode) {
+                timetableRepository.updateTimetable(
                     createTime = timetableEditorArgument.createTime,
-                    name = state.name,
                     year = state.semester.year,
                     semester = state.semester.semester,
-                ),
-            )
-        } else {
-            insertTimetableUseCase(
-                param = InsertTimetableUseCase.Param(
                     name = state.name,
+                )
+            } else {
+                timetableRepository.insertTimetable(
                     year = state.semester.year,
                     semester = state.semester.semester,
-                ),
-            )
-        }
-
-        useCase
-            .onSuccess {
-//              mviStore.postSideEffect(TimetableEditorSideEffect.PopBackStack)
-              mviStore.postSideEffect(TimetableEditorSideEffect.ShowEditSaveToast)
-            }.onFailure {
-                mviStore.postSideEffect(TimetableEditorSideEffect.HandleException(it))
+                    name = state.name,
+                )
             }
+        }.onSuccess {
+//          mviStore.postSideEffect(TimetableEditorSideEffect.PopBackStack)
+            mviStore.postSideEffect(TimetableEditorSideEffect.ShowEditSaveToast)
+        }.onFailure {
+            mviStore.postSideEffect(TimetableEditorSideEffect.HandleException(it))
+        }
     }
 
     fun popBackStack() {

@@ -5,13 +5,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chukchukhaksa.mobile.common.extension.record
+import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.kmp.getAppVersionName
 import com.chukchukhaksa.mobile.common.model.NetworkException
 import com.chukchukhaksa.mobile.common.model.UnknownException
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
 import com.chukchukhaksa.mobile.data.config.repository.AppConfigRepository
-import com.chukchukhaksa.mobile.domain.common.runCatchingIgnoreCancelled
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

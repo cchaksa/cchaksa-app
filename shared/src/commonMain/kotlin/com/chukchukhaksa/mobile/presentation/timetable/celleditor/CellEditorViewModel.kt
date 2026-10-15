@@ -3,6 +3,7 @@ package com.chukchukhaksa.mobile.presentation.timetable.celleditor
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.model.TimetableCellColor
 import com.chukchukhaksa.mobile.common.model.TimetableCellOverlapException
@@ -11,16 +12,14 @@ import com.chukchukhaksa.mobile.common.model.TimetableDay
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.decodeFromUri
 import com.chukchukhaksa.mobile.common.ui.mviStore
-import com.chukchukhaksa.mobile.domain.timetable.usecase.InsertTimetableCellUseCase
-import com.chukchukhaksa.mobile.domain.timetable.usecase.UpdateTimetableCellUseCase
+import com.chukchukhaksa.mobile.data.timetable.repository.TimetableRepository
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.TimetableRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 class CellEditorViewModel(
-    private val insertTimetableCellUseCase: InsertTimetableCellUseCase,
-    private val updateTimetableCellUseCase: UpdateTimetableCellUseCase,
+    private val timetableRepository: TimetableRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val argument = savedStateHandle.get<String>(TimetableRoute.CELL_EDITOR_ARGUMENT)!!
@@ -148,44 +147,40 @@ class CellEditorViewModel(
         }
 
         viewModelScope.launch {
-            val useCase = if (isEditMode) {
-                updateTimetableCellUseCase(
-                    UpdateTimetableCellUseCase.Param(
-                        cellEditorArgument.oldCellId,
-                        timetableCellList,
-                    ),
-                )
-            } else {
-                insertTimetableCellUseCase(timetableCellList)
+            runCatchingIgnoreCancelled {
+                if (isEditMode) {
+                    timetableRepository.updateTimetableCell(
+                        oldCellId = cellEditorArgument.oldCellId,
+                        cellList = timetableCellList,
+                    )
+                } else {
+                    timetableRepository.insertTimetableCell(timetableCellList)
+                }
+            }.onSuccess {
+                if (isEditMode) {
+                    mviStore.postSideEffect(CellEditorSideEffect.ShowEditSuccessCellToast)
+                } else {
+                    mviStore.postSideEffect(CellEditorSideEffect.ShowAddSuccessCellToast)
+                }
+
+                popBackStack()
+            }.onFailure { throwable ->
+                when (throwable) {
+                    is TimetableCellOverlapException -> mviStore.postSideEffect(
+                        CellEditorSideEffect.ShowToast(
+                            throwable.message
+                        )
+                    )
+
+                    is TimetableCellPeriodInvalidException -> mviStore.postSideEffect(
+                        CellEditorSideEffect.ShowToast(
+                            throwable.message
+                        )
+                    )
+
+                    else -> mviStore.postSideEffect(CellEditorSideEffect.HandleException(throwable))
+                }
             }
-
-            useCase
-                .onSuccess {
-                    if (isEditMode) {
-                        mviStore.postSideEffect(CellEditorSideEffect.ShowEditSuccessCellToast)
-                    } else {
-                        mviStore.postSideEffect(CellEditorSideEffect.ShowAddSuccessCellToast)
-                    }
-
-                    popBackStack()
-                }
-                .onFailure { throwable ->
-                    when (throwable) {
-                        is TimetableCellOverlapException -> mviStore.postSideEffect(
-                            CellEditorSideEffect.ShowToast(
-                                throwable.message
-                            )
-                        )
-
-                        is TimetableCellPeriodInvalidException -> mviStore.postSideEffect(
-                            CellEditorSideEffect.ShowToast(
-                                throwable.message
-                            )
-                        )
-
-                        else -> mviStore.postSideEffect(CellEditorSideEffect.HandleException(throwable))
-                    }
-                }
         }
     }
 

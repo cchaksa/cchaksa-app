@@ -31,7 +31,6 @@ import com.chukchukhaksa.mobile.common.designsystem.component.webview.rememberCc
 import com.chukchukhaksa.mobile.common.designsystem.component.loading.WebViewLoadingShimmer
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.PlatformBackHandler
-import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -53,7 +52,7 @@ fun WebViewRoute(
   onShowToast: (String) -> Unit,
 ) {
   val controller = rememberCchWebViewController()
-  val exchangeWebSession: ExchangeWebSessionUseCase = koinInject()
+  val webSessionManager: WebSessionManager = koinInject()
   val homeRedirectEventBus: HomeRedirectEventBus = koinInject()
   val withdraw: WithdrawHandler = koinInject()
   // AdManager 구현체는 Phase 2(Android)/Phase 3(iOS)에서 platformModule로 주입된다.
@@ -61,7 +60,7 @@ fun WebViewRoute(
   // Koin 인스턴스만 확보해 게이트 경로 흐름에서만 지연 해석한다.
   val koin = getKoin()
   val scope = rememberCoroutineScope()
-  val cookies by exchangeWebSession.cookies.collectAsStateWithLifecycle()
+  val cookies by webSessionManager.cookies.collectAsStateWithLifecycle()
 
   WebViewRouteContent(
     url = url,
