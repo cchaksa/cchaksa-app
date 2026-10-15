@@ -3,7 +3,6 @@ package com.chukchukhaksa.mobile.presentation.webview
 import com.chukchukhaksa.mobile.common.analytics.AnalyticsUserSync
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
 import com.chukchukhaksa.mobile.data.auth.repository.AuthRepository
-import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
 
 /**
  * 웹이 보낸 [BridgeAction.Withdraw]를 받아 앱의 로컬 인증 상태를 정리한다.
@@ -13,13 +12,13 @@ import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
  */
 class WithdrawHandler(
   private val authRepository: AuthRepository,
-  private val exchangeWebSession: ExchangeWebSessionUseCase,
+  private val webSessionManager: WebSessionManager,
   private val webViewHolder: WebViewHolder,
   private val analyticsUserSync: AnalyticsUserSync,
 ) {
   suspend operator fun invoke() {
     authRepository.clearTokens()
-    exchangeWebSession.clear()
+    webSessionManager.clear()
     webViewHolder.reset()
     analyticsUserSync.clear()
   }

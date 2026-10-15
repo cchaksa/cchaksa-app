@@ -10,9 +10,10 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.appwidget.updateAll
 import androidx.glance.state.PreferencesGlanceStateDefinition
+import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.model.Timetable
 import com.chukchukhaksa.mobile.common.ui.encodeToUri
-import com.chukchukhaksa.mobile.domain.timetable.usecase.GetMainTimetableUseCase
+import com.chukchukhaksa.mobile.data.timetable.repository.TimetableRepository
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,9 +26,9 @@ class TimetableWidgetReceiver : GlanceAppWidgetReceiver() {
 
   private fun observeData(context: Context) {
     CoroutineScope(Dispatchers.IO).launch {
-      val getMainTimetableUseCase: GetMainTimetableUseCase = getKoin().get()
+      val timetableRepository: TimetableRepository = getKoin().get()
 
-      val timetable = getMainTimetableUseCase().getOrNull() ?: Timetable()
+      val timetable = runCatchingIgnoreCancelled { timetableRepository.getMainTimetable() }.getOrNull() ?: Timetable()
       Napier.i("TimetableWidgetReceiver: observeData: timetable = $timetable")
 
       val timetableUri = Json.encodeToUri(timetable)

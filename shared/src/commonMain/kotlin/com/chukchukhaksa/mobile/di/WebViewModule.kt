@@ -3,10 +3,10 @@ package com.chukchukhaksa.mobile.di
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.sessionApiBaseUrl
 import com.chukchukhaksa.mobile.common.kmp.httpClientEngineFactory
 import com.chukchukhaksa.mobile.common.kmp.isDebug
-import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
-import com.chukchukhaksa.mobile.domain.webview.WebViewPreloader
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.WebViewGuideViewModel
 import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEventBus
+import com.chukchukhaksa.mobile.presentation.webview.WebSessionManager
+import com.chukchukhaksa.mobile.presentation.webview.WebViewPreloader
 import com.chukchukhaksa.mobile.presentation.webview.WithdrawHandler
 import com.chukchukhaksa.mobile.remote.auth.SessionApi
 import com.chukchukhaksa.mobile.remote.auth.SessionApiImpl
@@ -70,9 +70,9 @@ val webViewModule = module {
 
   single<UserApi> { UserApiImpl(client = get()) }
 
-  single { ExchangeWebSessionUseCase(localAuthDataSource = get(), sessionApi = get()) }
+  single { WebSessionManager(localAuthDataSource = get(), sessionApi = get()) }
 
-  single { WebViewPreloader(exchangeWebSession = get(), webViewHolder = get()) }
+  single { WebViewPreloader(webSessionManager = get(), webViewHolder = get()) }
 
   single { HomeRedirectEventBus() }
 

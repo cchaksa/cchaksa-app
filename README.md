@@ -27,9 +27,8 @@ Android 앱 모듈 `androidApp`과 공유 KMP 모듈 `shared`로 구성됩니다
 ```
 com.chukchukhaksa.mobile/
 ├── common/          # 디자인시스템, 확장함수, KMP 플랫폼 코드
-├── data/            # Repository 구현
+├── data/            # Repository 인터페이스·구현
 ├── di/              # Koin DI 모듈
-├── domain/          # UseCase, Repository 인터페이스
 ├── local/           # Room DB, DataStore
 ├── presentation/    # 화면 (MVI 패턴)
 ├── remote/          # Firebase 데이터소스
@@ -106,10 +105,10 @@ Android 설정 파일이 없으면 google-services 플러그인이 빌드를 실
 MVI + Clean Architecture 패턴을 사용합니다.
 
 ```
-Presentation (MVI)  →  Domain (UseCase)  →  Data (Repository)
-     ↓                                          ↓
-  ViewModel + State/SideEffect          Local (Room/DataStore)
-                                        Remote (Firebase)
+Presentation (MVI)              →  Data (Repository)
+       ↓                                   ↓
+ViewModel + State/SideEffect       Local (Room/DataStore)
+                                   Remote (Firebase)
 ```
 
 각 화면은 `[Feature]State`, `[Feature]SideEffect`, `[Feature]ViewModel` 구조를 따릅니다.

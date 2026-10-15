@@ -6,8 +6,9 @@ import com.chukchukhaksa.mobile.common.model.TimetableCellOverlapException
 import com.chukchukhaksa.mobile.common.model.TimetableCellPeriodInvalidException
 import com.chukchukhaksa.mobile.common.model.TimetableDay
 import com.chukchukhaksa.mobile.data.timetable.datasource.LocalTimetableDataSource
-import com.chukchukhaksa.mobile.domain.timetable.repository.TimetableRepository
 import kotlinx.coroutines.flow.firstOrNull
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class TimetableRepositoryImpl(
     private val localTimetableDataSource: LocalTimetableDataSource,
@@ -16,7 +17,8 @@ class TimetableRepositoryImpl(
         return localTimetableDataSource.getAllTimetable()
     }
 
-    override suspend fun getTimetable(createTime: Long): Timetable? {
+    override suspend fun getMainTimetable(): Timetable? {
+        val createTime = getMainTimetableCreateTime() ?: return null
         return localTimetableDataSource.getTimetable(createTime)
     }
 
@@ -38,10 +40,30 @@ class TimetableRepositoryImpl(
 
     override suspend fun deleteTimetable(data: Timetable) {
         localTimetableDataSource.deleteTimetable(data)
+
+        if (getMainTimetableCreateTime() != data.createTime) return
+
+        val firstTimetableCreateTime = getAllTimetable().firstOrNull()?.createTime ?: 0L
+        setMainTimetableCreateTime(firstTimetableCreateTime)
     }
 
-    override suspend fun insertTimetable(data: Timetable) {
-        localTimetableDataSource.insertTimetable(data)
+    @OptIn(ExperimentalTime::class)
+    override suspend fun insertTimetable(
+        year: String,
+        semester: String,
+        name: String,
+    ) {
+        val createTime = Clock.System.now().toEpochMilliseconds()
+        localTimetableDataSource.insertTimetable(
+            Timetable(
+                createTime = createTime,
+                year = year,
+                semester = semester,
+                name = name,
+                cellList = emptyList(),
+            ),
+        )
+        setMainTimetableCreateTime(createTime)
     }
 
     override suspend fun updateTimetable(
@@ -96,11 +118,6 @@ class TimetableRepositoryImpl(
                 cellList = tempCellList.plus(cellList),
             ),
         )
-    }
-
-    private suspend fun getMainTimetable() = with(localTimetableDataSource) {
-        val createTime = getMainTimetableCreateTime().firstOrNull() ?: return@with null
-        getTimetable(createTime)
     }
 
     private fun checkPeriodInvalid(

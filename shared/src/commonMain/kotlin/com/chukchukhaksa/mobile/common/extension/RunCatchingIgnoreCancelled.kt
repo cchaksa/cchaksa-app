@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.domain.common
+package com.chukchukhaksa.mobile.common.extension
 
 import kotlin.coroutines.cancellation.CancellationException
 

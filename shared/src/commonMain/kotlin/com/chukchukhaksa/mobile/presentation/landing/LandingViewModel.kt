@@ -3,6 +3,7 @@ package com.chukchukhaksa.mobile.presentation.landing
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chukchukhaksa.mobile.common.analytics.AnalyticsUserSync
+import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.kmp.AppleSignInClient
 import com.chukchukhaksa.mobile.common.kmp.KakaoSignInClient
 import com.chukchukhaksa.mobile.common.kmp.LoginCancelledException
@@ -10,8 +11,7 @@ import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
 import com.chukchukhaksa.mobile.data.auth.model.SignInResult
 import com.chukchukhaksa.mobile.data.auth.repository.AuthRepository
-import com.chukchukhaksa.mobile.domain.common.runCatchingIgnoreCancelled
-import com.chukchukhaksa.mobile.domain.webview.WebViewPreloader
+import com.chukchukhaksa.mobile.presentation.webview.WebViewPreloader
 import kotlinx.coroutines.launch
 
 class LandingViewModel(

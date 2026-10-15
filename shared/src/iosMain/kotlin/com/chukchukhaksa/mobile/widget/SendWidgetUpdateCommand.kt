@@ -5,9 +5,10 @@ import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSNotification
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.model.Timetable
 import kotlinx.cinterop.ExperimentalForeignApi
-import com.chukchukhaksa.mobile.domain.timetable.usecase.GetMainTimetableUseCase
+import com.chukchukhaksa.mobile.data.timetable.repository.TimetableRepository
 import org.koin.mp.KoinPlatform.getKoin
 import kotlinx.coroutines.runBlocking
 import io.github.aakira.napier.Napier
@@ -21,9 +22,9 @@ private val widgetJson = Json {
 @OptIn(ExperimentalForeignApi::class)
 actual fun sendWidgetUpdateCommand(context: Any) {
     try {
-        val getMainTimetableUseCase: GetMainTimetableUseCase = getKoin().get()
+        val timetableRepository: TimetableRepository = getKoin().get()
         val timetable = runBlocking {
-            getMainTimetableUseCase().getOrNull()
+            runCatchingIgnoreCancelled { timetableRepository.getMainTimetable() }.getOrNull()
         }
 
         if (timetable != null) {

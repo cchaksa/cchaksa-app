@@ -2,6 +2,7 @@ package com.chukchukhaksa.mobile.presentation.timetable.openlecture
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.model.OpenLecture
 import com.chukchukhaksa.mobile.common.model.TimetableCell
 import com.chukchukhaksa.mobile.common.model.TimetableCellColor
@@ -9,10 +10,8 @@ import com.chukchukhaksa.mobile.common.model.TimetableCellOverlapException
 import com.chukchukhaksa.mobile.common.model.TimetableDay
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
-import com.chukchukhaksa.mobile.domain.timetable.repository.OpenLectureRepository
-import com.chukchukhaksa.mobile.domain.timetable.usecase.GetOpenLectureListUseCase
-import com.chukchukhaksa.mobile.domain.timetable.usecase.InsertTimetableCellUseCase
-import com.chukchukhaksa.mobile.domain.timetable.usecase.UpdateOpenLectureIfNeedUseCase
+import com.chukchukhaksa.mobile.data.openlecture.repository.OpenLectureRepository
+import com.chukchukhaksa.mobile.data.timetable.repository.TimetableRepository
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.toCellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.openlecture.model.SchoolLevel
 import kotlinx.collections.immutable.toPersistentList
@@ -21,10 +20,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class OpenLectureViewModel(
-    private val updateOpenLectureIfNeedUseCase: UpdateOpenLectureIfNeedUseCase,
-    private val getOpenLectureListUseCase: GetOpenLectureListUseCase,
-    private val insertTimetableCellUseCase: InsertTimetableCellUseCase,
     private val openLectureRepository: OpenLectureRepository,
+    private val timetableRepository: TimetableRepository,
 ) : ViewModel() {
 
     private val mutex: Mutex = Mutex()
@@ -42,7 +39,7 @@ class OpenLectureViewModel(
     fun initData() = viewModelScope.launch {
         if (isFirstVisit) {
             mviStore.setState { copy(isLoading = true) }
-            updateOpenLectureIfNeedUseCase()
+            runCatchingIgnoreCancelled { openLectureRepository.updateAllLecturesIfNeeded() }
             val lastUpdated = openLectureRepository.getLastUpdatedDate()
             mviStore.setState {
                 copy(
@@ -110,7 +107,7 @@ class OpenLectureViewModel(
             }
         }
 
-        insertTimetableCellUseCase(timetableCellList)
+        runCatchingIgnoreCancelled { timetableRepository.insertTimetableCell(timetableCellList) }
             .onSuccess {
                 mviStore.setState { copy(selectedOpenLectureId = null) }
                 selectedOpenLecture = null
@@ -155,7 +152,7 @@ class OpenLectureViewModel(
             }
         }
 
-        insertTimetableCellUseCase(timetableCellList)
+        runCatchingIgnoreCancelled { timetableRepository.insertTimetableCell(timetableCellList) }
             .onSuccess {
                 mviStore.postSideEffect(OpenLectureSideEffect.ShowSuccessAddCellToast)
             }
@@ -220,13 +217,13 @@ class OpenLectureViewModel(
         search: String = searchQuery,
     ) = viewModelScope.launch {
         mutex.withLock {
-            getOpenLectureListUseCase(
-                GetOpenLectureListUseCase.Param(
+            runCatchingIgnoreCancelled {
+                openLectureRepository.getOpenLectureList(
                     lectureOrProfessorName = search,
                     major = currentState.selectedOpenMajor,
                     grade = currentState.schoolLevel.query,
-                ),
-            ).onSuccess { newData ->
+                )
+            }.onSuccess { newData ->
                 mviStore.setState {
                     copy(
                         isLoading = false,

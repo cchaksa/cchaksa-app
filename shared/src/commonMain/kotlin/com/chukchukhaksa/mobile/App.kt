@@ -27,20 +27,20 @@ import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHol
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.webPortalLoginUrl
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
+import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.kmp.AppLifecycleObserver
 import com.chukchukhaksa.mobile.common.kmp.Platform.*
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.data.auth.repository.AuthRepository
-import com.chukchukhaksa.mobile.domain.common.runCatchingIgnoreCancelled
-import com.chukchukhaksa.mobile.domain.webview.ExchangeStatus
-import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
-import com.chukchukhaksa.mobile.domain.webview.WebViewPreloader
 import com.chukchukhaksa.mobile.presentation.landing.navigation.LandingRoute
 import com.chukchukhaksa.mobile.presentation.landing.navigation.landingNavGraph
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.HomeRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.timetableNavGraph
+import com.chukchukhaksa.mobile.presentation.webview.ExchangeStatus
 import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEventBus
+import com.chukchukhaksa.mobile.presentation.webview.WebSessionManager
+import com.chukchukhaksa.mobile.presentation.webview.WebViewPreloader
 import com.chukchukhaksa.mobile.presentation.webview.navigation.webViewNavGraph
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.FirebaseAnalytics
@@ -67,7 +67,7 @@ fun App(
             val authRepository: AuthRepository = koinInject()
             val webViewPreloader: WebViewPreloader = koinInject()
             val appLifecycleObserver: AppLifecycleObserver = koinInject()
-            val exchangeWebSession: ExchangeWebSessionUseCase = koinInject()
+            val webSessionManager: WebSessionManager = koinInject()
             val homeRedirectEventBus: HomeRedirectEventBus = koinInject()
             val webViewHolder: WebViewHolder = koinInject()
             val analyticsUserSync: AnalyticsUserSync = koinInject()
@@ -108,7 +108,7 @@ fun App(
 
             LaunchedEffect(Unit) {
                 appLifecycleObserver.onForeground.collect {
-                    val status = exchangeWebSession.refreshIfExpired()
+                    val status = webSessionManager.refreshIfExpired()
                     if (status != null && status !is ExchangeStatus.Loaded) {
                         Napier.w(tag = "App") { "Foreground refresh failed ($status) → navigating to Landing" }
                         navigator.navigateToLanding()

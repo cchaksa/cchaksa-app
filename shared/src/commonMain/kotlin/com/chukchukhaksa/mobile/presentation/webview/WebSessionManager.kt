@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.domain.webview
+package com.chukchukhaksa.mobile.presentation.webview
 
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewCookie
 import com.chukchukhaksa.mobile.data.auth.datasource.LocalAuthDataSource
@@ -11,8 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/** 앱의 access/refresh token을 웹 세션 쿠키로 교환하고, 교환한 쿠키와 교환 상태를 보관한다. */
 @OptIn(ExperimentalTime::class)
-class ExchangeWebSessionUseCase(
+class WebSessionManager(
   private val localAuthDataSource: LocalAuthDataSource,
   private val sessionApi: SessionApi,
 ) {

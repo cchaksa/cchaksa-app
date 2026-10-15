@@ -8,8 +8,8 @@ import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHol
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.webHomeUrl
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
-import com.chukchukhaksa.mobile.domain.webview.ExchangeStatus
-import com.chukchukhaksa.mobile.domain.webview.ExchangeWebSessionUseCase
+import com.chukchukhaksa.mobile.presentation.webview.ExchangeStatus
+import com.chukchukhaksa.mobile.presentation.webview.WebSessionManager
 import com.chukchukhaksa.mobile.presentation.webview.BridgeAction
 import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEventBus
 import com.chukchukhaksa.mobile.presentation.webview.WithdrawHandler
@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import kotlin.time.TimeSource
 
 class WebViewGuideViewModel(
-  private val exchangeWebSession: ExchangeWebSessionUseCase,
+  private val webSessionManager: WebSessionManager,
   private val authEventBus: AuthEventBus,
   private val webViewHolder: WebViewHolder,
   private val homeRedirectEventBus: HomeRedirectEventBus,
@@ -47,7 +47,7 @@ class WebViewGuideViewModel(
 
   fun refresh() {
     viewModelScope.launch {
-      val status = exchangeWebSession.refresh()
+      val status = webSessionManager.refresh()
       mviStore.setState { copy(exchangeStatus = status) }
       when {
         status is ExchangeStatus.Failed400 -> {
@@ -55,7 +55,7 @@ class WebViewGuideViewModel(
         }
 
         status == ExchangeStatus.Loaded && !webViewHolder.isInitialLoaded() -> {
-          webViewHolder.preload(webHomeUrl, exchangeWebSession.cookies.value)
+          webViewHolder.preload(webHomeUrl, webSessionManager.cookies.value)
         }
       }
     }
@@ -135,7 +135,7 @@ class WebViewGuideViewModel(
 
   private fun observeCookies() {
     viewModelScope.launch {
-      exchangeWebSession.cookies.collect { cookies ->
+      webSessionManager.cookies.collect { cookies ->
         mviStore.setState { copy(cookies = cookies.toImmutableList()) }
       }
     }
@@ -145,7 +145,7 @@ class WebViewGuideViewModel(
     viewModelScope.launch {
       authEventBus.events.collect { event ->
         if (event is AuthEvent.TokenExpired) {
-          exchangeWebSession.clear()
+          webSessionManager.clear()
           webViewHolder.reset()
           mviStore.setState {
             copy(

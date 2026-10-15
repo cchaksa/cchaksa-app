@@ -31,7 +31,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.webview.rememberCc
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.PlatformBackHandler
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import com.chukchukhaksa.mobile.domain.webview.ExchangeStatus
+import com.chukchukhaksa.mobile.presentation.webview.ExchangeStatus
 import com.chukchukhaksa.mobile.presentation.webview.AdGateDialog
 import com.chukchukhaksa.mobile.presentation.webview.AdLoadingOverlay
 import com.chukchukhaksa.mobile.presentation.webview.showAdGateInterstitialThenNavigate

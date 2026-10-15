@@ -1,4 +1,4 @@
-package com.chukchukhaksa.mobile.domain.webview
+package com.chukchukhaksa.mobile.presentation.webview
 
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewCookie
 import com.chukchukhaksa.mobile.remote.auth.FakeLocalAuthDataSource
@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
-class ExchangeWebSessionUseCaseTest {
+class WebSessionManagerTest {
 
   private class FakeSessionApi(
     private val response: () -> Result<SessionExchangeResult>,
@@ -32,9 +32,9 @@ class ExchangeWebSessionUseCaseTest {
   fun `missing tokens returns NotLoggedIn without API call`() = runTest {
     val auth = FakeLocalAuthDataSource()
     val api = FakeSessionApi { Result.success(SessionExchangeResult(emptyList())) }
-    val useCase = ExchangeWebSessionUseCase(auth, api)
+    val webSessionManager = WebSessionManager(auth, api)
 
-    val status = useCase.refresh()
+    val status = webSessionManager.refresh()
 
     assertIs<ExchangeStatus.NotLoggedIn>(status)
     assertEquals(0, api.callCount)
@@ -49,10 +49,10 @@ class ExchangeWebSessionUseCaseTest {
     val api = FakeSessionApi {
       Result.success(SessionExchangeResult(cookies = cookies))
     }
-    val useCase = ExchangeWebSessionUseCase(auth, api)
+    val webSessionManager = WebSessionManager(auth, api)
 
-    val first = useCase.refresh()
-    val second = useCase.refresh()
+    val first = webSessionManager.refresh()
+    val second = webSessionManager.refresh()
 
     assertIs<ExchangeStatus.Loaded>(first)
     assertIs<ExchangeStatus.Loaded>(second)
@@ -63,9 +63,9 @@ class ExchangeWebSessionUseCaseTest {
   fun `400 maps to Failed400 and clears cache`() = runTest {
     val auth = FakeLocalAuthDataSource(initialAccessToken = "ac", initialRefreshToken = "re")
     val api = FakeSessionApi { Result.failure(SessionExchangeError.MissingAccessToken) }
-    val useCase = ExchangeWebSessionUseCase(auth, api)
+    val webSessionManager = WebSessionManager(auth, api)
 
-    val status = useCase.refresh()
+    val status = webSessionManager.refresh()
 
     assertIs<ExchangeStatus.Failed400>(status)
   }
@@ -76,9 +76,9 @@ class ExchangeWebSessionUseCaseTest {
     val api = FakeSessionApi {
       Result.failure(SessionExchangeError.Unknown(httpStatus = 503, throwable = null))
     }
-    val useCase = ExchangeWebSessionUseCase(auth, api)
+    val webSessionManager = WebSessionManager(auth, api)
 
-    val status = useCase.refresh()
+    val status = webSessionManager.refresh()
 
     assertIs<ExchangeStatus.Failed5xx>(status)
   }
@@ -92,11 +92,11 @@ class ExchangeWebSessionUseCaseTest {
     val api = FakeSessionApi {
       Result.success(SessionExchangeResult(cookies = cookies))
     }
-    val useCase = ExchangeWebSessionUseCase(auth, api)
-    useCase.refresh()
-    useCase.clear()
+    val webSessionManager = WebSessionManager(auth, api)
+    webSessionManager.refresh()
+    webSessionManager.clear()
 
-    val status = useCase.refresh()
+    val status = webSessionManager.refresh()
 
     assertTrue(status is ExchangeStatus.Loaded)
     assertEquals(2, api.callCount)

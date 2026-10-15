@@ -2,27 +2,24 @@ package com.chukchukhaksa.mobile.presentation.timetable.timetablelist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.model.Timetable
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
-import com.chukchukhaksa.mobile.domain.timetable.usecase.DeleteTimetableUseCase
-import com.chukchukhaksa.mobile.domain.timetable.usecase.GetAllTimetableUseCase
-import com.chukchukhaksa.mobile.domain.timetable.usecase.SetMainTimetableCreateTime
+import com.chukchukhaksa.mobile.data.timetable.repository.TimetableRepository
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.toTimetableEditorArgument
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 
 class TimetableListViewModel(
-    private val getAllTimetableUseCase: GetAllTimetableUseCase,
-    private val deleteTimetableUseCase: DeleteTimetableUseCase,
-    private val setMainTimetableCreateTime: SetMainTimetableCreateTime,
+    private val timetableRepository: TimetableRepository,
 ) : ViewModel() {
     val mviStore: MviStore<TimetableListState, TimetableListSideEffect> =
         mviStore(TimetableListState())
     private var toDeleteTimetable: Timetable? = null
 
     fun initData() = viewModelScope.launch {
-        getAllTimetableUseCase()
+        runCatchingIgnoreCancelled { timetableRepository.getAllTimetable() }
             .onSuccess {
                 mviStore.setState { copy(timetableList = it.toPersistentList()) }
             }
@@ -36,7 +33,7 @@ class TimetableListViewModel(
 
         val state = mviStore.uiState.value
 
-        deleteTimetableUseCase(timetable = toDeleteTimetable!!)
+        runCatchingIgnoreCancelled { timetableRepository.deleteTimetable(toDeleteTimetable!!) }
             .onSuccess {
                 mviStore.setState {
                     copy(
@@ -75,7 +72,7 @@ class TimetableListViewModel(
     }
 
     fun setMainTimetable(createTime: Long) = viewModelScope.launch {
-        setMainTimetableCreateTime(createTime)
+        runCatchingIgnoreCancelled { timetableRepository.setMainTimetableCreateTime(createTime) }
             .onSuccess { popBackStack() }
             .onFailure { mviStore.postSideEffect(TimetableListSideEffect.HandleException(it)) }
     }
