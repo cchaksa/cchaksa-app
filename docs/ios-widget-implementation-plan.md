@@ -6,7 +6,7 @@
 - **TimetableWidget**: Jetpack Glance 기반 위젯 클래스
 - **TimetableWidgetReceiver**: 위젯 업데이트 관리 (매 15-60분)
 - **GlanceTimetable**: 시간표 UI 컴포넌트 (시간/수업 컬럼, 셀 구조)
-- **데이터 플로우**: GetMainTimetableUseCase → JSON URI 인코딩 → DataStore 저장 → 위젯 표시
+- **데이터 플로우**: TimetableRepository.getMainTimetable() → JSON URI 인코딩 → DataStore 저장 → 위젯 표시
 
 ### 주요 기능:
 - 요일별 시간표 표시 (월~금)
@@ -29,7 +29,7 @@
 ```
 
 ### 3. 데이터 연동
-- KMP의 GetMainTimetableUseCase 연동
+- KMP의 TimetableRepository.getMainTimetable() 연동
 - App Groups를 통한 메인 앱-위젯 간 데이터 공유
 - iOS의 sendWidgetUpdateCommand 구현
 

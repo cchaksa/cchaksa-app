@@ -1,7 +1,6 @@
 package com.chukchukhaksa.mobile.data.openlecture.repository
 
 import com.chukchukhaksa.mobile.common.model.OpenLecture
-import kotlinx.coroutines.flow.Flow
 
 interface OpenLectureRepository {
     suspend fun getOpenLectureList(
