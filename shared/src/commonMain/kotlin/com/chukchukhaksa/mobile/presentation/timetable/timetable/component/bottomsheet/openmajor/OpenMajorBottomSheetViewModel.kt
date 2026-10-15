@@ -2,6 +2,7 @@ package com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bott
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
 import com.chukchukhaksa.mobile.data.openlecture.repository.OpenLectureRepository
@@ -42,7 +43,9 @@ class OpenMajorBottomSheetViewModel(
     mviStore.setState { copy(isLoading = true) }
 
     allOpenMajorList.clear()
-    val firebaseOpenMajor = openLectureRepository.getOpenMajor()
+    val firebaseOpenMajor = runCatchingIgnoreCancelled { openLectureRepository.getOpenMajor() }
+      .onFailure { mviStore.postSideEffect(OpenMajorSideEffect.HandleException(it)) }
+      .getOrDefault(emptyList())
     allOpenMajorList.addAll((listOf(null) + firebaseOpenMajor).distinct())
     reduceOpenMajorList()
 

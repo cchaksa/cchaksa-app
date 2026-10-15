@@ -10,6 +10,8 @@ import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /** 앱의 access/refresh token을 웹 세션 쿠키로 교환하고, 교환한 쿠키와 교환 상태를 보관한다. */
 @OptIn(ExperimentalTime::class)
@@ -21,10 +23,16 @@ class WebSessionManager(
   private val _status = MutableStateFlow<ExchangeStatus>(ExchangeStatus.Loading)
   private var lastTokenPair: Pair<String, String>? = null
 
+  // 앱 시작·홈 진입·홈 웹뷰가 거의 동시에 refresh()를 부른다. 교환을 한 번에 하나만 돌려
+  // 뒤따른 호출이 캐시를 재사용하게 하고, 늦게 끝난 실패가 앞선 성공의 쿠키를 지우지 않게 한다.
+  private val refreshMutex = Mutex()
+
   val cookies: StateFlow<List<WebViewCookie>> = cache.asStateFlow()
   val status: StateFlow<ExchangeStatus> = _status.asStateFlow()
 
-  suspend fun refresh(): ExchangeStatus {
+  suspend fun refresh(): ExchangeStatus = refreshMutex.withLock { refreshLocked() }
+
+  private suspend fun refreshLocked(): ExchangeStatus {
     Napier.d(tag = "ExchangeWebSession") { "refresh() called" }
     val ac = localAuthDataSource.getAccessToken()
     val re = localAuthDataSource.getRefreshToken()
@@ -93,8 +101,11 @@ class WebSessionManager(
       return null
     }
     Napier.d(tag = "ExchangeWebSession") { "refreshIfExpired() expired cookies detected → forcing refresh" }
-    lastTokenPair = null
-    return refresh()
+    return refreshMutex.withLock {
+      // 기다리는 동안 다른 호출이 새 쿠키를 받아 왔으면 다시 교환하지 않는다.
+      if (hasExpiredCookies(nowEpochSeconds)) lastTokenPair = null
+      refreshLocked()
+    }
   }
 
   fun clear() {

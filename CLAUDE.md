@@ -223,10 +223,12 @@ Each screen follows this pattern:
 data class [Feature]State(...)
 sealed interface [Feature]SideEffect
 
-// ViewModel with MviStore delegate
+// ViewModel holding an MviStore (mviStore() is an extension on ViewModel)
 class [Feature]ViewModel(
-    private val someRepository: SomeRepository
-) : ViewModel(), MviStore<State, SideEffect> by mviStore(initialState) {
+    private val someRepository: SomeRepository,
+) : ViewModel() {
+    val mviStore: MviStore<[Feature]State, [Feature]SideEffect> = mviStore([Feature]State())
+
     fun onAction(action: ...) { ... }
 }
 ```

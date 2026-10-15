@@ -29,17 +29,15 @@ class TimetableListViewModel(
     }
 
     fun deleteTimetable() = viewModelScope.launch {
-        if (toDeleteTimetable == null) return@launch
+        // 삭제가 끝날 때까지 다이얼로그가 떠 있으므로, 확인을 연달아 누르면 두 번째 호출이 들어온다.
+        // 대상을 지역 변수로 잡고 필드를 바로 비워 두 번째 호출은 아무 일도 하지 않게 한다.
+        val target = toDeleteTimetable ?: return@launch
+        toDeleteTimetable = null
 
-        val state = mviStore.uiState.value
-
-        runCatchingIgnoreCancelled { timetableRepository.deleteTimetable(toDeleteTimetable!!) }
+        runCatchingIgnoreCancelled { timetableRepository.deleteTimetable(target) }
             .onSuccess {
                 mviStore.setState {
-                    copy(
-                        timetableList = state.timetableList.minus(toDeleteTimetable!!)
-                            .toPersistentList()
-                    )
+                    copy(timetableList = timetableList.remove(target))
                 }
                 mviStore.postSideEffect(TimetableListSideEffect.ShowNeedTimetableDeleteToast)
             }

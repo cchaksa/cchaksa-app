@@ -6,9 +6,7 @@ import com.chukchukhaksa.mobile.data.openlecture.datasource.RemoteOpenLectureDat
 import com.chukchukhaksa.mobile.data.timetable.TimetableUtil
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDateTime
 
 class OpenLectureRepositoryImpl(

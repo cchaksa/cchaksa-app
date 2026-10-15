@@ -40,7 +40,7 @@ class OpenLectureViewModel(
         if (isFirstVisit) {
             mviStore.setState { copy(isLoading = true) }
             runCatchingIgnoreCancelled { openLectureRepository.updateAllLecturesIfNeeded() }
-            val lastUpdated = openLectureRepository.getLastUpdatedDate()
+            val lastUpdated = runCatchingIgnoreCancelled { openLectureRepository.getLastUpdatedDate() }.getOrNull()
             mviStore.setState {
                 copy(
                     lastUpdatedDate = lastUpdated,
