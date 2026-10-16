@@ -8,16 +8,6 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-data class SemesterSelectState(
-  val selectSemesterIndex: Int? = null,
-  val selectSemester: Semester? = null,
-  val nextButtonEnable: Boolean = false,
-)
-
-sealed interface SemesterSelectSideEffect {
-  data class NavigateTimetableNameInput(val semester: TimetableEditorArgument): SemesterSelectSideEffect
-}
-
 @OptIn(ExperimentalTime::class)
 val semesterList: PersistentList<Semester> = run {
   val currentYear = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year

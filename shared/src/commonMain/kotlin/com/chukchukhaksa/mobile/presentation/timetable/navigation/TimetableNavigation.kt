@@ -1,21 +1,26 @@
 package com.chukchukhaksa.mobile.presentation.timetable.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.chukchukhaksa.mobile.MainNavigator
+import com.chukchukhaksa.mobile.common.ui.decodeFromUri
 import com.chukchukhaksa.mobile.common.ui.encodeToUri
+import com.chukchukhaksa.mobile.rememberMainCircuitNavigator
 import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.openlecture.OpenLectureRoute
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.HomeRoute
-import com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput.TimetableNameInputRoute
+import com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput.TimetableNameInputScreen
 import com.chukchukhaksa.mobile.presentation.timetable.timetablelist.TimetableListRoute
-import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.SemesterSelectRoute
+import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.SemesterSelectScreen
 import com.chukchukhaksa.mobile.presentation.timetable.timetableeditor.TimetableEditorRoute
+import com.slack.circuit.foundation.CircuitContent
 import kotlinx.serialization.json.Json
 
 fun NavController.navigateTimetableNameInput(argument: TimetableEditorArgument = TimetableEditorArgument()) {
@@ -57,14 +62,13 @@ fun NavController.navigateTimetable() {
 
 fun NavGraphBuilder.timetableNavGraph(
     padding: PaddingValues,
+    mainNavigator: MainNavigator,
     popBackStack: () -> Unit,
-    navigateTimetableNameInput: (TimetableEditorArgument) -> Unit,
     navigateTimetableEditor: (TimetableEditorArgument) -> Unit,
     navigateTimetableList: () -> Unit,
     navigateOpenLecture: () -> Unit,
     navigateCellEditor: (CellEditorArgument) -> Unit,
     navigateSemesterSelect: () -> Unit,
-    navigateTimetable:() -> Unit,
     navigateWebView: (String) -> Unit,
     navigateToLanding: () -> Unit,
 ) {
@@ -90,11 +94,12 @@ fun NavGraphBuilder.timetableNavGraph(
                 nullable = true
             },
         ),
-    ) {
-        TimetableNameInputRoute(
-            navigateTimetable = navigateTimetable,
-            popBackStack = popBackStack,
-        )
+    ) { backStackEntry ->
+        val screen = remember(backStackEntry) {
+            val encoded = checkNotNull(backStackEntry.savedStateHandle.get<String>(TimetableRoute.TIMETABLE_EDITOR_ARGUMENT))
+            TimetableNameInputScreen(Json.decodeFromUri<TimetableEditorArgument>(encoded))
+        }
+        CircuitContent(screen = screen, navigator = rememberMainCircuitNavigator(mainNavigator, screen))
     }
 
     composable(
@@ -148,10 +153,10 @@ fun NavGraphBuilder.timetableNavGraph(
   composable(
     route = TimetableRoute.semesterSelectRoute,
   ) {
-      SemesterSelectRoute(
-        popBackStack = popBackStack,
-        navigateTimetableNameInput = navigateTimetableNameInput,
-    )
+      CircuitContent(
+        screen = SemesterSelectScreen,
+        navigator = rememberMainCircuitNavigator(mainNavigator, SemesterSelectScreen),
+      )
   }
 }
 

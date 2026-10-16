@@ -1,146 +1,32 @@
 package com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import chukchukhaksa.composeapp.generated.resources.Res
-import chukchukhaksa.composeapp.generated.resources.create_timetable_need_select_semester
-import chukchukhaksa.composeapp.generated.resources.create_timetable_screen_placeholder
-import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
-import com.chukchukhaksa.mobile.common.designsystem.component.appbar.CchAppBarWithTitle
-import com.chukchukhaksa.mobile.common.designsystem.component.button.CchBasicButton
-import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchRegularTextField
-import com.chukchukhaksa.mobile.common.designsystem.theme.Black100
-import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
-import com.chukchukhaksa.mobile.common.designsystem.theme.Red300
-import com.chukchukhaksa.mobile.common.designsystem.theme.White
-import com.chukchukhaksa.mobile.common.extension.checkOverTimetableNameLimit
-import com.chukchukhaksa.mobile.common.ui.ExceptionHandler
-import com.chukchukhaksa.mobile.common.ui.ToastNotifier
-import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
-import org.koin.compose.viewmodel.koinViewModel
+import com.chukchukhaksa.mobile.common.extension.checkTimetableNameRule
+import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
+import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.Semester
+import com.slack.circuit.runtime.CircuitUiEvent
+import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.screen.Screen
+import kotlinx.serialization.Serializable
 
-@Composable
-fun TimetableNameInputRoute(
-  viewModel: TimetableNameInputViewModel = koinViewModel(),
-  navigateTimetable: () -> Unit,
-  popBackStack: () -> Unit,
-) {
-    val exceptionHandler: ExceptionHandler = koinInject()
-    val toastNotifier: ToastNotifier = koinInject()
-    val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
-    viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
-        when (sideEffect) {
-            is TimetableNameInputSideEffect.HandleException -> exceptionHandler.handleException(sideEffect.throwable)
-            TimetableNameInputSideEffect.PopBackStack -> popBackStack()
-            TimetableNameInputSideEffect.NeedSelectSemesterToast -> toastNotifier.showToast(
-                getString(Res.string.create_timetable_need_select_semester),
-            )
-            TimetableNameInputSideEffect.NavigateTimetable -> navigateTimetable()
-        }
-    }
-    TimetableNameInputScreen(
-        uiState = uiState,
-        onValueChangeTimetableName = viewModel::updateName,
-        onClickBack = viewModel::popBackStack,
-        onClickCompleteButton = viewModel::upsertTimetable,
-        onClickTextFieldClearButton = { viewModel.updateName("") },
-    )
+/**
+ * 시간표 이름을 정하고 시간표를 만드는(또는 이름·학기를 고치는) 화면.
+ * [TimetableEditorArgument.isEditMode]이면 기존 시간표를 고치고, 아니면 새로 만든다.
+ */
+@Serializable
+data class TimetableNameInputScreen(
+  val argument: TimetableEditorArgument,
+) : Screen {
+  data class State(
+    val name: String,
+    val semester: Semester,
+    val eventSink: (Event) -> Unit,
+  ) : CircuitUiState {
+    val buttonEnabled: Boolean get() = checkTimetableNameRule(name)
+  }
+
+  sealed interface Event : CircuitUiEvent {
+    data class ChangeName(val name: String) : Event
+    data object ClickBack : Event
+    data object ClickComplete : Event
+  }
 }
-
-@Composable
-fun TimetableNameInputScreen(
-  uiState: TimetableNameInputState = TimetableNameInputState(),
-  onValueChangeTimetableName: (String) -> Unit = {},
-  onClickTextFieldClearButton: () -> Unit = {},
-  onClickBack: () -> Unit = {},
-  onClickCompleteButton: () -> Unit = {},
-) {
-    SuwikiBackground {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(White),
-        ) {
-            CchAppBarWithTitle(
-              title = "${uiState.semester?.year}년 ${uiState.semester?.semester}학기",
-              isShowAddButton = false,
-              onClickBackButton = { onClickBack() },
-            )
-
-            Column(
-                modifier = Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                  modifier = Modifier
-                    .width(240.dp)
-                    .padding(top = 8.dp),
-                  text = "선택한 학기의 시간표 이름을 정해주세요",
-                  style = CchTheme.typography.titleLg,
-                  color = Black100,
-                  textAlign = TextAlign.Center,
-                )
-
-                CchRegularTextField(
-                    modifier = Modifier.padding(top = 196.dp, start = 4.dp, end = 4.dp),
-                    value = uiState.name,
-                    placeholder = stringResource(Res.string.create_timetable_screen_placeholder),
-                    isActive = uiState.name.isNotEmpty(),
-                    isError = checkOverTimetableNameLimit(uiState.name),
-                    onValueChanged = onValueChangeTimetableName,
-                    onClickClearButton = onClickTextFieldClearButton,
-                )
-
-                if (uiState.name.length > 20) {
-                  Text(
-                    modifier = Modifier
-                      .padding(top = 12.dp, start = 4.dp, end = 4.dp)
-                      .fillMaxWidth(),
-                    text = "시간표 이름은 최대 20자까지 설정 가능합니다.",
-                    textAlign = TextAlign.Start,
-                    style = CchTheme.typography.bodyMd,
-                    color = Red300,
-                  )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                CchBasicButton(
-                    modifier = Modifier
-                        .consumeWindowInsets(WindowInsets.navigationBars),
-                    text = "시간표 생성하기",
-                    enable = uiState.buttonEnabled,
-                    onClick = onClickCompleteButton,
-                )
-            }
-        }
-    }
-}
-
-//@Preview
-//@Composable
-//fun TimetableEditorScreenPreview() {
-//    SuwikiTheme {
-//        TimetableEditorScreen()
-//    }
-//}
