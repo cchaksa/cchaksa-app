@@ -37,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -80,6 +79,8 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.model.OpenLecture
 import com.chukchukhaksa.mobile.common.model.TimetableCellColor
+import com.chukchukhaksa.mobile.common.ui.ExceptionHandler
+import com.chukchukhaksa.mobile.common.ui.ToastNotifier
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.common.ui.runIf
@@ -94,6 +95,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -101,10 +103,10 @@ fun OpenLectureRoute(
   viewModel: OpenLectureViewModel = koinViewModel(),
   selectedOpenMajor: String?,
   popBackStack: () -> Unit,
-  handleException: (Throwable) -> Unit,
-  onShowToast: (String, Dp) -> Unit,
   navigateCellEditor: (CellEditorArgument) -> Unit,
 ) {
+  val exceptionHandler: ExceptionHandler = koinInject()
+  val toastNotifier: ToastNotifier = koinInject()
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
 
   val listState = rememberLazyListState()
@@ -112,7 +114,7 @@ fun OpenLectureRoute(
 
   viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
     when (sideEffect) {
-      is OpenLectureSideEffect.HandleException -> handleException(sideEffect.throwable)
+      is OpenLectureSideEffect.HandleException -> exceptionHandler.handleException(sideEffect.throwable)
       OpenLectureSideEffect.NavigateAddCustomTimetableCell -> navigateCellEditor(
         CellEditorArgument(),
       )
@@ -122,8 +124,8 @@ fun OpenLectureRoute(
         listState.animateScrollToItem(0)
       }
 
-      is OpenLectureSideEffect.ShowOverlapCellToast -> onShowToast(sideEffect.msg, 100.dp)
-      OpenLectureSideEffect.ShowSuccessAddCellToast -> onShowToast(getString(Res.string.open_lecture_success_add_cell_toast), 100.dp)
+      is OpenLectureSideEffect.ShowOverlapCellToast -> toastNotifier.showToast(sideEffect.msg, 100.dp)
+      OpenLectureSideEffect.ShowSuccessAddCellToast -> toastNotifier.showToast(getString(Res.string.open_lecture_success_add_cell_toast), 100.dp)
       is OpenLectureSideEffect.NavigateCellEditor -> navigateCellEditor(sideEffect.argument)
     }
   }
@@ -162,8 +164,6 @@ fun OpenLectureRoute(
     onClickCustomAdd = viewModel::navigateAddCustomCell,
     onDismissOpenMajorBottomSheet = viewModel::hideOpenMajorBottomSheet,
     onConfirmOpenMajor = viewModel::confirmOpenMajor,
-    handleException = handleException,
-    onShowToast = onShowToast,
   )
 }
 
@@ -187,8 +187,6 @@ fun OpenLectureScreen(
   onClickCustomAdd: () -> Unit = {},
   onDismissOpenMajorBottomSheet: () -> Unit = {},
   onConfirmOpenMajor: (String?) -> Unit = {},
-  handleException: (Throwable) -> Unit = {},
-  onShowToast: (String, Dp) -> Unit = { _, _ -> },
   onClickAddSelectedLecture: () -> Unit = {},
 ) {
   SuwikiBackground {
@@ -351,8 +349,6 @@ fun OpenLectureScreen(
       selectedOpenMajor = uiState.selectedOpenMajor,
       onDismissRequest = onDismissOpenMajorBottomSheet,
       onConfirm = onConfirmOpenMajor,
-      handleException = handleException,
-      onShowToast = onShowToast,
     )
   }
 }

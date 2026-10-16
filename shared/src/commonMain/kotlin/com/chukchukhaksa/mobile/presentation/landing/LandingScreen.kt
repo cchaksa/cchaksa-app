@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -44,28 +43,31 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.kmp.Platform
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.provider.LocalAppContext
+import com.chukchukhaksa.mobile.common.ui.ExceptionHandler
+import com.chukchukhaksa.mobile.common.ui.ToastNotifier
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LandingRoute(
     viewModel: LandingViewModel = koinViewModel(),
-    handleException: (Throwable) -> Unit,
-    onShowToast: (String, Dp) -> Unit,
     navigateToHome: (isPortalLinked: Boolean) -> Unit,
 ) {
+    val exceptionHandler: ExceptionHandler = koinInject()
+    val toastNotifier: ToastNotifier = koinInject()
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     val context = LocalAppContext.current
 
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
             is LandingSideEffect.NavigateHome -> navigateToHome(sideEffect.isPortalLinked)
-            is LandingSideEffect.ShowToast -> onShowToast(sideEffect.message, 70.dp)
-            is LandingSideEffect.HandleException -> handleException(sideEffect.throwable)
+            is LandingSideEffect.ShowToast -> toastNotifier.showToast(sideEffect.message)
+            is LandingSideEffect.HandleException -> exceptionHandler.handleException(sideEffect.throwable)
         }
     }
 

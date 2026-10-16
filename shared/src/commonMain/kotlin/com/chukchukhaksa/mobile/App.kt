@@ -42,6 +42,8 @@ import com.chukchukhaksa.mobile.presentation.webview.HomeRedirectEventBus
 import com.chukchukhaksa.mobile.presentation.webview.WebSessionManager
 import com.chukchukhaksa.mobile.presentation.webview.WebViewPreloader
 import com.chukchukhaksa.mobile.presentation.webview.navigation.webViewNavGraph
+import com.slack.circuit.foundation.Circuit
+import com.slack.circuit.foundation.CircuitCompositionLocals
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.FirebaseAnalytics
 import dev.gitlive.firebase.analytics.analytics
@@ -71,6 +73,7 @@ fun App(
             val homeRedirectEventBus: HomeRedirectEventBus = koinInject()
             val webViewHolder: WebViewHolder = koinInject()
             val analyticsUserSync: AnalyticsUserSync = koinInject()
+            val circuit: Circuit = koinInject()
             var startDestination by remember { mutableStateOf<String?>(null) }
 
             viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
@@ -135,98 +138,94 @@ fun App(
                 )
             }
 
-            Scaffold(
-                containerColor = White,
-                contentWindowInsets = WindowInsets(0.dp),
-                modifier = modifier,
-                content = { innerPadding ->
-                    val currentStartDestination = startDestination
+            CircuitCompositionLocals(circuit) {
+                Scaffold(
+                    containerColor = White,
+                    contentWindowInsets = WindowInsets(0.dp),
+                    modifier = modifier,
+                    content = { innerPadding ->
+                        val currentStartDestination = startDestination
 
-                    if (currentStartDestination != null) {
-                        val navGraphBuilder: NavGraphBuilder.() -> Unit = {
-                            landingNavGraph(
-                                handleException = viewModel::handleException,
-                                onShowToast = viewModel::onShowToast,
-                                navigateToHome = { isPortalLinked ->
-                                    // 세션 쿠키 교환·preload는 LandingViewModel에서 이미 await 완료된 상태.
-                                    if (!isPortalLinked) {
-                                        navigator.navigateWebView(webPortalLoginUrl)
-                                    } else {
-                                      navigator.navigateFromLandingToHome()
-                                    }
-                                },
-                            )
+                        if (currentStartDestination != null) {
+                            val navGraphBuilder: NavGraphBuilder.() -> Unit = {
+                                landingNavGraph(
+                                    navigateToHome = { isPortalLinked ->
+                                        // 세션 쿠키 교환·preload는 LandingViewModel에서 이미 await 완료된 상태.
+                                        if (!isPortalLinked) {
+                                            navigator.navigateWebView(webPortalLoginUrl)
+                                        } else {
+                                          navigator.navigateFromLandingToHome()
+                                        }
+                                    },
+                                )
 
-                            timetableNavGraph(
-                                padding = innerPadding,
-                                popBackStack = navigator::popBackStackIfNotHome,
-                                navigateTimetableNameInput = navigator::navigateTimetableNameInput,
-                                navigateTimetableEditor = navigator::navigateTimetableEditor,
-                                navigateTimetableList = navigator::navigateTimetableList,
-                                navigateOpenLecture = navigator::navigateOpenLecture,
-                                handleException = viewModel::handleException,
-                                onShowToast = viewModel::onShowToast,
-                                navigateCellEditor = navigator::navigateCellEditor,
-                                navigateSemesterSelect = navigator::navigateSemesterSelect,
-                                navigateTimetable = navigator::navigateTimetable,
-                                navigateWebView = navigator::navigateWebView,
-                                navigateToLanding = navigator::navigateToLanding,
-                            )
+                                timetableNavGraph(
+                                    padding = innerPadding,
+                                    mainNavigator = navigator,
+                                    popBackStack = navigator::popBackStackIfNotHome,
+                                    navigateTimetableEditor = navigator::navigateTimetableEditor,
+                                    navigateTimetableList = navigator::navigateTimetableList,
+                                    navigateOpenLecture = navigator::navigateOpenLecture,
+                                    navigateCellEditor = navigator::navigateCellEditor,
+                                    navigateSemesterSelect = navigator::navigateSemesterSelect,
+                                    navigateWebView = navigator::navigateWebView,
+                                    navigateToLanding = navigator::navigateToLanding,
+                                )
 
-                            webViewNavGraph(
-                                popBackStack = navigator::popBackStackIfNotHome,
-                                onNavigateWebView = navigator::navigateWebView,
-                                navigateToLanding = navigator::navigateToLanding,
-                                onShowToast = viewModel::onShowToast,
+                                webViewNavGraph(
+                                    popBackStack = navigator::popBackStackIfNotHome,
+                                    onNavigateWebView = navigator::navigateWebView,
+                                    navigateToLanding = navigator::navigateToLanding,
+                                )
+                            }
+
+                            when (getPlatform()) {
+                                Android -> NavHost(
+                                    navController = navigator.navController,
+                                    startDestination = currentStartDestination,
+                                    enterTransition = { slideInHorizontally(tween(350, easing = FastOutSlowInEasing)) { it } },
+                                    exitTransition = { slideOutHorizontally(tween(350, easing = FastOutSlowInEasing)) { -it / 3 } },
+                                    popEnterTransition = { slideInHorizontally(tween(350, easing = FastOutSlowInEasing)) { -it / 3 } },
+                                    popExitTransition = { slideOutHorizontally(tween(350, easing = FastOutSlowInEasing)) { it } },
+                                    builder = navGraphBuilder,
+                                )
+
+                                IOS -> NavHost(
+                                    navController = navigator.navController,
+                                    startDestination = currentStartDestination,
+                                    builder = navGraphBuilder,
+                                )
+                            }
+                        }
+
+                        if (uiState.showNetworkErrorDialog) {
+                            CchDialog(
+                                headerText = stringResource(Res.string.dialog_network_header),
+                                bodyText = stringResource(Res.string.dialog_network_body),
+                                confirmButtonText = stringResource(Res.string.word_confirm),
+                                onDismissRequest = viewModel::hideNetworkErrorDialog,
+                                onClickConfirm = viewModel::hideNetworkErrorDialog,
                             )
                         }
 
-                        when (getPlatform()) {
-                            Android -> NavHost(
-                                navController = navigator.navController,
-                                startDestination = currentStartDestination,
-                                enterTransition = { slideInHorizontally(tween(350, easing = FastOutSlowInEasing)) { it } },
-                                exitTransition = { slideOutHorizontally(tween(350, easing = FastOutSlowInEasing)) { -it / 3 } },
-                                popEnterTransition = { slideInHorizontally(tween(350, easing = FastOutSlowInEasing)) { -it / 3 } },
-                                popExitTransition = { slideOutHorizontally(tween(350, easing = FastOutSlowInEasing)) { it } },
-                                builder = navGraphBuilder,
-                            )
-
-                            IOS -> NavHost(
-                                navController = navigator.navController,
-                                startDestination = currentStartDestination,
-                                builder = navGraphBuilder,
+                        if (uiState.showForceUpdateDialog) {
+                            CchDialog(
+                                headerText = stringResource(Res.string.dialog_update_mandatory_header),
+                                bodyText = stringResource(Res.string.dialog_update_mandatory_body),
+                                confirmButtonText = stringResource(Res.string.word_confirm),
+                                onDismissRequest = {},
+                                onClickConfirm = viewModel::openAppStore,
                             )
                         }
-                    }
 
-                    if (uiState.showNetworkErrorDialog) {
-                        CchDialog(
-                            headerText = stringResource(Res.string.dialog_network_header),
-                            bodyText = stringResource(Res.string.dialog_network_body),
-                            confirmButtonText = stringResource(Res.string.word_confirm),
-                            onDismissRequest = viewModel::hideNetworkErrorDialog,
-                            onClickConfirm = viewModel::hideNetworkErrorDialog,
+                        CchToast(
+                            visible = uiState.toastVisible,
+                            message = uiState.toastMessage,
+                            bottomPadding = uiState.toastBottomPadding + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
                         )
-                    }
-
-                    if (uiState.showForceUpdateDialog) {
-                        CchDialog(
-                            headerText = stringResource(Res.string.dialog_update_mandatory_header),
-                            bodyText = stringResource(Res.string.dialog_update_mandatory_body),
-                            confirmButtonText = stringResource(Res.string.word_confirm),
-                            onDismissRequest = {},
-                            onClickConfirm = viewModel::openAppStore,
-                        )
-                    }
-
-                    CchToast(
-                        visible = uiState.toastVisible,
-                        message = uiState.toastMessage,
-                        bottomPadding = uiState.toastBottomPadding + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
-                    )
-                },
-            )
+                    },
+                )
+            }
         }
     }
 }

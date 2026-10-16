@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -30,26 +29,29 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Red300
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.extension.checkOverTimetableNameLimit
+import com.chukchukhaksa.mobile.common.ui.ExceptionHandler
+import com.chukchukhaksa.mobile.common.ui.ToastNotifier
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.semesterList
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun TimetableEditorRoute(
   viewModel: TimetableEditorViewModel = koinViewModel(),
   popBackStack: () -> Unit,
-  handleException: (Throwable) -> Unit,
-  onShowToast: (String, Dp) -> Unit,
 ) {
+    val exceptionHandler: ExceptionHandler = koinInject()
+    val toastNotifier: ToastNotifier = koinInject()
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
-            is TimetableEditorSideEffect.HandleException -> handleException(sideEffect.throwable)
+            is TimetableEditorSideEffect.HandleException -> exceptionHandler.handleException(sideEffect.throwable)
             TimetableEditorSideEffect.PopBackStack -> popBackStack()
             TimetableEditorSideEffect.ShowEditSaveToast -> {
-              onShowToast("변경사항이 저장되었습니다.", 111.dp)
+              toastNotifier.showToast("변경사항이 저장되었습니다.", 111.dp)
               popBackStack()
             }
         }

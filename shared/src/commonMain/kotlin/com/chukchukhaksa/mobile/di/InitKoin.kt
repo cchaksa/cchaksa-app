@@ -40,6 +40,7 @@ internal fun initKoin(config: KoinAppDeclaration? = null) {
             localOpenLectureDataSourceModule,
             openLectureRepositoryModule,
             presentationModule,
+            circuitModule,
             firebaseDatabaseModule,
             httpClientModule,
             remoteAppConfigDataSourceModule,

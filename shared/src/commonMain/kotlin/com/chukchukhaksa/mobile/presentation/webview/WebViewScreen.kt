@@ -31,6 +31,7 @@ import com.chukchukhaksa.mobile.common.designsystem.component.webview.rememberCc
 import com.chukchukhaksa.mobile.common.designsystem.component.loading.WebViewLoadingShimmer
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.ui.PlatformBackHandler
+import com.chukchukhaksa.mobile.common.ui.ToastNotifier
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -49,8 +50,8 @@ fun WebViewRoute(
   popBackStack: () -> Unit,
   onNavigateWebView: (String) -> Unit,
   navigateToLanding: () -> Unit,
-  onShowToast: (String) -> Unit,
 ) {
+  val toastNotifier: ToastNotifier = koinInject()
   val controller = rememberCchWebViewController()
   val webSessionManager: WebSessionManager = koinInject()
   val homeRedirectEventBus: HomeRedirectEventBus = koinInject()
@@ -76,7 +77,7 @@ fun WebViewRoute(
         navigateToLanding()
       }
     },
-    onShowToast = onShowToast,
+    onShowToast = { toastNotifier.showToast(it) },
     // 구현체 미주입(Phase 2/3 전)이면 NotReady 실패로 환원해 토스트 후 이동(크래시 방지, D5와 정합).
     onShowInterstitial = {
       koin.getOrNull<AdManager>()?.showInterstitial() ?: AdShowResult.Failed(AdFailureReason.NotReady)

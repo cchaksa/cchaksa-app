@@ -1,29 +1,30 @@
 package com.chukchukhaksa.mobile.di
 
 import com.chukchukhaksa.mobile.MainViewModel
+import com.chukchukhaksa.mobile.common.ui.AppMessageBus
+import com.chukchukhaksa.mobile.common.ui.ExceptionHandler
+import com.chukchukhaksa.mobile.common.ui.ToastNotifier
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor.OpenMajorBottomSheetViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.openlecture.OpenLectureViewModel
 import com.chukchukhaksa.mobile.presentation.landing.LandingViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.HomeViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.ShowTimetableTabEventBus
-import com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput.TimetableNameInputViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.timetableeditor.TimetableEditorViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.timetablelist.TimetableListViewModel
-import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.SemesterSelectViewModel
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.binds
 import org.koin.dsl.module
 
 val presentationModule = module {
     single { ShowTimetableTabEventBus() }
+    single { AppMessageBus() } binds arrayOf(ToastNotifier::class, ExceptionHandler::class)
     viewModelOf(::LandingViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::TimetableListViewModel)
-    viewModelOf(::TimetableNameInputViewModel)
     viewModelOf(::TimetableEditorViewModel)
     viewModelOf(::MainViewModel)
     viewModelOf(::CellEditorViewModel)
     viewModelOf(::OpenLectureViewModel)
     viewModelOf(::OpenMajorBottomSheetViewModel)
-    viewModelOf(::SemesterSelectViewModel)
 }

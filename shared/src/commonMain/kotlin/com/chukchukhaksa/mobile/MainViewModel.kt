@@ -1,7 +1,6 @@
 package com.chukchukhaksa.mobile
 
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chukchukhaksa.mobile.common.extension.record
@@ -9,6 +8,9 @@ import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.kmp.getAppVersionName
 import com.chukchukhaksa.mobile.common.model.NetworkException
 import com.chukchukhaksa.mobile.common.model.UnknownException
+import com.chukchukhaksa.mobile.common.ui.AppMessageBus
+import com.chukchukhaksa.mobile.common.ui.AppMessageEvent
+import com.chukchukhaksa.mobile.common.ui.DefaultToastBottomPadding
 import com.chukchukhaksa.mobile.common.ui.MviStore
 import com.chukchukhaksa.mobile.common.ui.mviStore
 import com.chukchukhaksa.mobile.data.config.repository.AppConfigRepository
@@ -20,12 +22,24 @@ import kotlinx.coroutines.sync.withLock
 
 class MainViewModel(
     private val appConfigRepository: AppConfigRepository,
+    appMessageBus: AppMessageBus,
 ) : ViewModel() {
     val mviStore: MviStore<MainState, MainSideEffect> = mviStore(MainState())
 
     private val mutex = Mutex()
     private var isFirstVisit: Boolean = true
     private var storeUrl: String? = null
+
+    init {
+        viewModelScope.launch {
+            appMessageBus.events.collect { event ->
+                when (event) {
+                    is AppMessageEvent.ShowToast -> onShowToast(event.message, event.bottomPadding)
+                    is AppMessageEvent.HandleException -> handleException(event.throwable)
+                }
+            }
+        }
+    }
 
     fun checkNeedForceUpdate() = viewModelScope.launch {
         if (isFirstVisit.not()) return@launch
@@ -50,7 +64,7 @@ class MainViewModel(
         }
     }
 
-    fun onShowToast(msg: String, bottomPadding: Dp = 70.dp) {
+    private fun onShowToast(msg: String, bottomPadding: Dp = DefaultToastBottomPadding) {
         viewModelScope.launch {
             mutex.withLock {
                 mviStore.setState { copy(toastMessage = msg, toastVisible = true, toastBottomPadding = bottomPadding) }
@@ -64,7 +78,7 @@ class MainViewModel(
      * 네트워크와 무관한 예외까지 네트워크 오류로 안내하면 사용자가 원인을 오해한다. 실제로 로컬
      * 데이터베이스 마이그레이션이 실패했을 때도 이 분기를 타므로, 원인을 특정하지 않는 문구를 쓴다.
      */
-    fun handleException(throwable: Throwable) {
+    private fun handleException(throwable: Throwable) {
         when (throwable) {
             is NetworkException -> { mviStore.setState { copy(showNetworkErrorDialog = true) } }
             else -> {

@@ -26,7 +26,11 @@ kotlin {
       enable = true
     }
     // Without a host test compilation, commonTest does not run on Android.
-    withHostTest {}
+    withHostTest {
+      // Presenter tests run Compose (Molecule) on the JVM, and the runtime calls android.os/android.util stubs
+      // (Trace, Looper, Log) that throw "not mocked" unless they return defaults.
+      isReturnDefaultValues = true
+    }
 
     lint {
       // A library has no targetSdk of its own; lint against the app's target, as before the split.
@@ -94,6 +98,8 @@ kotlin {
       implementation(libs.koin.compose.viewmodel)
       implementation(libs.koin.compose.viewmodel.navigation)
 
+      implementation(libs.circuit.foundation)
+
       implementation(libs.androidx.room.runtime)
 
       implementation(libs.androidx.datastore.preferences)
@@ -117,6 +123,7 @@ kotlin {
       implementation(libs.kotlin.test)
       implementation(libs.kotlinx.coroutines.test)
       implementation(libs.ktor.client.mock)
+      implementation(libs.circuit.test)
     }
   }
 }
