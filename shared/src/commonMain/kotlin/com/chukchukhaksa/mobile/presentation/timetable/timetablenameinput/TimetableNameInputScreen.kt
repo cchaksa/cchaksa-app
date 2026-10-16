@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -32,9 +31,12 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.Red300
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.extension.checkOverTimetableNameLimit
+import com.chukchukhaksa.mobile.common.ui.ExceptionHandler
+import com.chukchukhaksa.mobile.common.ui.ToastNotifier
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -42,15 +44,15 @@ fun TimetableNameInputRoute(
   viewModel: TimetableNameInputViewModel = koinViewModel(),
   navigateTimetable: () -> Unit,
   popBackStack: () -> Unit,
-  handleException: (Throwable) -> Unit,
-  onShowToast: (String, Dp) -> Unit,
 ) {
+    val exceptionHandler: ExceptionHandler = koinInject()
+    val toastNotifier: ToastNotifier = koinInject()
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
-            is TimetableNameInputSideEffect.HandleException -> handleException(sideEffect.throwable)
+            is TimetableNameInputSideEffect.HandleException -> exceptionHandler.handleException(sideEffect.throwable)
             TimetableNameInputSideEffect.PopBackStack -> popBackStack()
-            TimetableNameInputSideEffect.NeedSelectSemesterToast -> onShowToast(
+            TimetableNameInputSideEffect.NeedSelectSemesterToast -> toastNotifier.showToast(
                 getString(Res.string.create_timetable_need_select_semester),
                 70.dp,
             )

@@ -14,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -33,9 +32,12 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.model.Timetable
+import com.chukchukhaksa.mobile.common.ui.ExceptionHandler
+import com.chukchukhaksa.mobile.common.ui.ToastNotifier
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -44,17 +46,17 @@ fun TimetableListRoute(
     popBackStack: () -> Unit,
     navigateTimetableEditor: (TimetableEditorArgument) -> Unit,
     navigateSemesterSelect: () -> Unit,
-    handleException: (Throwable) -> Unit,
-    onShowToast: (String, Dp) -> Unit,
 ) {
+    val exceptionHandler: ExceptionHandler = koinInject()
+    val toastNotifier: ToastNotifier = koinInject()
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
-            is TimetableListSideEffect.HandleException -> handleException(sideEffect.throwable)
+            is TimetableListSideEffect.HandleException -> exceptionHandler.handleException(sideEffect.throwable)
             is TimetableListSideEffect.NavigateTimetableEditor -> navigateTimetableEditor(sideEffect.argument)
             TimetableListSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
             TimetableListSideEffect.PopBackStack -> popBackStack()
-            TimetableListSideEffect.ShowNeedTimetableDeleteToast -> onShowToast("시간표가 삭제되었습니다.", 46.dp)
+            TimetableListSideEffect.ShowNeedTimetableDeleteToast -> toastNotifier.showToast("시간표가 삭제되었습니다.", 46.dp)
         }
     }
 

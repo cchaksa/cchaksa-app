@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -68,6 +67,8 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.model.TimetableCellColor
 import com.chukchukhaksa.mobile.common.model.TimetableDay
+import com.chukchukhaksa.mobile.common.ui.ExceptionHandler
+import com.chukchukhaksa.mobile.common.ui.ToastNotifier
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.common.ui.timetableCellColorHexMap
@@ -76,26 +77,27 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CellEditorRoute(
     viewModel: CellEditorViewModel = koinViewModel(),
     popBackStack: () -> Unit,
-    handleException: (Throwable) -> Unit,
-    onShowToast: (String, Dp) -> Unit,
 ) {
+    val exceptionHandler: ExceptionHandler = koinInject()
+    val toastNotifier: ToastNotifier = koinInject()
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
-            is CellEditorSideEffect.HandleException -> handleException(sideEffect.throwable)
+            is CellEditorSideEffect.HandleException -> exceptionHandler.handleException(sideEffect.throwable)
             CellEditorSideEffect.PopBackStack -> popBackStack()
-            is CellEditorSideEffect.ShowToast -> onShowToast(sideEffect.msg, 130.dp)
-            CellEditorSideEffect.ShowAddSuccessCellToast -> onShowToast(getString(Res.string.open_lecture_success_add_cell_toast), 130.dp)
-            CellEditorSideEffect.ShowNeedLectureNameToast -> onShowToast(getString(Res.string.add_cell_screen_need_lecture_name), 130.dp)
-            CellEditorSideEffect.ShowNeedLocationToast -> onShowToast(getString(Res.string.add_cell_screen_need_location), 130.dp)
-            CellEditorSideEffect.ShowNeedProfessorNameToast -> onShowToast(getString(Res.string.add_cell_screen_need_professor_name), 130.dp)
-            CellEditorSideEffect.ShowEditSuccessCellToast -> onShowToast(getString(Res.string.open_lecture_success_edit_cell_toast), 130.dp)
+            is CellEditorSideEffect.ShowToast -> toastNotifier.showToast(sideEffect.msg, 130.dp)
+            CellEditorSideEffect.ShowAddSuccessCellToast -> toastNotifier.showToast(getString(Res.string.open_lecture_success_add_cell_toast), 130.dp)
+            CellEditorSideEffect.ShowNeedLectureNameToast -> toastNotifier.showToast(getString(Res.string.add_cell_screen_need_lecture_name), 130.dp)
+            CellEditorSideEffect.ShowNeedLocationToast -> toastNotifier.showToast(getString(Res.string.add_cell_screen_need_location), 130.dp)
+            CellEditorSideEffect.ShowNeedProfessorNameToast -> toastNotifier.showToast(getString(Res.string.add_cell_screen_need_professor_name), 130.dp)
+            CellEditorSideEffect.ShowEditSuccessCellToast -> toastNotifier.showToast(getString(Res.string.open_lecture_success_edit_cell_toast), 130.dp)
         }
     }
     CellEditorScreen(

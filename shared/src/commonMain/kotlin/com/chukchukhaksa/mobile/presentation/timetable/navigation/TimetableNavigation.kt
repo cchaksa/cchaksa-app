@@ -1,7 +1,6 @@
 package com.chukchukhaksa.mobile.presentation.timetable.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -68,15 +67,11 @@ fun NavGraphBuilder.timetableNavGraph(
     navigateTimetable:() -> Unit,
     navigateWebView: (String) -> Unit,
     navigateToLanding: () -> Unit,
-    handleException: (Throwable) -> Unit,
-    onShowToast: (String, Dp) -> Unit,
 ) {
     composable(route = HomeRoute.route) {
         HomeRoute(
             padding = padding,
             navigateTimetableList = navigateTimetableList,
-            handleException = handleException,
-            onShowToast = onShowToast,
             navigateOpenLecture = navigateOpenLecture,
             navigateCellEditor = navigateCellEditor,
             navigateSemesterSelect = navigateSemesterSelect,
@@ -99,8 +94,6 @@ fun NavGraphBuilder.timetableNavGraph(
         TimetableNameInputRoute(
             navigateTimetable = navigateTimetable,
             popBackStack = popBackStack,
-            handleException = handleException,
-            onShowToast = onShowToast,
         )
     }
 
@@ -117,8 +110,6 @@ fun NavGraphBuilder.timetableNavGraph(
     ) {
       TimetableEditorRoute(
         popBackStack = popBackStack,
-        handleException = handleException,
-        onShowToast = onShowToast,
       )
     }
 
@@ -126,8 +117,6 @@ fun NavGraphBuilder.timetableNavGraph(
         OpenLectureRoute(
             selectedOpenMajor = null,
             popBackStack = popBackStack,
-            handleException = handleException,
-            onShowToast = onShowToast,
             navigateCellEditor = navigateCellEditor,
         )
     }
@@ -143,8 +132,6 @@ fun NavGraphBuilder.timetableNavGraph(
     ) {
         CellEditorRoute(
             popBackStack = popBackStack,
-            handleException = handleException,
-            onShowToast = onShowToast,
         )
     }
 
@@ -152,11 +139,9 @@ fun NavGraphBuilder.timetableNavGraph(
         route = TimetableRoute.timetableListRoute,
     ) {
         TimetableListRoute(
-            handleException = handleException,
             popBackStack = popBackStack,
             navigateTimetableEditor = navigateTimetableEditor,
             navigateSemesterSelect = navigateSemesterSelect,
-            onShowToast = onShowToast,
         )
     }
 

@@ -145,8 +145,6 @@ fun App(
                     if (currentStartDestination != null) {
                         val navGraphBuilder: NavGraphBuilder.() -> Unit = {
                             landingNavGraph(
-                                handleException = viewModel::handleException,
-                                onShowToast = viewModel::onShowToast,
                                 navigateToHome = { isPortalLinked ->
                                     // 세션 쿠키 교환·preload는 LandingViewModel에서 이미 await 완료된 상태.
                                     if (!isPortalLinked) {
@@ -164,8 +162,6 @@ fun App(
                                 navigateTimetableEditor = navigator::navigateTimetableEditor,
                                 navigateTimetableList = navigator::navigateTimetableList,
                                 navigateOpenLecture = navigator::navigateOpenLecture,
-                                handleException = viewModel::handleException,
-                                onShowToast = viewModel::onShowToast,
                                 navigateCellEditor = navigator::navigateCellEditor,
                                 navigateSemesterSelect = navigator::navigateSemesterSelect,
                                 navigateTimetable = navigator::navigateTimetable,
@@ -177,7 +173,6 @@ fun App(
                                 popBackStack = navigator::popBackStackIfNotHome,
                                 onNavigateWebView = navigator::navigateWebView,
                                 navigateToLanding = navigator::navigateToLanding,
-                                onShowToast = viewModel::onShowToast,
                             )
                         }
 

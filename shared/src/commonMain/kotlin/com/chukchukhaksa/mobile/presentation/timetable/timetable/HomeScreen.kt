@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -21,6 +20,8 @@ import com.chukchukhaksa.mobile.common.designsystem.component.SuwikiBackground
 import com.chukchukhaksa.mobile.common.designsystem.component.bottomsheet.CchSelectBottomSheet
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.model.TimetableCell
+import com.chukchukhaksa.mobile.common.ui.ExceptionHandler
+import com.chukchukhaksa.mobile.common.ui.ToastNotifier
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.EditTimetableCellBottomSheet
@@ -37,6 +38,7 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import com.chukchukhaksa.mobile.widget.sendWidgetUpdateCommand
 import com.chukchukhaksa.mobile.common.provider.LocalAppContext
@@ -49,22 +51,22 @@ fun HomeRoute(
   viewModel: HomeViewModel = koinViewModel(),
   navigateOpenLecture: () -> Unit,
   navigateTimetableList: () -> Unit,
-  handleException: (Throwable) -> Unit,
-  onShowToast: (String, Dp) -> Unit,
   navigateCellEditor: (CellEditorArgument) -> Unit,
   navigateSemesterSelect: () -> Unit,
   navigateWebView: (String) -> Unit,
   navigateToLanding: () -> Unit,
 ) {
+  val exceptionHandler: ExceptionHandler = koinInject()
+  val toastNotifier: ToastNotifier = koinInject()
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
 
   val context = LocalAppContext.current
   val clipboardManager = LocalClipboardManager.current
   viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
     when (sideEffect) {
-      is HomeSideEffect.HandleException -> handleException(sideEffect.throwable)
+      is HomeSideEffect.HandleException -> exceptionHandler.handleException(sideEffect.throwable)
       HomeSideEffect.NavigateAddTimetableCell -> navigateOpenLecture()
-      HomeSideEffect.ShowNeedCreateTimetableToast -> onShowToast(getString(Res.string.timetable_screen_need_create_timetable), 70.dp)
+      HomeSideEffect.ShowNeedCreateTimetableToast -> toastNotifier.showToast(getString(Res.string.timetable_screen_need_create_timetable), 70.dp)
       is HomeSideEffect.NavigateCellEditor -> navigateCellEditor(sideEffect.argument)
       HomeSideEffect.NavigateTimetableList -> navigateTimetableList()
       HomeSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
@@ -120,7 +122,7 @@ fun HomeRoute(
     navigateToLanding = navigateToLanding,
     navigateWebView = navigateWebView,
     // 광고 게이트 실패 토스트용. 홈 탭 기본 bottomPadding(70.dp)으로 전역 토스트를 재사용한다.
-    onShowToast = { onShowToast(it, 70.dp) },
+    onShowToast = { toastNotifier.showToast(it, 70.dp) },
   )
 
   // 디버그 전용: 시간표 탭 3연타 제스처로 노출되는 IDFA 진단 다이얼로그.
@@ -135,7 +137,7 @@ fun HomeRoute(
           else -> info.diagnostics
         }
         clipboardManager.setText(AnnotatedString(copyText))
-        onShowToast(
+        toastNotifier.showToast(
           if (info.isValid) "IDFA가 복사되었습니다" else "IDFA 진단 정보가 복사되었습니다",
           70.dp,
         )
