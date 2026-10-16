@@ -19,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -30,10 +29,12 @@ import com.chukchukhaksa.mobile.common.designsystem.component.loading.LoadingScr
 import com.chukchukhaksa.mobile.common.designsystem.component.textfield.CchSearchTextField
 import com.chukchukhaksa.mobile.common.designsystem.theme.Gray95
 import com.chukchukhaksa.mobile.common.designsystem.theme.SuwikiTheme
+import com.chukchukhaksa.mobile.common.ui.ExceptionHandler
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.bottomsheet.openmajor.model.OpenMajor
 import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -45,14 +46,13 @@ fun OpenMajorBottomSheet(
   viewModel: OpenMajorBottomSheetViewModel = koinViewModel(),
   onDismissRequest: () -> Unit,
   onConfirm: (String?) -> Unit,
-  handleException: (Throwable) -> Unit,
-  onShowToast: (String, Dp) -> Unit,
 ) {
+  val exceptionHandler: ExceptionHandler = koinInject()
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
 
   viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
     when (sideEffect) {
-      is OpenMajorSideEffect.HandleException -> handleException(sideEffect.throwable)
+      is OpenMajorSideEffect.HandleException -> exceptionHandler.handleException(sideEffect.throwable)
       OpenMajorSideEffect.PopBackStack -> onDismissRequest()
       is OpenMajorSideEffect.PopBackStackWithArgument -> onConfirm(sideEffect.argument)
     }

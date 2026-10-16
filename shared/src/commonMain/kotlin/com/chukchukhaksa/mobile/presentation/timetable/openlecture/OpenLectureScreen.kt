@@ -37,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import chukchukhaksa.composeapp.generated.resources.Res
@@ -165,8 +164,6 @@ fun OpenLectureRoute(
     onClickCustomAdd = viewModel::navigateAddCustomCell,
     onDismissOpenMajorBottomSheet = viewModel::hideOpenMajorBottomSheet,
     onConfirmOpenMajor = viewModel::confirmOpenMajor,
-    handleException = exceptionHandler::handleException,
-    onShowToast = toastNotifier::showToast,
   )
 }
 
@@ -190,8 +187,6 @@ fun OpenLectureScreen(
   onClickCustomAdd: () -> Unit = {},
   onDismissOpenMajorBottomSheet: () -> Unit = {},
   onConfirmOpenMajor: (String?) -> Unit = {},
-  handleException: (Throwable) -> Unit = {},
-  onShowToast: (String, Dp) -> Unit = { _, _ -> },
   onClickAddSelectedLecture: () -> Unit = {},
 ) {
   SuwikiBackground {
@@ -354,8 +349,6 @@ fun OpenLectureScreen(
       selectedOpenMajor = uiState.selectedOpenMajor,
       onDismissRequest = onDismissOpenMajorBottomSheet,
       onConfirm = onConfirmOpenMajor,
-      handleException = handleException,
-      onShowToast = onShowToast,
     )
   }
 }

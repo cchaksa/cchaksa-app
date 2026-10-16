@@ -36,8 +36,8 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.getKoin
-import kotlin.time.TimeSource
 import org.koin.compose.koinInject
+import kotlin.time.TimeSource
 
 private const val DUPLICATE_PUSH_DEBOUNCE_MS = 500L
 

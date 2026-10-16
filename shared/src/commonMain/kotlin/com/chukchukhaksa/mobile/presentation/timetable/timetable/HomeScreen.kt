@@ -66,7 +66,7 @@ fun HomeRoute(
     when (sideEffect) {
       is HomeSideEffect.HandleException -> exceptionHandler.handleException(sideEffect.throwable)
       HomeSideEffect.NavigateAddTimetableCell -> navigateOpenLecture()
-      HomeSideEffect.ShowNeedCreateTimetableToast -> toastNotifier.showToast(getString(Res.string.timetable_screen_need_create_timetable), 70.dp)
+      HomeSideEffect.ShowNeedCreateTimetableToast -> toastNotifier.showToast(getString(Res.string.timetable_screen_need_create_timetable))
       is HomeSideEffect.NavigateCellEditor -> navigateCellEditor(sideEffect.argument)
       HomeSideEffect.NavigateTimetableList -> navigateTimetableList()
       HomeSideEffect.NavigateSemesterSelect -> navigateSemesterSelect()
@@ -121,8 +121,8 @@ fun HomeRoute(
     },
     navigateToLanding = navigateToLanding,
     navigateWebView = navigateWebView,
-    // 광고 게이트 실패 토스트용. 홈 탭 기본 bottomPadding(70.dp)으로 전역 토스트를 재사용한다.
-    onShowToast = { toastNotifier.showToast(it, 70.dp) },
+    // 광고 게이트 실패 토스트용. 기본 bottomPadding으로 전역 토스트를 재사용한다.
+    onShowToast = { toastNotifier.showToast(it) },
   )
 
   // 디버그 전용: 시간표 탭 3연타 제스처로 노출되는 IDFA 진단 다이얼로그.
@@ -139,7 +139,6 @@ fun HomeRoute(
         clipboardManager.setText(AnnotatedString(copyText))
         toastNotifier.showToast(
           if (info.isValid) "IDFA가 복사되었습니다" else "IDFA 진단 정보가 복사되었습니다",
-          70.dp,
         )
       },
       onDismiss = viewModel::hideIdfaDebugDialog,

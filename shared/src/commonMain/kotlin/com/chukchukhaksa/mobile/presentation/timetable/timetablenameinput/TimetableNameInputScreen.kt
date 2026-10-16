@@ -54,7 +54,6 @@ fun TimetableNameInputRoute(
             TimetableNameInputSideEffect.PopBackStack -> popBackStack()
             TimetableNameInputSideEffect.NeedSelectSemesterToast -> toastNotifier.showToast(
                 getString(Res.string.create_timetable_need_select_semester),
-                70.dp,
             )
             TimetableNameInputSideEffect.NavigateTimetable -> navigateTimetable()
         }

@@ -66,7 +66,7 @@ fun LandingRoute(
     viewModel.mviStore.sideEffects.collectWithLifecycle { sideEffect ->
         when (sideEffect) {
             is LandingSideEffect.NavigateHome -> navigateToHome(sideEffect.isPortalLinked)
-            is LandingSideEffect.ShowToast -> toastNotifier.showToast(sideEffect.message, 70.dp)
+            is LandingSideEffect.ShowToast -> toastNotifier.showToast(sideEffect.message)
             is LandingSideEffect.HandleException -> exceptionHandler.handleException(sideEffect.throwable)
         }
     }
