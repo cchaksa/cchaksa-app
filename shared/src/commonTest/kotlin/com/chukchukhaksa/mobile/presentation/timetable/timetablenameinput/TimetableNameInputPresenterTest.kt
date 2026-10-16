@@ -10,6 +10,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.ShowTimetableTa
 import com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput.TimetableNameInputScreen.Event
 import com.slack.circuit.test.FakeNavigator
 import com.slack.circuit.test.test
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -94,6 +95,24 @@ class TimetableNameInputPresenterTest {
         assertEquals(listOf(Upsert(null, "2026", "2", "새 시간표")), repository.inserted)
         assertEquals(emptyList(), repository.updated)
         assertEquals(1, tabRequests.size)
+    }
+
+    @Test
+    fun completeTappedTwiceWhileSavingInsertsOnce() = runTest {
+        val gate = CompletableDeferred<Unit>()
+        repository.gate = gate
+        val (presenter, navigator) = presenter(TimetableEditorArgument(name = "새 시간표", year = "2026", semester = "2"))
+
+        presenter.test {
+            val state = awaitItem()
+            state.eventSink(Event.ClickComplete)
+            state.eventSink(Event.ClickComplete)
+            gate.complete(Unit)
+
+            assertEquals(LegacyScreen.Home, navigator.awaitResetRoot().newRoot)
+            cancelAndIgnoreRemainingEvents()
+        }
+        assertEquals(listOf(Upsert(null, "2026", "2", "새 시간표")), repository.inserted)
     }
 
     @Test

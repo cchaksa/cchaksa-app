@@ -38,16 +38,22 @@ class MainCircuitNavigator(
       return null
     }
     mainNavigator.popBackStackIfNotHome()
-    return null
+    // Circuit 계약상 pop은 꺼낸 화면을, 꺼낼 것이 없을 때만 null을 돌려준다. 이 navigator가 아는 화면은 현재 화면뿐이다.
+    return currentScreen
   }
 
-  override fun resetRoot(newRoot: Screen, options: Navigator.StateOptions): List<Screen> {
+  override fun resetRoot(newRoot: Screen, options: Navigator.StateOptions): List<Screen> =
     when (newRoot) {
-      LegacyScreen.Home -> mainNavigator.navigateTimetable()
-      else -> unmapped("resetRoot($newRoot)")
+      // Circuit 계약상 resetRoot는 걷어낸 백스택을 돌려준다. 이 navigator가 아는 화면은 현재 화면뿐이다.
+      LegacyScreen.Home -> {
+        mainNavigator.navigateTimetable()
+        listOf(currentScreen)
+      }
+      else -> {
+        unmapped("resetRoot($newRoot)")
+        emptyList()
+      }
     }
-    return emptyList()
-  }
 
   override fun forward(): Boolean = unmapped("forward()")
 

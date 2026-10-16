@@ -71,7 +71,7 @@ fun TimetableNameInputUi(
                     onClickClearButton = { state.eventSink(Event.ChangeName("")) },
                 )
 
-                if (state.name.length > 20) {
+                if (checkOverTimetableNameLimit(state.name)) {
                   Text(
                     modifier = Modifier
                       .padding(top = 12.dp, start = 4.dp, end = 4.dp)

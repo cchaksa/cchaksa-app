@@ -3,6 +3,7 @@ package com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -32,6 +33,8 @@ class TimetableNameInputPresenter(
     // 입력 중인 이름도 학기 선택과 같은 기준으로, 백스택 엔트리가 살아 있는 동안 rememberSaveable로 보존한다.
     var name by rememberSaveable { mutableStateOf(argument.name) }
     val scope = rememberCoroutineScope()
+    // 저장 중 완료 버튼을 다시 누르면 같은 시간표가 두 번 만들어지므로, 진행 중인 저장이 끝날 때까지 무시한다.
+    var isSaving by remember { mutableStateOf(false) }
 
     return State(
       name = name,
@@ -40,7 +43,16 @@ class TimetableNameInputPresenter(
       when (event) {
         is Event.ChangeName -> name = event.name
         Event.ClickBack -> navigator.pop()
-        Event.ClickComplete -> scope.launch { upsertTimetable(name) }
+        Event.ClickComplete -> if (!isSaving) {
+          isSaving = true
+          scope.launch {
+            try {
+              upsertTimetable(name)
+            } finally {
+              isSaving = false
+            }
+          }
+        }
       }
     }
   }

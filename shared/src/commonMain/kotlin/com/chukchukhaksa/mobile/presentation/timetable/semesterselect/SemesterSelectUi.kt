@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,7 +30,7 @@ fun SemesterSelectUi(
   state: SemesterSelectScreen.State,
   modifier: Modifier = Modifier,
 ) {
-  val semesters = semesterList.map { it.toText() }.toPersistentList()
+  val semesters = remember { semesterList.map { it.toText() }.toPersistentList() }
   val scrollState = rememberScrollState()
 
   SuwikiBackground(modifier = modifier) {
