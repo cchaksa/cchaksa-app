@@ -1,6 +1,7 @@
 package com.chukchukhaksa.mobile.presentation.timetable.timetable
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
@@ -34,6 +36,8 @@ import com.chukchukhaksa.mobile.common.designsystem.component.webview.webMyPageU
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.webPortalLoginUrl
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
+import com.chukchukhaksa.mobile.common.kmp.isDebug
+import com.chukchukhaksa.mobile.presentation.portalscrape.PortalScrapeTestButton
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -55,6 +59,7 @@ fun HomeRoute(
   navigateSemesterSelect: () -> Unit,
   navigateWebView: (String) -> Unit,
   navigateToLanding: () -> Unit,
+  navigatePortalScrapeTest: () -> Unit = {},
 ) {
   val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
 
@@ -119,6 +124,7 @@ fun HomeRoute(
     },
     navigateToLanding = navigateToLanding,
     navigateWebView = navigateWebView,
+    onClickPortalScrapeTest = navigatePortalScrapeTest,
     // 광고 게이트 실패 토스트용. 홈 탭 기본 bottomPadding(70.dp)으로 전역 토스트를 재사용한다.
     onShowToast = { onShowToast(it, 70.dp) },
   )
@@ -168,6 +174,7 @@ fun HomeScreen(
   onShowToast: (String) -> Unit = {},
   onDismissPortalLinkDialog: () -> Unit = {},
   onConfirmPortalLinkDialog: () -> Unit = {},
+  onClickPortalScrapeTest: () -> Unit = {},
 ) {
     val semester = "${uiState.timetable?.year}년 ${uiState.timetable?.semester}학기"
     SuwikiBackground {
@@ -218,6 +225,22 @@ fun HomeScreen(
                 onShowToast = onShowToast,
               )
             }
+        }
+
+        // 디버그 빌드 전용: 시간표 탭 우측 하단에 포털 스크래핑 테스트 진입 버튼을 띄운다.
+        if (isDebug && (uiState.selectedTab == HomeTab.TIMETABLE || uiState.selectedTab == HomeTab.EMPTY_TIMETABLE)) {
+          Box(
+            modifier = Modifier
+              .fillMaxSize()
+              .padding(padding),
+          ) {
+            PortalScrapeTestButton(
+              modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 20.dp, bottom = 24.dp),
+              onClick = onClickPortalScrapeTest,
+            )
+          }
         }
     }
 

@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.chukchukhaksa.mobile.presentation.landing.navigation.LandingRoute
+import com.chukchukhaksa.mobile.presentation.portalscrape.navigation.navigatePortalScrapeTest
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.HomeRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.CellEditorArgument
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.argument.TimetableEditorArgument
@@ -53,6 +54,10 @@ class MainNavigator(
 
     fun navigateWebView(url: String) {
         navController.navigateWebView(url)
+    }
+
+    fun navigatePortalScrapeTest() {
+        navController.navigatePortalScrapeTest()
     }
 
     fun navigateToHome() {

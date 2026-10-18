@@ -5,6 +5,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetable.component.botto
 import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.openlecture.OpenLectureViewModel
 import com.chukchukhaksa.mobile.presentation.landing.LandingViewModel
+import com.chukchukhaksa.mobile.presentation.portalscrape.PortalScrapeViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.HomeViewModel
 import com.chukchukhaksa.mobile.presentation.timetable.timetable.ShowTimetableTabEventBus
 import com.chukchukhaksa.mobile.presentation.timetable.timetablenameinput.TimetableNameInputViewModel
@@ -26,4 +27,5 @@ val presentationModule = module {
     viewModelOf(::OpenLectureViewModel)
     viewModelOf(::OpenMajorBottomSheetViewModel)
     viewModelOf(::SemesterSelectViewModel)
+    viewModelOf(::PortalScrapeViewModel)
 }

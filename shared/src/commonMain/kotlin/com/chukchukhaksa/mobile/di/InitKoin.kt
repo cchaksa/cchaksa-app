@@ -6,6 +6,7 @@ import com.chukchukhaksa.mobile.data.auth.di.authRepositoryModule
 import com.chukchukhaksa.mobile.data.config.di.appConfigRepositoryModule
 import com.chukchukhaksa.mobile.data.openlecture.di.openLectureRepositoryModule
 import com.chukchukhaksa.mobile.data.openmajor.di.openMajorRepositoryModule
+import com.chukchukhaksa.mobile.data.portalscrape.di.portalScrapeRepositoryModule
 import com.chukchukhaksa.mobile.data.profile.di.ProfileRepositoryModule
 import com.chukchukhaksa.mobile.data.timetable.di.timetableRepositoryModule
 import com.chukchukhaksa.mobile.local.database.common.di.openLectureDatabaseModule
@@ -48,6 +49,7 @@ internal fun initKoin(config: KoinAppDeclaration? = null) {
             authRepositoryModule,
             ProfileRepositoryModule,
             AcademicRepositoryModule,
+            portalScrapeRepositoryModule,
             webViewModule,
             analyticsModule,
         )
