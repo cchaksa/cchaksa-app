@@ -43,8 +43,6 @@ build/
 .idea/gradle.xml
 .idea/dictionaries
 .idea/libraries
-app/.idea/
 /androidApp/google-services.json
-/composeApp/google-services.json
 /iosApp/iosApp/GoogleService-Info.plist
 /iosApp/Configuration/Config.xcconfig

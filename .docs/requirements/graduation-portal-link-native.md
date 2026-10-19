@@ -88,7 +88,7 @@
 
 - 가로채기는 `BridgeAction`이 아니라 `MainNavigator.navigateWebView`에서 한다. 웹 홈의 이동 요청, 광고 게이트를 거친 이동,
   랜딩의 미연동 분기, 시간표 탭의 연동 안내 다이얼로그가 모두 이 함수를 지나므로 한 곳에서 처리된다. 광고 게이트는 그대로 동작한다.
-- 업로드 API 계약과 앱의 오류 처리는 `requirements/portal-scrape-upload-api.md`에 있다.
+- 업로드 API 계약과 앱의 오류 처리는 `.docs/requirements/portal-scrape-upload-api.md`에 있다.
 - 일부 학기 성적 상세 조회가 실패한(경고가 있는) 스크래핑 결과는 올리지 않고 서버 job으로 넘긴다.
   서버가 올린 결과를 전체 기록으로 보고 빠진 과목을 지우기 때문이다.
 - 디버그 빌드에서는 기기를 흔들면 디버그 화면(`presentation/debug`)이 열린다(2026-10-19 사용자 요청).
