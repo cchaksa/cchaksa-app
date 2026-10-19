@@ -24,18 +24,21 @@ import com.chukchukhaksa.mobile.common.analytics.AnalyticsUserSync
 import com.chukchukhaksa.mobile.common.designsystem.component.dialog.CchDialog
 import com.chukchukhaksa.mobile.common.designsystem.component.toast.CchToast
 import com.chukchukhaksa.mobile.common.designsystem.component.webview.WebViewHolder
-import com.chukchukhaksa.mobile.common.designsystem.component.webview.webPortalLoginUrl
 import com.chukchukhaksa.mobile.common.designsystem.theme.CchTheme
 import com.chukchukhaksa.mobile.common.designsystem.theme.White
 import com.chukchukhaksa.mobile.common.extension.runCatchingIgnoreCancelled
 import com.chukchukhaksa.mobile.common.kmp.AppLifecycleObserver
 import com.chukchukhaksa.mobile.common.kmp.Platform.*
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
+import com.chukchukhaksa.mobile.common.kmp.isDebug
+import com.chukchukhaksa.mobile.common.ui.ShakeEffect
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
 import com.chukchukhaksa.mobile.data.auth.repository.AuthRepository
+import com.chukchukhaksa.mobile.presentation.debug.navigation.debugNavGraph
 import com.chukchukhaksa.mobile.presentation.landing.navigation.LandingRoute
 import com.chukchukhaksa.mobile.presentation.landing.navigation.landingNavGraph
-import com.chukchukhaksa.mobile.presentation.portalscrape.navigation.portalScrapeNavGraph
+import com.chukchukhaksa.mobile.presentation.portallink.navigation.PortalLinkMode
+import com.chukchukhaksa.mobile.presentation.portallink.navigation.portalLinkNavGraph
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.HomeRoute
 import com.chukchukhaksa.mobile.presentation.timetable.navigation.timetableNavGraph
 import com.chukchukhaksa.mobile.presentation.webview.ExchangeStatus
@@ -151,12 +154,11 @@ fun App(
                                 navigateToHome = { isPortalLinked ->
                                     // 세션 쿠키 교환·preload는 LandingViewModel에서 이미 await 완료된 상태.
                                     if (!isPortalLinked) {
-                                        navigator.navigateWebView(webPortalLoginUrl)
+                                        navigator.navigatePortalLink(PortalLinkMode.LINK)
                                     } else {
                                       navigator.navigateFromLandingToHome()
                                     }
                                 },
-                                navigatePortalScrapeTest = navigator::navigatePortalScrapeTest,
                             )
 
                             timetableNavGraph(
@@ -173,7 +175,7 @@ fun App(
                                 navigateTimetable = navigator::navigateTimetable,
                                 navigateWebView = navigator::navigateWebView,
                                 navigateToLanding = navigator::navigateToLanding,
-                                navigatePortalScrapeTest = navigator::navigatePortalScrapeTest,
+                                navigatePortalLink = { navigator.navigatePortalLink(PortalLinkMode.LINK) },
                             )
 
                             webViewNavGraph(
@@ -183,10 +185,16 @@ fun App(
                                 onShowToast = viewModel::onShowToast,
                             )
 
-                            portalScrapeNavGraph(
+                            portalLinkNavGraph(
                                 popBackStack = navigator::popBackStackIfNotHome,
-                                onShowToast = viewModel::onShowToast,
                             )
+
+                            if (isDebug) {
+                                debugNavGraph(
+                                    popBackStack = navigator::popBackStackIfNotHome,
+                                    navigatePortalLink = navigator::navigatePortalLink,
+                                )
+                            }
                         }
 
                         when (getPlatform()) {
@@ -205,6 +213,12 @@ fun App(
                                 startDestination = currentStartDestination,
                                 builder = navGraphBuilder,
                             )
+                        }
+
+                        // 디버그 빌드에서는 어느 화면에서든 기기를 흔들면 디버그 화면을 연다.
+                        // NavHost가 그래프를 갖춘 뒤에만 이동할 수 있으므로 이 블록 안에 둔다.
+                        if (isDebug) {
+                            ShakeEffect(onShake = navigator::navigateDebug)
                         }
                     }
 

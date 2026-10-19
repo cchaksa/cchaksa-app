@@ -7,8 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **ChukChukHaksa** (formerly Suwiki) is a Kotlin Multiplatform Compose project of timetable and academic services for Suwon University students. The project is split into an Android app module `androidApp` (entry points, launcher resources, applicationId/version/build-type keys) and a shared KMP module `shared` (all Android/iOS shared code, the Android widget, the iOS `ComposeApp` framework), with Clean Architecture and MVI pattern. Supports Android and iOS with platform-specific widgets.
 
 Native Compose screens cover the timetable feature set (`presentation/timetable`: editor, cell editor,
-open-lecture search, semester select, …) plus landing/login and the tab host. Most other surfaces —
-including academic info — are served by an embedded web app driven through the WebView bridge.
+open-lecture search, semester select, …) plus landing/login, the tab host, and portal linking
+(`presentation/portallink`). Most other surfaces — including academic info — are served by an embedded
+web app driven through the WebView bridge.
 
 ## Build System and Commands
 

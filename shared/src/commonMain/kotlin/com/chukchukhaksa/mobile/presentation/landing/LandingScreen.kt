@@ -7,15 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,11 +43,9 @@ import com.chukchukhaksa.mobile.common.designsystem.theme.Gray600
 import com.chukchukhaksa.mobile.common.designsystem.theme.White100
 import com.chukchukhaksa.mobile.common.kmp.Platform
 import com.chukchukhaksa.mobile.common.kmp.getPlatform
-import com.chukchukhaksa.mobile.common.kmp.isDebug
 import com.chukchukhaksa.mobile.common.provider.LocalAppContext
 import com.chukchukhaksa.mobile.common.ui.cchClickable
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
-import com.chukchukhaksa.mobile.presentation.portalscrape.PortalScrapeTestButton
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -62,7 +57,6 @@ fun LandingRoute(
     handleException: (Throwable) -> Unit,
     onShowToast: (String, Dp) -> Unit,
     navigateToHome: (isPortalLinked: Boolean) -> Unit,
-    navigatePortalScrapeTest: () -> Unit = {},
 ) {
     val uiState by viewModel.mviStore.uiState.collectAsStateWithLifecycle()
     val context = LocalAppContext.current
@@ -79,7 +73,6 @@ fun LandingRoute(
         uiState = uiState,
         onKakaoLogin = { viewModel.onKakaoLogin(context) },
         onAppleLogin = viewModel::onAppleLogin,
-        onClickPortalScrapeTest = navigatePortalScrapeTest,
     )
 }
 
@@ -88,7 +81,6 @@ fun LandingScreen(
     uiState: LandingState = LandingState(),
     onKakaoLogin: () -> Unit = {},
     onAppleLogin: () -> Unit = {},
-    onClickPortalScrapeTest: () -> Unit = {},
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -149,17 +141,6 @@ fun LandingScreen(
                     onClick = onAppleLogin,
                 )
             }
-        }
-
-        // 디버그 빌드 전용: 앱 로그인 없이 포털 스크래핑을 확인할 수 있도록 진입 버튼을 둔다.
-        if (isDebug) {
-            PortalScrapeTestButton(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .windowInsetsPadding(WindowInsets.statusBars)
-                    .padding(top = 12.dp, end = 16.dp),
-                onClick = onClickPortalScrapeTest,
-            )
         }
     }
 }

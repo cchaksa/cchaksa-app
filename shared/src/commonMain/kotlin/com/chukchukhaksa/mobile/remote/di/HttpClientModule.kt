@@ -44,6 +44,13 @@ private fun String.prettyPrintJson(): String = try {
     this
 }
 
+// 포털 연동 요청(POST /portal/link)처럼 비밀번호가 담긴 본문은 디버그 로그에도 값을 남기지 않는다.
+private val PASSWORD_FIELD = Regex("(\"password\"\\s*:\\s*)\"(?:[^\"\\\\]|\\\\.)*\"")
+
+internal fun String.maskPasswords(): String = replace(PASSWORD_FIELD, "$1\"***\"")
+
+private const val MAX_LOG_BODY_LENGTH = 4096
+
 private fun buildRequestLog(request: HttpRequestBuilder): String = buildString {
     appendLine("REQUEST: ${request.method.value} ${request.url.buildString()}")
     val headers = request.headers.entries()
@@ -54,7 +61,8 @@ private fun buildRequestLog(request: HttpRequestBuilder): String = buildString {
     val body = request.body
     if (body is TextContent) {
         appendLine("BODY:")
-        append(body.text.prettyPrintJson())
+        // 스크래핑 결과 업로드처럼 큰 본문은 응답 로그와 같이 앞부분만 남긴다. 잘린 뒤에는 가릴 수 없으므로 먼저 가린다.
+        append(body.text.maskPasswords().take(MAX_LOG_BODY_LENGTH).prettyPrintJson())
     }
 }
 
@@ -69,7 +77,7 @@ private suspend fun buildResponseLog(response: HttpResponse): String = buildStri
     val text = response.bodyAsText()
     if (text.isNotBlank()) {
         appendLine("BODY:")
-        append(text.take(4096).prettyPrintJson())
+        append(text.take(MAX_LOG_BODY_LENGTH).prettyPrintJson())
     }
 }
 
