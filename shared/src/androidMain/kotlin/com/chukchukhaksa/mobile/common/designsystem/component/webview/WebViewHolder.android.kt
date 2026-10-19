@@ -24,6 +24,7 @@ actual class WebViewHolder(private val context: Context) {
 
   private val mainHandler = Handler(Looper.getMainLooper())
   private var hasLoadedInitial = false
+  private var contentRendered = false
 
   internal val webView: WebView by lazy { createPersistentWebView() }
 
@@ -35,6 +36,7 @@ actual class WebViewHolder(private val context: Context) {
     }
     Napier.d(tag = "WebViewHolder") { "preload: url=$url, cookies.size=${cookies.size}" }
     syncCookies(cookies)
+    contentRendered = false
     webView.loadUrl(url)
     hasLoadedInitial = true
   }
@@ -45,9 +47,12 @@ actual class WebViewHolder(private val context: Context) {
 
   actual fun isInitialLoaded(): Boolean = hasLoadedInitial
 
+  actual fun isContentRendered(): Boolean = contentRendered
+
   actual fun reset() {
     Napier.d(tag = "WebViewHolder") { "reset() called → next preload will reload url" }
     hasLoadedInitial = false
+    contentRendered = false
   }
 
   private fun createPersistentWebView(): WebView = WebView(context.applicationContext).apply {
@@ -68,7 +73,10 @@ actual class WebViewHolder(private val context: Context) {
     setLayerType(View.LAYER_TYPE_HARDWARE, null)
     addJavascriptInterface(
       HolderJsBridge { message ->
-        mainHandler.post { bridgeMessageListener?.invoke(message) }
+        mainHandler.post {
+          if (message is BridgeMessage.Rendered) contentRendered = true
+          bridgeMessageListener?.invoke(message)
+        }
       },
       BRIDGE_INTERFACE_NAME,
     )

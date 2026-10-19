@@ -39,8 +39,10 @@ actual class WebViewHolder {
   internal var canGoBackListener: ((Boolean) -> Unit)? = null
 
   private var hasLoadedInitial = false
+  private var contentRendered = false
 
   private val scriptHandler = HolderBridgeScriptMessageHandler { msg ->
+    if (msg is BridgeMessage.Rendered) contentRendered = true
     bridgeMessageListener?.invoke(msg)
   }
 
@@ -67,6 +69,7 @@ actual class WebViewHolder {
       return
     }
     Napier.d(tag = "WebViewHolder") { "preload: url=$url, cookies.size=${cookies.size}" }
+    contentRendered = false
     syncCookies(cookies) {
       Napier.d(tag = "WebViewHolder") { "cookies synced → loadRequest($url)" }
       webView.loadRequest(NSURLRequest(uRL = nsUrl))
@@ -80,9 +83,12 @@ actual class WebViewHolder {
 
   actual fun isInitialLoaded(): Boolean = hasLoadedInitial
 
+  actual fun isContentRendered(): Boolean = contentRendered
+
   actual fun reset() {
     Napier.d(tag = "WebViewHolder") { "reset() called → next preload will reload url" }
     hasLoadedInitial = false
+    contentRendered = false
   }
 
   private fun createPersistentWebView(): WKWebView {

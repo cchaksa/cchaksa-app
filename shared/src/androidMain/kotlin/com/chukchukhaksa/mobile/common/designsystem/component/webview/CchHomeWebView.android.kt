@@ -27,6 +27,9 @@ actual fun CchHomeWebView(
       if (view.canGoBack()) view.goBack()
     }
     controller.canGoBack = holder.webView.canGoBack()
+    // 리스너가 붙기 전에 온 rendered 이벤트를 다시 전달한다. 이미 그려진 페이지는 이벤트를 다시 보내지 않으므로,
+    // 놓치거나 ViewModel이 새로 만들어지면 이 화면에 들어올 때마다 shimmer가 타임아웃까지 덮인다.
+    if (holder.isContentRendered()) currentBridgeMessage.value(BridgeMessage.Rendered)
     onDispose {
       holder.bridgeMessageListener = null
       holder.canGoBackListener = null
