@@ -3,12 +3,12 @@ package com.chukchukhaksa.mobile.presentation.webview.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
-import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.chukchukhaksa.mobile.common.ui.decodeFromUri
 import com.chukchukhaksa.mobile.common.ui.encodeToUri
 import com.chukchukhaksa.mobile.presentation.webview.WebViewRoute
 import kotlinx.serialization.json.Json
+import com.chukchukhaksa.mobile.common.ui.cchComposable
 
 fun NavController.navigateWebView(url: String) {
   navigate(WebViewRouteSpec.buildRoute(url))
@@ -20,7 +20,7 @@ fun NavGraphBuilder.webViewNavGraph(
   navigateToLanding: () -> Unit,
   onShowToast: (String) -> Unit,
 ) {
-  composable(
+  cchComposable(
     route = WebViewRouteSpec.pattern(),
     arguments = listOf(
       navArgument(WebViewRouteSpec.URL_ARG) {

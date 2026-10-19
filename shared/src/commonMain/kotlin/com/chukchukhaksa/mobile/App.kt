@@ -1,9 +1,5 @@
 package com.chukchukhaksa.mobile
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
@@ -33,6 +29,10 @@ import com.chukchukhaksa.mobile.common.kmp.getPlatform
 import com.chukchukhaksa.mobile.common.kmp.isDebug
 import com.chukchukhaksa.mobile.common.ui.ShakeEffect
 import com.chukchukhaksa.mobile.common.ui.collectWithLifecycle
+import com.chukchukhaksa.mobile.common.ui.navEnterTransition
+import com.chukchukhaksa.mobile.common.ui.navExitTransition
+import com.chukchukhaksa.mobile.common.ui.navPopEnterTransition
+import com.chukchukhaksa.mobile.common.ui.navPopExitTransition
 import com.chukchukhaksa.mobile.data.auth.repository.AuthRepository
 import com.chukchukhaksa.mobile.presentation.debug.navigation.debugNavGraph
 import com.chukchukhaksa.mobile.presentation.landing.navigation.LandingRoute
@@ -197,23 +197,15 @@ fun App(
                             }
                         }
 
-                        when (getPlatform()) {
-                            Android -> NavHost(
-                                navController = navigator.navController,
-                                startDestination = currentStartDestination,
-                                enterTransition = { slideInHorizontally(tween(350, easing = FastOutSlowInEasing)) { it } },
-                                exitTransition = { slideOutHorizontally(tween(350, easing = FastOutSlowInEasing)) { -it / 3 } },
-                                popEnterTransition = { slideInHorizontally(tween(350, easing = FastOutSlowInEasing)) { -it / 3 } },
-                                popExitTransition = { slideOutHorizontally(tween(350, easing = FastOutSlowInEasing)) { it } },
-                                builder = navGraphBuilder,
-                            )
-
-                            IOS -> NavHost(
-                                navController = navigator.navController,
-                                startDestination = currentStartDestination,
-                                builder = navGraphBuilder,
-                            )
-                        }
+                        NavHost(
+                            navController = navigator.navController,
+                            startDestination = currentStartDestination,
+                            enterTransition = navEnterTransition,
+                            exitTransition = navExitTransition,
+                            popEnterTransition = navPopEnterTransition,
+                            popExitTransition = navPopExitTransition,
+                            builder = navGraphBuilder,
+                        )
 
                         // 디버그 빌드에서는 어느 화면에서든 기기를 흔들면 디버그 화면을 연다.
                         // NavHost가 그래프를 갖춘 뒤에만 이동할 수 있으므로 이 블록 안에 둔다.

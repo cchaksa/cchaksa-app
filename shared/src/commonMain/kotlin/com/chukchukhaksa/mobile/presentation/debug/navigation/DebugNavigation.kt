@@ -2,9 +2,9 @@ package com.chukchukhaksa.mobile.presentation.debug.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import com.chukchukhaksa.mobile.presentation.debug.DebugRoute
 import com.chukchukhaksa.mobile.presentation.portallink.navigation.PortalLinkMode
+import com.chukchukhaksa.mobile.common.ui.cchComposable
 
 object DebugRoute {
   const val route = "debug"
@@ -19,7 +19,7 @@ fun NavGraphBuilder.debugNavGraph(
   popBackStack: () -> Unit,
   navigatePortalLink: (PortalLinkMode) -> Unit,
 ) {
-  composable(route = DebugRoute.route) {
+  cchComposable(route = DebugRoute.route) {
     DebugRoute(
       popBackStack = popBackStack,
       navigatePortalLink = navigatePortalLink,

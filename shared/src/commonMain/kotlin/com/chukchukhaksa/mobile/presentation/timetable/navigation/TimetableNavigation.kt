@@ -5,7 +5,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
-import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.chukchukhaksa.mobile.common.ui.encodeToUri
 import com.chukchukhaksa.mobile.presentation.timetable.celleditor.CellEditorRoute
@@ -18,6 +17,7 @@ import com.chukchukhaksa.mobile.presentation.timetable.timetablelist.TimetableLi
 import com.chukchukhaksa.mobile.presentation.timetable.semesterselect.SemesterSelectRoute
 import com.chukchukhaksa.mobile.presentation.timetable.timetableeditor.TimetableEditorRoute
 import kotlinx.serialization.json.Json
+import com.chukchukhaksa.mobile.common.ui.cchComposable
 
 fun NavController.navigateTimetableNameInput(argument: TimetableEditorArgument = TimetableEditorArgument()) {
     navigate(TimetableRoute.timetableNameInputRoute(Json.encodeToUri(argument)))
@@ -44,8 +44,8 @@ fun NavController.navigateSemesterSelect() {
 }
 
 fun NavController.navigateTimetable() {
-    // 홈 엔트리를 재생성하면 HomeViewModel/WebViewGuideViewModel이 함께 새로 만들어져
-    // 홈 웹뷰 상태(렌더 완료 여부 등)가 초기화되므로, 기존 홈까지만 pop해 엔트리를 보존한다.
+    // 홈 엔트리를 재생성하면 HomeViewModel/WebViewGuideViewModel이 함께 새로 만들어지므로,
+    // 기존 홈까지만 pop해 엔트리와 화면 상태를 그대로 쓴다.
     // (시간표 탭 전환·재조회는 ShowTimetableTabEventBus 신호로 살아있는 HomeViewModel이 처리한다.)
     val poppedToHome = popBackStack(HomeRoute.route, inclusive = false)
     if (!poppedToHome) {
@@ -72,7 +72,7 @@ fun NavGraphBuilder.timetableNavGraph(
     handleException: (Throwable) -> Unit,
     onShowToast: (String, Dp) -> Unit,
 ) {
-    composable(route = HomeRoute.route) {
+    cchComposable(route = HomeRoute.route) {
         HomeRoute(
             padding = padding,
             navigateTimetableList = navigateTimetableList,
@@ -87,7 +87,7 @@ fun NavGraphBuilder.timetableNavGraph(
         )
     }
 
-    composable(
+    cchComposable(
         route = TimetableRoute.timetableNameInputRoute(
             "{${TimetableRoute.TIMETABLE_EDITOR_ARGUMENT}}",
         ),
@@ -106,7 +106,7 @@ fun NavGraphBuilder.timetableNavGraph(
         )
     }
 
-    composable(
+    cchComposable(
       route = TimetableRoute.timetableEditorRoute(
         "{${TimetableRoute.TIMETABLE_EDITOR_ARGUMENT}}",
       ),
@@ -124,7 +124,7 @@ fun NavGraphBuilder.timetableNavGraph(
       )
     }
 
-    composable(route = TimetableRoute.openLectureRoute) {
+    cchComposable(route = TimetableRoute.openLectureRoute) {
         OpenLectureRoute(
             selectedOpenMajor = null,
             popBackStack = popBackStack,
@@ -134,7 +134,7 @@ fun NavGraphBuilder.timetableNavGraph(
         )
     }
 
-    composable(
+    cchComposable(
         route = TimetableRoute.cellEditorRoute("{${TimetableRoute.CELL_EDITOR_ARGUMENT}}"),
         arguments = listOf(
             navArgument(TimetableRoute.CELL_EDITOR_ARGUMENT) {
@@ -150,7 +150,7 @@ fun NavGraphBuilder.timetableNavGraph(
         )
     }
 
-    composable(
+    cchComposable(
         route = TimetableRoute.timetableListRoute,
     ) {
         TimetableListRoute(
@@ -162,7 +162,7 @@ fun NavGraphBuilder.timetableNavGraph(
         )
     }
 
-  composable(
+  cchComposable(
     route = TimetableRoute.semesterSelectRoute,
   ) {
       SemesterSelectRoute(

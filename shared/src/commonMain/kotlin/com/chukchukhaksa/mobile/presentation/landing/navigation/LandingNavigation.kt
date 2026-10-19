@@ -2,8 +2,8 @@ package com.chukchukhaksa.mobile.presentation.landing.navigation
 
 import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import com.chukchukhaksa.mobile.presentation.landing.LandingRoute
+import com.chukchukhaksa.mobile.common.ui.cchComposable
 
 object LandingRoute {
     const val route = "landing"
@@ -14,7 +14,7 @@ fun NavGraphBuilder.landingNavGraph(
     onShowToast: (String, Dp) -> Unit,
     navigateToHome: (isPortalLinked: Boolean) -> Unit,
 ) {
-    composable(route = LandingRoute.route) {
+    cchComposable(route = LandingRoute.route) {
         LandingRoute(
             handleException = handleException,
             onShowToast = onShowToast,

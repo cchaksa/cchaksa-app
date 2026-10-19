@@ -3,9 +3,9 @@ package com.chukchukhaksa.mobile.presentation.portallink.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
-import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.chukchukhaksa.mobile.presentation.portallink.PortalLinkRoute
+import com.chukchukhaksa.mobile.common.ui.cchComposable
 
 /** 포털 연동 화면의 용도. 처음 연동하는 화면과 학업 정보를 업데이트하는 화면은 폼이 같고 안내와 이동만 다르다. */
 enum class PortalLinkMode(
@@ -51,7 +51,7 @@ fun NavController.navigatePortalLink(mode: PortalLinkMode) {
 fun NavGraphBuilder.portalLinkNavGraph(
   popBackStack: () -> Unit,
 ) {
-  composable(
+  cchComposable(
     route = PortalLinkRouteSpec.pattern(),
     arguments = listOf(
       navArgument(PortalLinkRouteSpec.MODE_ARG) {
