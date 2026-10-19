@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>포털 연동 네이티브 QA 체크리스트</title>
+<style>
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --border: #dfe3e8;
+  --txt: #1a1d21;
+  --txt-2: #5c6570;
+  --txt-3: #8a929c;
+  --accent: #2f6df6;
+  --pass: #1f9d55;
+  --pass-bg: #e7f6ed;
+  --fail: #d94040;
+  --fail-bg: #fdecec;
+  --tag-reg: #7c4dff;
+  --tag-time: #c2700a;
+  --tag-edge: #0a8f9c;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14171a;
+    --surface: #1c2024;
+    --surface-2: #23282d;
+    --border: #333a41;
+    --txt: #e8eaed;
+    --txt-2: #a4adb7;
+    --txt-3: #79828c;
+    --accent: #6a9bff;
+    --pass: #4ec27f;
+    --pass-bg: #17301f;
+    --fail: #ef7070;
+    --fail-bg: #341c1c;
+    --tag-reg: #b39bff;
+    --tag-time: #e0a34a;
+    --tag-edge: #45c3ce;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--txt);
+  font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 20px 120px; }
+
+header.top {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px 12px;
+}
+.top-inner { max-width: 980px; margin: 0 auto; }
+.top h1 { font-size: 17px; margin: 0 0 10px; font-weight: 650; letter-spacing: -0.01em; }
+.top h1 small { font-weight: 400; color: var(--txt-3); font-size: 13px; margin-left: 8px; }
+
+.progress-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.bar { flex: 1 1 220px; height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden; display: flex; }
+.bar > i { display: block; height: 100%; transition: width .2s ease; }
+.bar > i.p { background: var(--pass); }
+.bar > i.f { background: var(--fail); }
+.counts { font-size: 13px; color: var(--txt-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.counts b { color: var(--txt); font-weight: 600; }
+.counts .c-pass { color: var(--pass); }
+.counts .c-fail { color: var(--fail); }
+
+.controls { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
+button.ctl {
+  font: inherit; font-size: 13px; padding: 5px 11px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface-2); color: var(--txt-2);
+  cursor: pointer;
+}
+button.ctl:hover { color: var(--txt); }
+button.ctl[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.spacer { flex: 1; }
+
+.intro {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px 20px; margin: 22px 0;
+}
+.intro h2 { font-size: 14px; margin: 0 0 10px; letter-spacing: .02em; text-transform: uppercase; color: var(--txt-3); }
+.intro p { margin: 0 0 10px; color: var(--txt-2); font-size: 14px; }
+table.meds { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 6px; }
+table.meds th, table.meds td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+table.meds th { color: var(--txt-3); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+table.meds td:first-child { font-family: var(--mono); font-weight: 600; white-space: nowrap; }
+
+section.feature { margin-top: 34px; }
+section.feature > h2 {
+  font-size: 15px; margin: 0 0 4px; font-weight: 650;
+  display: flex; align-items: baseline; gap: 10px;
+}
+section.feature > h2 .fid { font-family: var(--mono); color: var(--txt-3); font-size: 13px; }
+section.feature > .fdesc { color: var(--txt-2); font-size: 13.5px; margin: 0 0 14px; }
+
+.sc {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 10px;
+}
+.sc[data-state="pass"] { border-color: color-mix(in srgb, var(--pass) 45%, var(--border)); }
+.sc[data-state="fail"] { border-color: color-mix(in srgb, var(--fail) 55%, var(--border)); }
+.sc.hidden { display: none; }
+
+.sc-head { display: flex; align-items: flex-start; gap: 10px; }
+.mark {
+  width: 18px; height: 18px; margin: 3px 0 0; flex: none;
+  border: 1.5px solid var(--border); border-radius: 6px; background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; line-height: 1; color: transparent; user-select: none;
+}
+.mark.done { border-color: var(--txt-3); color: var(--txt-3); }
+.mark.pass { background: var(--pass); border-color: var(--pass); color: #fff; }
+.mark.fail { background: var(--fail); border-color: var(--fail); color: #fff; }
+.sc-title { flex: 1; font-weight: 600; font-size: 14.5px; letter-spacing: -0.005em; }
+.stale {
+  display: inline-block; margin-left: 8px; font-size: 11px; font-family: var(--mono);
+  padding: 1px 6px; border-radius: 5px; border: 1px solid var(--tag-time); color: var(--tag-time);
+  font-weight: 500; vertical-align: middle; white-space: nowrap;
+}
+.sc-title .sid { font-family: var(--mono); color: var(--txt-3); font-weight: 500; margin-right: 8px; font-size: 13px; }
+.tags { display: inline-flex; gap: 5px; margin-left: 8px; vertical-align: middle; }
+.tag { font-size: 11px; font-family: var(--mono); padding: 1px 6px; border-radius: 5px; border: 1px solid currentColor; font-weight: 500; }
+.tag.reg { color: var(--tag-reg); }
+.tag.time { color: var(--tag-time); }
+.tag.edge { color: var(--tag-edge); }
+
+.gherkin { margin: 10px 0 0 27px; font-size: 13.5px; }
+.gherkin div { display: flex; gap: 8px; padding: 1px 0; }
+.gherkin .kw {
+  font-family: var(--mono); color: var(--accent); font-weight: 600;
+  min-width: 52px; text-align: right; flex: none; font-size: 12.5px; padding-top: 1px;
+}
+.gherkin .tx { color: var(--txt-2); }
+.gherkin .tx code { font-family: var(--mono); font-size: 12.5px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; color: var(--txt); }
+
+.sfeat { margin: 2px 0 0 27px; font-size: 12px; color: var(--txt-3); }
+.sfeat .fid { font-family: var(--mono); margin-right: 6px; }
+.ctl-sep { width: 1px; height: 18px; background: var(--border); margin: 0 4px; }
+.why { margin: 9px 0 0 27px; font-size: 12.5px; color: var(--txt-3); }
+.why code { font-family: var(--mono); font-size: 11.5px; }
+
+.verdict { display: flex; align-items: center; gap: 8px; margin: 12px 0 0 27px; flex-wrap: wrap; }
+.verdict label {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 13px;
+  padding: 3px 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; color: var(--txt-2);
+}
+.verdict label input { accent-color: currentColor; margin: 0; }
+.verdict label.p:has(input:checked) { background: var(--pass-bg); border-color: var(--pass); color: var(--pass); font-weight: 600; }
+.verdict label.f:has(input:checked) { background: var(--fail-bg); border-color: var(--fail); color: var(--fail); font-weight: 600; }
+.verdict input[type=text] {
+  flex: 1 1 240px; font: inherit; font-size: 13px; padding: 5px 10px;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--surface-2); color: var(--txt);
+}
+.verdict input[type=text]::placeholder { color: var(--txt-3); }
+.verdict input[type=text]:focus { outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 1px; }
+
+footer.bar-bottom {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
+  background: var(--surface); border-top: 1px solid var(--border);
+  padding: 10px 20px;
+}
+.fb-inner { max-width: 980px; margin: 0 auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.fb-inner .note { font-size: 12.5px; color: var(--txt-3); }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.empty { color: var(--txt-3); font-size: 14px; padding: 30px 0; text-align: center; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <h1>포털 연동 네이티브 QA 체크리스트 <small id="meta"></small></h1>
+    <div class="progress-row">
+      <div class="bar"><i class="p" id="barPass" style="width:0"></i><i class="f" id="barFail" style="width:0"></i></div>
+      <div class="counts" id="counts"></div>
+    </div>
+    <div class="controls">
+      <span id="viewCtl" style="display:none">
+        <button class="ctl" id="vState" aria-pressed="true" title="같은 준비 상태에서 확인할 시나리오를 묶는다. 시간 점프는 맨 뒤로 간다">상태순</button>
+        <button class="ctl" id="vFeat" aria-pressed="false" title="기능별로 묶어 읽는다">기능순</button>
+        <span class="ctl-sep"></span>
+      </span>
+      <button class="ctl" id="fAll" aria-pressed="true">전체</button>
+      <button class="ctl" id="fTodo" aria-pressed="false">미체크만</button>
+      <button class="ctl" id="fFail" aria-pressed="false">FAIL만</button>
+      <button class="ctl" id="fStale" aria-pressed="false">재확인만</button>
+      <span class="spacer"></span>
+      <button class="ctl" id="btnCopy">FAIL 결과 복사</button>
+      <button class="ctl" id="btnReset">초기화</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="intro">
+    <h2>테스트 준비물</h2>
+    <p>디버그 빌드를 Android 에뮬레이터에서 밟는 것을 기준으로 한다. 화면과 연동 로직은 commonMain 코드라 iOS도 기대 결과가 같다.
+   logcat 표지는 디버그 빌드에서만 찍힌다: <code>adb logcat -s PortalLinkApi PortalLinkRepository PortalScrape</code></p>
+<p>포털 계정 P는 첫 연동에 한 번 성공하면 계정 B에 묶인다. 그래서 상태순 보기의 순서(준비물 그대로 → API 호스트 차단 → 계정 B 첫 연동 성공 직후 →
+   계정 C 로그인 → 포털 호스트 차단 → 웹 재연동 차단 해제 후 → 디버그: 앱 로직만 · 포털 호스트 차단 → 디버그: 서버 로직만)를 지켜 밟는다.
+   웹 수정이 배포되기 전이면 웹 재연동 묶음은 건너뛴다. 계정을 바꿀 때는 앱 데이터를 지우고 다시 로그인한다.
+   웹 연동 폼은 지금 <code>PORTAL_LINK_DISABLED = true</code> 라서 <code>현재 포털 연동을 잠시 중단했습니다.</code> 안내를 띄운다.
+   이 문구가 없으면 네이티브 화면이다.</p>
+<table class="meds">
+  <thead><tr><th>대상</th><th>설정</th><th>쓰이는 곳</th></tr></thead>
+  <tbody>
+    <tr><td>디버그 빌드</td><td>API 주소 <code>dev.api.cchaksa.com</code>. 백엔드 PR #369(업로드 API <code>POST /portal/link/scrape-results</code>)가 dev 서버에 배포돼 있어야 한다</td><td>업로드가 끝나야 하는 시나리오 전부</td></tr>
+    <tr><td>포털 계정 P</td><td>수원대 포털 학번·비밀번호. 시작할 때 어느 앱 계정에도 연동되지 않은 학번</td><td>첫 연동, 계정 충돌, 서버 fallback</td></tr>
+    <tr><td>앱 계정 B</td><td>포털에 연동하지 않은 카카오 계정. S3-04에서 P로 연동한 뒤에는 연동된 계정이 된다</td><td>F1~F4, F6, F7</td></tr>
+    <tr><td>앱 계정 C</td><td>B와 다른 카카오 계정. 포털에 연동하지 않은 상태</td><td>F5</td></tr>
+    <tr><td>디버그 화면</td><td>디버그 빌드에서 기기를 흔들면 열린다. 에뮬레이터는 <code>adb emu sensor set acceleration 40:40:40</code> 다음에 <code>adb emu sensor set acceleration 0:9.81:0</code> 으로 흔든다. 고른 연동 경로는 앱을 다시 시작하면 기본으로 돌아간다</td><td>F7</td></tr>
+    <tr><td>dev 서버 스크래퍼</td><td>서버 로직의 결과를 보려면 dev 서버가 학교 포털에 접속할 수 있어야 한다. 학교가 클라우드 IP를 막고 있어 지금은 접속하지 못할 수 있다</td><td>S7-11, S7-12</td></tr>
+    <tr><td>프록시 도구</td><td>에뮬레이터 프록시를 Proxyman·Charles 같은 도구에 연결하고, 호스트 차단 목록을 켜고 끌 수 있는 상태. HTTPS 복호화는 필요 없다</td><td>API 호스트 차단, 포털 호스트 차단</td></tr>
+    <tr><td>웹 수정 배포</td><td>웹의 <code>PORTAL_LINK_DISABLED</code> 를 <code>false</code> 로 바꾼 배포. 2026-10-19 기준 배포되지 않아 F6은 그 뒤에 밟는다</td><td>F6 재연동</td></tr>
+  </tbody>
+</table>
+    <p style="margin-top:14px">
+      <span class="tag reg">@회귀</span> 최근 커밋에서 고친 버그의 재발 확인 ·
+      <span class="tag time">@시간점프</span> 기기 시간 변경 필요 ·
+      <span class="tag edge">@엣지</span> 경계값
+    </p>
+    <p style="margin-bottom:0">시간 점프 시나리오는 <b>설정 → 날짜 및 시간 → 자동 설정 끄기</b> 로 수동 변경한다. 검증이 끝나면 자동 설정을 되돌린다.</p>
+    <p id="viewHint" hidden style="margin:10px 0 0">기본 보기는 <b>상태순</b>이다. 같은 상태를 한 번 만들고 여러 기능의 항목을 이어서 확인하며, 시간 점프는 마지막에 한 번에 몰아서 한다. 빠진 항목을 검토하거나 수정한 기능만 다시 확인할 때는 <b>기능순</b>으로 바꾼다.</p>
+  </div>
+
+  <div id="list"></div>
+  <div class="empty hidden" id="empty">조건에 맞는 시나리오가 없다.</div>
+</div>
+
+<footer class="bar-bottom">
+  <div class="fb-inner">
+    <span class="note" id="savedNote">PASS 또는 FAIL 을 고르면 확인 완료로 잡힌다. 같은 버튼을 다시 누르면 판정이 풀린다.</span>
+  </div>
+</footer>
+
+<script>
+const FEATURES = [
+{
+  id: "F1", title: "진입과 첫 연동 입력 폼",
+  desc: "포털에 연동하지 않은 계정 B로 랜딩에서 로그인해 연 네이티브 연동 폼이다. 입력 칸과 연동 불가 안내를 확인한 뒤 시간표 탭의 홈 탭 버튼으로 다시 들어온다.",
+  scenarios: [
+  { id:"S1-01", tags:[], title:"연동하지 않은 계정으로 로그인하면 네이티브 연동 폼이 열린다",
+    steps:[["Given","앱 데이터를 지운 뒤 랜딩 화면에 있다"],
+           ["When","카카오 로그인으로 계정 B에 로그인한다"],
+           ["Then","제목 <code>재학 중인 학교 계정을 연동해주세요</code>(두 줄)와 <code>수원대학교</code> 카드가 있는 폼이 열린다"],
+           ["And","웹의 중단 안내 <code>현재 포털 연동을 잠시 중단했습니다.</code> 가 보이지 않고, 상단에 뒤로가기 버튼이 없다"]] },
+  { id:"S1-02", tags:[], title:"학번과 비밀번호를 모두 입력해야 학업 이력 동기화하기 버튼이 눌린다",
+    steps:[["Given","계정 B의 연동 폼, 두 칸이 비어 있다"],
+           ["When","학번 칸에만 아무 값을 입력하고 <code>학업 이력 동기화하기</code> 를 누른다"],
+           ["Then","버튼이 반투명하게 보이고, 눌러도 화면이 바뀌지 않는다"],
+           ["When","비밀번호 칸에도 값을 입력한다 (버튼은 누르지 않는다)"],
+           ["Then","버튼이 불투명하게 바뀐다"]] },
+  { id:"S1-03", tags:["edge"], title:"학번에 입력한 공백은 칸에 남지 않는다",
+    steps:[["Given","계정 B의 연동 폼"],
+           ["When","학번 칸에 <code>2023 1234</code> 처럼 공백을 섞어 입력한다"],
+           ["Then","칸에는 공백 없이 <code>20231234</code> 로 보인다"]],
+    why:"학번 입력에서 공백을 모두 지운다(PortalLinkViewModel.updateStudentId). 붙여넣기로 공백이 섞여 들어오는 경우를 막는다" },
+  { id:"S1-04", tags:[], title:"값이 있는 칸에는 지우기 버튼이 보이고, 누르면 그 칸만 비워진다",
+    steps:[["Given","계정 B의 연동 폼, 학번과 비밀번호를 모두 입력했다"],
+           ["Then","두 칸 오른쪽 끝에 동그란 지우기 버튼이 보인다"],
+           ["When","비밀번호 칸의 지우기 버튼을 누른다"],
+           ["Then","비밀번호 칸만 비어 <code>비밀번호를 입력해주세요</code> 가 보이고 그 칸의 지우기 버튼이 사라진다. 학번은 그대로다"]] },
+  { id:"S1-05", tags:[], title:"키보드가 올라와도 학업 이력 동기화하기 버튼이 키보드 위에 보인다",
+    steps:[["Given","계정 B의 연동 폼"],
+           ["When","비밀번호 칸을 눌러 키보드를 연다"],
+           ["Then","<code>학업 이력 동기화하기</code> 버튼이 키보드 바로 위로 올라와 가려지지 않는다"]] },
+  { id:"S1-06", tags:[], title:"연동 불가 안내를 누르면 시간표 만들기만 쓸 수 있다는 다이얼로그가 뜬다",
+    steps:[["Given","계정 B의 연동 폼"],
+           ["When","버튼 위의 <code>즉시 학교 연동이 불가하신가요?</code> <code>(ex. 신입생, 편입생)</code> 를 누른다"],
+           ["Then","제목 <code>알림</code>, 본문 <code>학교 연동없이 이용시</code> <code>'시간표 만들기'만 이용 가능합니다.</code>, 버튼 <code>취소</code>·<code>확인</code> 다이얼로그가 뜬다"]] },
+  { id:"S1-07", tags:[], title:"연동 불가 다이얼로그에서 취소하면 입력한 값이 남은 폼으로 돌아간다",
+    steps:[["Given","계정 B의 연동 폼에 학번을 입력한 뒤 S1-06의 다이얼로그를 열었다"],
+           ["When","<code>취소</code> 를 누른다"],
+           ["Then","다이얼로그만 닫히고, 입력한 학번이 그대로 남은 폼이 보인다"]] },
+  { id:"S1-08", tags:[], title:"연동 불가 다이얼로그에서 확인하면 홈의 시간표 탭으로 이동한다",
+    steps:[["Given","계정 B의 연동 폼에서 S1-06의 다이얼로그를 열었다"],
+           ["When","<code>확인</code> 을 누른다"],
+           ["Then","홈 화면이 열리고 하단 탭에서 시간표 탭이 선택되어 있다 (시간표가 없으면 빈 시간표 화면)"]] },
+  { id:"S1-09", tags:[], title:"시간표 탭의 연동 안내 다이얼로그에서 네를 누르면 네이티브 연동 폼이 열린다",
+    steps:[["Given","계정 B로 시간표 탭에 있다 (S1-08에서 이어진다)"],
+           ["When","하단의 홈 탭을 누른다"],
+           ["And","다이얼로그 <code>학교 연동 후 이용 가능한 기능입니다.</code> <code>학교 연동을 진행하시겠어요?</code> 에서 <code>네</code> 를 누른다"],
+           ["Then","S1-01과 같은 연동 폼이 열리고, 중단 안내 <code>현재 포털 연동을 잠시 중단했습니다.</code> 가 보이지 않는다"]] },
+  ]
+},
+{
+  id: "F2", title: "진행 화면",
+  desc: "학업 이력 동기화하기를 누른 뒤의 로딩 화면이다. 업로드를 막아 로딩이 길어진 상태에서 확인한다.",
+  scenarios: [
+  { id:"S2-01", tags:[], title:"제출하면 애니메이션과 안내 문구가 있는 로딩 화면으로 바뀐다",
+    state:"API 호스트 차단",
+    steps:[["Given","프록시 도구에서 <code>dev.api.cchaksa.com</code> 을 차단하고, 계정 B의 연동 폼에 있다"],
+           ["When","포털 계정 P의 학번과 비밀번호를 넣고 <code>학업 이력 동기화하기</code> 를 누른다"],
+           ["Then","폼이 사라지고 애니메이션 아래에 <code>학교 정보를 불러오는 중이에요</code> 와 <code>척척학사에서 수집하는 개인 정보는</code> <code>학교 연동 후 즉시 폐기됩니다.</code> 가 보인다"]] },
+  { id:"S2-02", tags:[], title:"로딩 제목이 약 2.5초마다 다음 문구로 바뀐다",
+    state:"API 호스트 차단",
+    steps:[["Given","S2-01의 로딩 화면이 보이고 있다"],
+           ["Then","2.5초쯤 지나면 제목이 잠깐 흐려졌다가 <code>불러온 정보를 입력하고 있어요</code> 로 바뀐다"],
+           ["And","다시 2.5초쯤 지나면 <code>학교 인증이 거의 다 되었어요!</code> 로 바뀐다 (로딩이 먼저 끝나면 거기까지 본 것으로 판정한다)"]] },
+  ]
+},
+{
+  id: "F3", title: "실패와 다시 시도",
+  desc: "연동 폼에서 제출한 뒤 실패하는 경우다. 비밀번호 오류는 폼으로 돌아가고, 업로드 실패는 실패 화면에서 같은 결과를 다시 올린다.",
+  scenarios: [
+  { id:"S3-01", tags:[], title:"비밀번호가 틀리면 서버 연동으로 넘어가지 않고 학번이 남은 폼으로 돌아온다",
+    steps:[["Given","계정 B의 연동 폼, 프록시 차단은 꺼져 있다"],
+           ["When","포털 계정 P의 학번과 틀린 비밀번호를 넣고 제출한다 (포털에 계정 잠김이 있으니 한 번만 틀린다)"],
+           ["Then","몇 초 안에 폼으로 돌아오고, 학번은 남고 비밀번호 칸은 비어 있다"],
+           ["And","두 칸 테두리가 빨갛고, 칸 아래에 빨간 글씨로 <code>아이디나 비밀번호가 일치하지 않습니다.</code> <code>학교 홈페이지에서 확인해주세요.</code> 가 보인다"],
+           ["And","logcat의 <code>PortalLinkRepository</code> 태그에 <code>서버 job으로 전환</code> 이 찍히지 않는다"]] },
+  { id:"S3-02", tags:[], title:"업로드가 계속 실패하면 학업 정보를 저장하지 못했다는 실패 화면이 보인다",
+    state:"API 호스트 차단",
+    steps:[["Given","S2-01·S2-02의 로딩이 이어지고 있다 (API 호스트 차단 중)"],
+           ["Then","로딩이 끝나면 일러스트 아래에 <code>불러온 학업 정보를 저장하지 못했어요</code> <code>잠시 후 다시 시도해주세요</code> 와 <code>다시 시도하기</code> 버튼이 보인다"],
+           ["And","logcat의 <code>PortalLinkRepository</code> 태그에 <code>업로드 실패(1/3)</code> 과 <code>(2/3)</code> 이 찍혀 있다 (자동으로 세 번 보냈다)"]] },
+  { id:"S3-03", tags:[], title:"실패 화면의 일러스트와 문구는 가운데 정렬되고 문구의 줄바꿈이 유지된다",
+    state:"API 호스트 차단",
+    steps:[["Given","S3-02의 실패 화면"],
+           ["Then","일러스트가 화면 가로 가운데에 있다"],
+           ["And","문구가 <code>불러온 학업 정보를 저장하지 못했어요</code> 와 <code>잠시 후 다시 시도해주세요</code> 두 줄로 나뉘어 가운데 정렬돼 있다 (웹 실패 화면은 왼쪽으로 치우치고 한 줄로 합쳐지지만, 앱은 의도적으로 따르지 않는다)"]] },
+  { id:"S3-04", tags:[], title:"업로드만 실패했을 때 다시 시도하면 입력 없이 같은 결과를 다시 올려 연동을 마친다",
+    state:"API 호스트 차단",
+    steps:[["Given","S3-02의 실패 화면"],
+           ["And","프록시 도구에서 <code>dev.api.cchaksa.com</code> 차단을 푼다"],
+           ["When","<code>다시 시도하기</code> 를 누른다"],
+           ["Then","입력 폼을 거치지 않고 로딩 화면이 잠깐 보인 뒤 홈 화면으로 이동한다"],
+           ["And","누른 뒤의 logcat에 <code>PortalScrape</code> 태그 로그 없이 <code>PortalLinkApi</code> 의 <code>POST /portal/link/scrape-results</code> 만 찍힌다 (포털을 다시 스크래핑하지 않는다)"]] },
+  ]
+},
+{
+  id: "F4", title: "첫 연동 성공 뒤",
+  desc: "S3-04(또는 프록시 없이 제출)로 계정 B의 첫 연동이 끝난 직후의 홈 화면이다.",
+  scenarios: [
+  { id:"S4-01", tags:[], title:"첫 연동이 끝나면 홈 탭이 선택되고 웹 홈이 연동된 학업 정보로 다시 열린다",
+    state:"계정 B 첫 연동 성공 직후",
+    steps:[["Given","계정 B가 포털 계정 P로 첫 연동에 성공했다"],
+           ["Then","하단 탭에서 홈 탭이 선택되어 있고, 시간표 화면이 아니라 웹 홈이 보인다"],
+           ["And","웹 홈이 처음부터 다시 불러와져 학번 P의 학업 정보가 보인다"]] },
+  { id:"S4-02", tags:[], title:"첫 연동이 끝난 뒤 뒤로 가기를 눌러도 연동 폼으로 돌아가지 않는다",
+    state:"계정 B 첫 연동 성공 직후",
+    steps:[["Given","S4-01의 홈 화면, 웹 홈 안에서 다른 페이지로 이동하지 않았다"],
+           ["When","시스템 뒤로 가기를 누른다"],
+           ["Then","앱이 백그라운드로 간다. 연동 폼이나 실패 화면이 다시 보이지 않는다"],
+           ["And","앱을 다시 열면 홈 화면이 보인다"]] },
+  { id:"S4-03", tags:[], title:"연동한 뒤에는 시간표 탭에서 홈 탭을 눌러도 연동 안내 다이얼로그가 뜨지 않는다",
+    state:"계정 B 첫 연동 성공 직후",
+    steps:[["Given","S4-01의 홈 화면"],
+           ["When","하단의 시간표 탭으로 바꾼 뒤 홈 탭을 누른다"],
+           ["Then","<code>학교 연동 후 이용 가능한 기능입니다.</code> 다이얼로그 없이 바로 웹 홈이 보인다"]] },
+  ]
+},
+{
+  id: "F5", title: "계정 충돌과 서버 연동 fallback",
+  desc: "다른 앱 계정(C)에서 이미 계정 B에 연동된 학번을 쓰거나, 기기에서 포털에 접속하지 못하는 경우다. 랜딩에서 계정 C로 로그인해 연 연동 폼에서 시작한다.",
+  scenarios: [
+  { id:"S5-01", tags:[], title:"다른 계정에 연동된 학번을 올리면 현재 계정에 연결할 수 없다는 실패 화면이 보인다",
+    state:"계정 C 로그인",
+    steps:[["Given","앱 데이터를 지우고 계정 C로 로그인해 연동 폼이 열려 있다 (계정 B는 S3-04에서 학번 P에 연동됐다)"],
+           ["When","포털 계정 P의 학번과 비밀번호를 넣고 제출한다"],
+           ["Then","로딩 뒤 실패 화면에 <code>현재 계정에 연결할 수 없는 학번입니다.</code> <code>다른 계정으로 로그인했는지 확인해주세요.</code> 가 보인다"],
+           ["And","logcat의 <code>PortalLinkApi</code> 에 <code>POST /portal/link/scrape-results</code> 가 한 번만 찍힌다 (같은 결과를 다시 올리지 않는다)"]] },
+  { id:"S5-02", tags:[], title:"계정 충돌 실패 화면에서 다시 시도하면 학번만 남은 입력 폼으로 돌아간다",
+    state:"계정 C 로그인",
+    steps:[["Given","S5-01의 실패 화면"],
+           ["When","<code>다시 시도하기</code> 를 누른다"],
+           ["Then","로딩 없이 연동 폼으로 돌아가고, 학번은 남고 비밀번호 칸은 비어 있다"],
+           ["And","칸 아래에 빨간 오류 문구가 없다"]] },
+  { id:"S5-03", tags:[], title:"기기에서 포털에 접속하지 못하면 곧바로 실패하지 않고 서버 연동으로 넘어간다",
+    state:"포털 호스트 차단",
+    steps:[["Given","프록시 도구에서 <code>portal.suwon.ac.kr</code> 과 <code>info.suwon.ac.kr</code> 을 차단하고, 계정 C의 연동 폼에 있다"],
+           ["When","포털 계정 P의 학번과 비밀번호를 넣고 제출한다"],
+           ["Then","logcat의 <code>PortalLinkRepository</code> 에 <code>서버 job으로 전환</code> 이 찍히고, <code>PortalLinkApi</code> 에 <code>POST /portal/link</code> 가 찍힌다"],
+           ["And","그 뒤에도 실패 화면으로 바뀌지 않고 로딩 화면이 이어진다. 최대 3분 안에 끝나는 결과는 판정하지 않는다. 학번 P는 앱으로 계정 B에 연동돼 있어 백엔드가 계정 C의 서버 job을 <code>C21</code> 로 거절한다. 서버 경로의 성공은 S7-11에서 계정 B로 확인한다"]] },
+  ]
+},
+{
+  id: "F6", title: "학업 정보 업데이트(재연동)",
+  desc: "연동된 계정 B가 웹 홈의 정보 업데이트 버튼에서 광고를 거쳐 들어오는 네이티브 화면이다. 웹 수정이 배포된 뒤에만 밟을 수 있다.",
+  scenarios: [
+  { id:"S6-01", tags:[], title:"웹 홈의 정보 업데이트 버튼은 광고 안내를 거쳐 네이티브 학업 정보 업데이트 폼을 연다",
+    state:"웹 재연동 차단 해제 후",
+    steps:[["Given","앱 데이터를 지우고 계정 B로 로그인해 웹 홈에 있다"],
+           ["When","웹 홈의 <code>26년 10월 19일 14:05 업데이트</code> 꼴의 버튼(동기화 시각이 없으면 <code>정보 업데이트</code>)을 누른다"],
+           ["Then","제목 <code>안내</code>, 본문 <code>척척학사를 위한 짧은 광고가 재생된 후,</code> <code>학업 정보 업데이트 화면으로 이동합니다.</code> 다이얼로그가 뜬다"],
+           ["When","<code>확인</code> 을 누르고 광고가 끝나면 닫는다"],
+           ["Then","상단에 뒤로가기 버튼이 있고 학번·비밀번호 칸이 있는 폼이 열린다"]] },
+  { id:"S6-02", tags:[], title:"학업 정보 업데이트 폼에는 연동 불가 안내가 없다",
+    state:"웹 재연동 차단 해제 후",
+    steps:[["Given","S6-01의 학업 정보 업데이트 폼"],
+           ["Then","<code>학업 이력 동기화하기</code> 버튼 위에 <code>즉시 학교 연동이 불가하신가요?</code> 가 보이지 않는다"]] },
+  { id:"S6-03", tags:[], title:"학업 정보 업데이트 폼의 뒤로가기 버튼을 누르면 웹 홈으로 돌아간다",
+    state:"웹 재연동 차단 해제 후",
+    steps:[["Given","S6-01의 학업 정보 업데이트 폼"],
+           ["When","상단 왼쪽의 뒤로가기 버튼을 누른다"],
+           ["Then","폼이 닫히고 웹 홈이 보인다"]] },
+  { id:"S6-04", tags:[], title:"학업 정보 업데이트가 끝나면 웹 홈의 업데이트 시각이 방금 시각으로 바뀐다",
+    state:"웹 재연동 차단 해제 후",
+    steps:[["Given","S6-01의 학업 정보 업데이트 폼"],
+           ["When","포털 계정 P의 학번과 비밀번호를 넣고 제출한다"],
+           ["Then","로딩 뒤 홈 탭이 선택된 웹 홈이 다시 불러와지고, 업데이트 버튼이 방금 시각의 <code>…년 …월 …일 HH:mm 업데이트</code> 로 바뀐다"],
+           ["And","logcat의 <code>PortalLinkApi</code> 에 <code>POST /portal/link/scrape-results</code> 가 찍힌다 (웹이 아니라 네이티브 경로로 올렸다)"]] },
+  ]
+},
+{
+  id: "F7", title: "디버그 화면과 연동 경로 선택",
+  desc: "디버그 빌드에서 기기를 흔들면 열리는 디버그 화면이다. 포털 연동을 앱 로직으로 할지 서버 로직으로 할지 고르고, 연동 여부와 관계없이 연동 화면을 연다.",
+  scenarios: [
+  { id:"S7-01", tags:[], title:"기기를 흔들면 디버그 화면이 열린다",
+    steps:[["Given","디버그 빌드의 랜딩 화면이나 홈 화면"],
+           ["When","기기를 흔든다. 에뮬레이터는 <code>adb emu sensor set acceleration 40:40:40</code> 다음에 <code>adb emu sensor set acceleration 0:9.81:0</code> 을 실행한다"],
+           ["Then","상단에 뒤로가기 버튼과 <code>디버그</code> 제목이 있고, <code>포털 연동 경로</code> 아래에 <code>기본</code>·<code>앱 로직만</code>·<code>서버 로직만</code> 세 항목이 있는 화면이 열린다"]] },
+  { id:"S7-02", tags:[], title:"디버그 화면을 처음 열면 연동 경로는 기본이 선택되어 있다",
+    steps:[["Given","앱을 시작한 뒤 S7-01로 디버그 화면을 처음 열었다"],
+           ["Then","<code>기본</code> 항목만 보라색 테두리와 속이 찬 동그라미로 표시되어 있다"]] },
+  { id:"S7-03", tags:["edge"], title:"디버그 화면에서 다시 흔들어도 디버그 화면이 겹쳐 열리지 않는다",
+    steps:[["Given","S7-01의 디버그 화면"],
+           ["When","S7-01과 같이 한 번 더 흔든다"],
+           ["And","상단의 뒤로가기 버튼을 한 번 누른다"],
+           ["Then","디버그 화면을 열기 전의 화면으로 돌아간다 (디버그 화면이 한 번 더 나오지 않는다)"]],
+    why:"흔들기는 어느 화면에서든 디버그 화면으로 이동시킨다. 지금 화면이 디버그 화면이면 이동하지 않게 했다(MainNavigator.navigateDebug)" },
+  { id:"S7-04", tags:[], title:"고른 연동 경로는 디버그 화면을 닫았다 다시 열어도 유지된다",
+    steps:[["Given","S7-01의 디버그 화면"],
+           ["When","<code>서버 로직만</code> 을 누르고 뒤로가기로 나간 뒤 다시 흔들어 디버그 화면을 연다"],
+           ["Then","<code>서버 로직만</code> 이 선택되어 있다"]] },
+  { id:"S7-05", tags:[], title:"앱을 다시 시작하면 연동 경로가 기본으로 돌아간다",
+    steps:[["Given","S7-04로 <code>서버 로직만</code> 을 고른 상태"],
+           ["When","<code>adb shell am force-stop com.kunize.uswtimetable</code> 로 앱을 끝내고 다시 연 뒤 흔들어 디버그 화면을 연다"],
+           ["Then","<code>기본</code> 이 선택되어 있다"]] },
+  { id:"S7-06", tags:[], title:"디버그 화면의 첫 연동 화면 버튼은 연동 불가 안내가 있는 첫 연동 폼을 연다",
+    steps:[["Given","S7-01의 디버그 화면"],
+           ["When","<code>포털 연동 화면 열기</code> 아래의 <code>첫 연동 화면</code> 을 누른다"],
+           ["Then","상단 뒤로가기 버튼이 없고, <code>즉시 학교 연동이 불가하신가요?</code> 가 있는 연동 폼이 열린다"]] },
+  { id:"S7-07", tags:[], title:"디버그 화면의 학업 정보 업데이트 화면 버튼은 뒤로가기 버튼이 있는 업데이트 폼을 연다",
+    steps:[["Given","S7-01의 디버그 화면"],
+           ["When","<code>학업 정보 업데이트 화면</code> 을 누른다"],
+           ["Then","상단에 뒤로가기 버튼이 있는 학업 정보 업데이트 폼이 열린다"]] },
+  { id:"S7-08", tags:[], title:"디버그 화면에서 연 학업 정보 업데이트 폼의 뒤로가기는 디버그 화면으로 돌아간다",
+    steps:[["Given","S7-07의 학업 정보 업데이트 폼"],
+           ["When","상단 왼쪽의 뒤로가기 버튼을 누른다"],
+           ["Then","폼이 닫히고 디버그 화면이 보인다"]] },
+  { id:"S7-09", tags:[], title:"앱 로직만을 고르면 기기에서 포털에 접속하지 못해도 서버 job으로 넘어가지 않고 실패 화면이 뜬다",
+    state:"디버그: 앱 로직만 · 포털 호스트 차단",
+    steps:[["Given","계정 B로 로그인해 있다 (계정 C라면 앱 데이터를 지우고 B로 로그인한다). 디버그 화면에서 <code>앱 로직만</code> 을 고르고 <code>학업 정보 업데이트 화면</code> 을 연다"],
+           ["And","프록시 도구에서 <code>portal.suwon.ac.kr</code> 과 <code>info.suwon.ac.kr</code> 을 차단한다"],
+           ["When","포털 계정 P의 학번과 비밀번호를 넣고 제출한다"],
+           ["Then","몇 초 안에 실패 화면에 <code>알 수 없는 오류가 발생했어요</code> <code>잠시후 다시 시도해주세요</code> 가 보인다"],
+           ["And","logcat의 <code>PortalLinkRepository</code> 에 <code>디버그 설정의 연동 경로: DEVICE_ONLY</code> 가 찍히고, <code>서버 job으로 전환</code> 과 <code>PortalLinkApi</code> 의 <code>POST /portal/link</code> 는 찍히지 않는다"]] },
+  { id:"S7-10", tags:[], title:"서버 로직만을 고르면 포털을 스크래핑하지 않고 바로 서버 job을 만든다",
+    state:"디버그: 서버 로직만",
+    steps:[["Given","계정 B, 프록시 차단 없음. 디버그 화면에서 <code>서버 로직만</code> 을 고르고 <code>학업 정보 업데이트 화면</code> 을 연다"],
+           ["When","포털 계정 P의 학번과 비밀번호를 넣고 제출한다"],
+           ["Then","logcat의 <code>PortalLinkRepository</code> 에 <code>디버그 설정의 연동 경로: SERVER_ONLY</code> 가 찍힌 뒤 <code>PortalLinkApi</code> 에 <code>POST /portal/link</code> 가 찍힌다"],
+           ["And","<code>PortalScrape</code> 태그 로그와 <code>POST /portal/link/scrape-results</code> 는 찍히지 않고, 로딩 화면이 이어진다"]] },
+  { id:"S7-11", tags:[], title:"서버 로직의 연동이 성공하면 홈 탭으로 돌아가고 웹 홈의 업데이트 시각이 바뀐다",
+    state:"디버그: 서버 로직만",
+    steps:[["Given","S7-10에서 이어진다. dev 서버 스크래퍼가 학교 포털에 접속할 수 있어야 한다 (접속하지 못하면 판정하지 않고 메모를 남긴다)"],
+           ["Then","최대 3분 안에 홈 탭이 선택된 웹 홈이 다시 불러와진다"],
+           ["And","웹 홈의 업데이트 버튼이 방금 시각의 <code>…년 …월 …일 HH:mm 업데이트</code> 로 바뀐다"]] },
+  { id:"S7-12", tags:[], title:"서버 로직에서 비밀번호가 틀리면 학번이 남은 폼으로 돌아온다",
+    state:"디버그: 서버 로직만",
+    steps:[["Given","<code>서버 로직만</code> 을 고른 채 디버그 화면에서 <code>학업 정보 업데이트 화면</code> 을 다시 연다. S7-11과 같이 dev 서버 스크래퍼가 학교 포털에 접속할 수 있어야 한다"],
+           ["When","포털 계정 P의 학번과 틀린 비밀번호를 넣고 제출한다 (한 번만 틀린다)"],
+           ["Then","서버 job이 끝나면 폼으로 돌아오고, 학번은 남고 비밀번호 칸은 비어 있다"],
+           ["And","칸 아래에 빨간 글씨로 <code>아이디나 비밀번호가 일치하지 않습니다.</code> <code>학교 홈페이지에서 확인해주세요.</code> 가 보인다"]] },
+  ]
+},
+];
+
+const KEY = "qa-portal-link-native-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { state = {}; }
+
+// 코드 변경으로 기대 동작이 바뀐 시나리오는 rev 를 올린다. 저장된 rev 가 다르면
+// "재확인" 배지만 붙이고, 이미 눌러 둔 PASS/FAIL·메모는 그대로 둔다 — 저장된 판정을
+// 지우지 않는 것이 이 파일의 규칙이다. 다시 판정하면 그 자리에서 배지가 사라진다.
+const STALE = new Set();
+(function markStale() {
+  for (const f of FEATURES) for (const s of f.scenarios) {
+    const saved = state[s.id];
+    if (!saved || !saved.verdict) continue;
+    if ((saved.rev || 1) !== (s.rev || 1)) STALE.add(s.id);
+  }
+})();
+
+const REV_OF = Object.fromEntries(FEATURES.flatMap(f => f.scenarios.map(s => [s.id, s.rev || 1])));
+const TAG_LABEL = { reg: "@회귀", time: "@시간점프", edge: "@엣지" };
+const TAG_CLASS = { reg: "reg", time: "time", edge: "edge" };
+const listEl = document.getElementById("list");
+const emptyEl = document.getElementById("empty");
+let filter = "all";
+
+function allScenarios() {
+  return FEATURES.flatMap(f => f.scenarios.map(s => ({ ...s, feature: f })));
+}
+
+// 상태순 보기: 같은 state 라벨의 시나리오를 기능과 관계없이 한 묶음으로 모은다.
+// 준비물 그대로 → 중간 상태(첫 등장 순) → 시간 점프가 낀 상태(첫 등장 순) 순서다.
+// 상태를 한 번 만들고 이어서 확인하게 해, 같은 준비를 기능마다 되풀이하지 않게 한다.
+const HAS_STATE = FEATURES.some(f => f.scenarios.some(s => s.state));
+const VIEW_KEY = KEY + ":view";
+// state 를 쓴 파일은 기기에서 밟는 순서인 상태순으로 연다. 사용자가 고른 보기는 기억한다.
+let view = HAS_STATE ? "state" : "feature";
+try {
+  const saved = localStorage.getItem(VIEW_KEY);
+  if (HAS_STATE && (saved === "state" || saved === "feature")) view = saved;
+} catch (e) {}
+
+function groups() {
+  if (view !== "state") {
+    return FEATURES.map(f => ({ id: f.id, title: f.title, desc: f.desc,
+      items: f.scenarios.map(s => ({ ...s, feature: f })) }));
+  }
+  const order = [], byKey = new Map();
+  for (const s of allScenarios()) {
+    const k = s.state || "";
+    if (!byKey.has(k)) { byKey.set(k, []); order.push(k); }
+    byKey.get(k).push(s);
+  }
+  const isTime = k => byKey.get(k).some(s => (s.tags || []).includes("time"));
+  const rank = k => k === "" ? 0 : isTime(k) ? 2 : 1;
+  order.sort((a, b) => rank(a) - rank(b));
+  return order.map((k, i) => ({
+    id: `#${i + 1}`,
+    title: k || "준비물 표 그대로",
+    desc: k === "" ? "준비물 표의 상태에서 바로 확인한다."
+      : isTime(k) ? "기기 시간을 옮겨 이 상태를 만든 뒤 아래 항목을 이어서 확인한다."
+      : "이 상태를 한 번 만든 뒤 아래 항목을 이어서 확인한다.",
+    items: byKey.get(k),
+  }));
+}
+
+function render() {
+  listEl.innerHTML = "";
+  for (const g of groups()) {
+    const sec = document.createElement("section");
+    sec.className = "feature";
+    sec.innerHTML = `<h2><span class="fid">${g.id}</span>${escapeHtml(g.title)}</h2><p class="fdesc">${escapeHtml(g.desc)}</p>`;
+    for (const s of g.items) {
+      sec.appendChild(scenarioEl(s));
+    }
+    listEl.appendChild(sec);
+  }
+  applyFilter();
+  updateProgress();
+}
+
+function setView(v) {
+  view = v;
+  try { localStorage.setItem(VIEW_KEY, v); } catch (e) {}
+  document.getElementById("vFeat").setAttribute("aria-pressed", v === "feature");
+  document.getElementById("vState").setAttribute("aria-pressed", v === "state");
+  render();
+}
+if (HAS_STATE) {
+  document.getElementById("viewCtl").style.display = "contents";
+  document.getElementById("viewHint").hidden = false;
+  document.getElementById("vFeat").setAttribute("aria-pressed", view === "feature");
+  document.getElementById("vState").setAttribute("aria-pressed", view === "state");
+  document.getElementById("vFeat").onclick = () => setView("feature");
+  document.getElementById("vState").onclick = () => setView("state");
+}
+
+function markHtml(id, st) {
+  const cls = st.verdict || (st.done ? "done" : "");
+  const label = st.verdict === "pass" ? "PASS" : st.verdict === "fail" ? "FAIL"
+    : st.done ? "확인 완료" : "미확인";
+  return `<span class="mark ${cls}" role="img" aria-label="${id} ${label}">${st.verdict === "fail" ? "✕" : "✓"}</span>`;
+}
+
+function scenarioEl(s) {
+  const st = state[s.id] || {};
+  const el = document.createElement("div");
+  el.className = "sc";
+  el.dataset.id = s.id;
+  el.dataset.state = st.verdict || "";
+
+  const tags = (s.tags || []).map(t => `<span class="tag ${TAG_CLASS[t]}">${TAG_LABEL[t]}</span>`).join("");
+  const steps = s.steps.map(([kw, tx]) =>
+    `<div><span class="kw">${kw}</span><span class="tx">${tx}</span></div>`).join("");
+
+  el.innerHTML = `
+    <div class="sc-head">
+      ${markHtml(s.id, st)}
+      <div class="sc-title"><span class="sid">${s.id}</span>${escapeHtml(s.title)}${tags ? `<span class="tags">${tags}</span>` : ""}${STALE.has(s.id) ? `<span class="stale">기준 변경 · 재확인</span>` : ""}</div>
+    </div>
+    ${view === "state" ? `<div class="sfeat"><span class="fid">${s.feature.id}</span>${escapeHtml(s.feature.title)}</div>` : ""}
+    <div class="gherkin">${steps}</div>
+    ${s.why ? `<div class="why">↳ ${s.why}</div>` : ""}
+    <div class="verdict">
+      <label class="p"><input type="radio" name="v-${s.id}" value="pass" ${st.verdict === "pass" ? "checked" : ""}>PASS</label>
+      <label class="f"><input type="radio" name="v-${s.id}" value="fail" ${st.verdict === "fail" ? "checked" : ""}>FAIL</label>
+      <input type="text" placeholder="메모 (실제 동작, 기기, 재현 조건)" value="${escapeAttr(st.note || "")}">
+    </div>`;
+
+  // 확인 완료 표시는 PASS/FAIL 판정에서만 나온다 — 직접 누를 수 있는 체크박스가 없다.
+  // 같은 판정을 다시 누르면 풀린다(잘못 누른 것을 되돌리는 유일한 길).
+  el.querySelectorAll('input[type=radio]').forEach(r => {
+    r.addEventListener("click", () => {
+      const undo = el.dataset.state === r.value;
+      if (undo) r.checked = false;
+      el.dataset.state = undo ? "" : r.value;
+      patch(s.id, undo ? { verdict: null, done: false } : { verdict: r.value, done: true });
+      el.querySelector(".mark").outerHTML = markHtml(s.id, state[s.id] || {});
+      applyFilter();
+    });
+  });
+
+  const note = el.querySelector('input[type=text]');
+  note.addEventListener("input", () => { patch(s.id, { note: note.value }, true); });
+
+  return el;
+}
+
+let saveTimer = null;
+function patch(id, changes, debounce) {
+  const next = { ...(state[id] || {}), ...changes };
+  // rev 는 판정을 내린 기준이다. 메모만 고친 것으로 옮기면 새로고침 뒤 재확인 배지가
+  // 사라지므로, 판정이 바뀔 때만 현재 rev 로 맞춘다.
+  if ("verdict" in changes) next.rev = REV_OF[id] || 1;
+  state[id] = next;
+  // 새 기준으로 다시 판정했으면 배지를 뗀다. 메모만 고친 것은 재확인이 아니라 그대로 둔다.
+  if ("verdict" in changes && STALE.delete(id)) {
+    const badge = document.querySelector(`.sc[data-id="${id}"] .stale`);
+    if (badge) badge.remove();
+  }
+  const write = () => {
+    localStorage.setItem(KEY, JSON.stringify(state));
+    updateProgress();
+    flashSaved();
+  };
+  if (debounce) {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(write, 300);
+  } else {
+    write();
+    applyFilter();
+  }
+}
+
+function updateProgress() {
+  const all = allScenarios();
+  const total = all.length;
+  let pass = 0, fail = 0, done = 0;
+  for (const s of all) {
+    const st = state[s.id] || {};
+    if (st.verdict === "pass") pass++;
+    else if (st.verdict === "fail") fail++;
+    if (st.done) done++;
+  }
+  document.getElementById("barPass").style.width = (pass / total * 100) + "%";
+  document.getElementById("barFail").style.width = (fail / total * 100) + "%";
+  document.getElementById("counts").innerHTML =
+    `<b>${done}</b>/${total} 확인 · <span class="c-pass">PASS ${pass}</span> · <span class="c-fail">FAIL ${fail}</span>`
+    + (STALE.size ? ` · 재확인 ${STALE.size}` : "");
+  document.getElementById("meta").textContent = `${FEATURES.length}개 기능 · ${total}개 시나리오`;
+}
+
+function applyFilter() {
+  let visible = 0;
+  document.querySelectorAll(".sc").forEach(el => {
+    const st = state[el.dataset.id] || {};
+    let show = true;
+    if (filter === "todo") show = !st.done;
+    else if (filter === "fail") show = st.verdict === "fail";
+    else if (filter === "stale") show = STALE.has(el.dataset.id);
+    el.classList.toggle("hidden", !show);
+    if (show) visible++;
+  });
+  document.querySelectorAll("section.feature").forEach(sec => {
+    const any = [...sec.querySelectorAll(".sc")].some(el => !el.classList.contains("hidden"));
+    sec.style.display = any ? "" : "none";
+  });
+  emptyEl.classList.toggle("hidden", visible > 0);
+}
+
+function setFilter(f) {
+  filter = f;
+  document.getElementById("fAll").setAttribute("aria-pressed", f === "all");
+  document.getElementById("fTodo").setAttribute("aria-pressed", f === "todo");
+  document.getElementById("fFail").setAttribute("aria-pressed", f === "fail");
+  document.getElementById("fStale").setAttribute("aria-pressed", f === "stale");
+  applyFilter();
+}
+document.getElementById("fAll").onclick = () => setFilter("all");
+document.getElementById("fTodo").onclick = () => setFilter("todo");
+document.getElementById("fFail").onclick = () => setFilter("fail");
+document.getElementById("fStale").onclick = () => setFilter("stale");
+
+document.getElementById("btnCopy").onclick = async () => {
+  const fails = allScenarios().filter(s => (state[s.id] || {}).verdict === "fail");
+  if (!fails.length) { toast("FAIL 로 표시한 시나리오가 없다."); return; }
+  const lines = ["## 포털 연동 네이티브 QA — FAIL 목록", ""];
+  for (const s of fails) {
+    const st = state[s.id];
+    lines.push(`### ${s.id} ${s.title}`);
+    lines.push(`- 기능: ${s.feature.id} ${s.feature.title}`);
+    if (s.state) lines.push(`- 상태: ${s.state}`);
+    for (const [kw, tx] of s.steps) lines.push(`  - ${kw} ${toMarkdown(tx)}`);
+    lines.push(`- 관찰: ${st.note || "(메모 없음)"}`);
+    lines.push("");
+  }
+  try {
+    await navigator.clipboard.writeText(lines.join("\n"));
+    toast(`FAIL ${fails.length}건을 복사했다.`);
+  } catch (e) {
+    toast("복사 실패 — 브라우저 권한을 확인한다.");
+  }
+};
+
+document.getElementById("btnReset").onclick = () => {
+  if (!confirm("체크·PASS/FAIL·메모를 모두 지운다. 계속할까?")) return;
+  state = {};
+  localStorage.removeItem(KEY);
+  STALE.clear();
+  render();
+};
+
+let toastTimer = null;
+const NOTE_DEFAULT = "PASS 또는 FAIL 을 고르면 확인 완료로 잡힌다. 같은 버튼을 다시 누르면 판정이 풀린다.";
+function toast(msg) {
+  const el = document.getElementById("savedNote");
+  el.textContent = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.textContent = NOTE_DEFAULT; }, 2600);
+}
+function flashSaved() { toast("저장됨"); }
+
+if (STALE.size) {
+  toast(`기대 동작이 바뀐 ${STALE.size}건에 재확인 표시를 붙였다 (${[...STALE].join(", ")}). 눌러 둔 판정은 그대로 있다.`);
+  clearTimeout(toastTimer);
+}
+
+function escapeHtml(s) { return String(s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])); }
+function escapeAttr(s) { return escapeHtml(s).replace(/"/g, "&quot;"); }
+function toMarkdown(html) {
+  return html.replace(/<\/?code>/g, "`").replace(/<\/?b>/g, "**").replace(/<\/?em>/g, "_")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&amp;/g, "&");
+}
+
+render();
+</script>
+</body>
+</html>
