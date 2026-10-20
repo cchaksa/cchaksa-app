@@ -165,7 +165,7 @@ private fun PortalLinkForm(
     ) {
       FunnelHeadline(
         title = "재학 중인 학교\n계정을 연동해주세요",
-        description = "척척학사에서 수집하는 개인 정보는\n학교 연동 후 즉시 폐기됩니다.",
+        description = "척척학사에서 수집하는 개인정보는\n학교 연동 후 즉시 폐기됩니다.",
       )
 
       // 웹은 폼 컨테이너와 학교 카드에 각각 68px의 위쪽 여백을 둔다.
@@ -296,7 +296,7 @@ private val LOADING_TITLES = listOf(
   "불러온 정보를 입력하고 있어요",
   "학교 인증이 거의 다 되었어요!",
 )
-private const val LOADING_DESCRIPTION = "척척학사에서 수집하는 개인 정보는\n학교 연동 후 즉시 폐기됩니다."
+private const val LOADING_DESCRIPTION = "척척학사에서 수집하는 개인정보는\n학교 연동 후 즉시 폐기됩니다."
 private const val TEXT_ROTATE_INTERVAL_MS = 2_500L
 private const val FADE_DURATION_MS = 300
 
@@ -318,11 +318,12 @@ private fun PortalLinkLoading() {
   }
 
   // 웹은 레이아웃 좌우 여백 20px 안에 로딩 화면의 좌우 여백 40px을 다시 둔다.
+  // 안내 문구는 첫 줄이 한 줄에 들어가도록 안쪽 여백 40px을 제목에만 준다.
   Column(
     modifier = Modifier
       .fillMaxSize()
       .verticalScroll(rememberScrollState())
-      .padding(start = 60.dp, end = 60.dp, top = 141.dp),
+      .padding(start = 20.dp, end = 20.dp, top = 141.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     // 애니메이션은 300px 고정이라 좁은 화면에서는 여백을 넘어 가운데에 그려진다(웹과 같다).
@@ -334,6 +335,7 @@ private fun PortalLinkLoading() {
       horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       Text(
+        modifier = Modifier.padding(horizontal = 40.dp),
         text = LOADING_TITLES[titleIndex].keepAll(),
         style = CchTheme.typography.titleLg,
         color = Black100,
