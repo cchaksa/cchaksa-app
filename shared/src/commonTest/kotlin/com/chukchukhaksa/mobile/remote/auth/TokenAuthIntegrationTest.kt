@@ -1,5 +1,7 @@
 package com.chukchukhaksa.mobile.remote.auth
 
+import com.chukchukhaksa.mobile.data.auth.model.SignInResult
+import com.chukchukhaksa.mobile.data.auth.repository.AuthRepositoryImpl
 import com.chukchukhaksa.mobile.remote.di.configureBearerAuth
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -165,6 +167,87 @@ class TokenAuthIntegrationTest {
 
         assertEquals(1, requestLog.size)
         assertNull(requestLog[0].headers[HttpHeaders.Authorization])
+    }
+
+    // --- 저장된 토큰 교체 테스트 ---
+
+    @Test
+    fun `탈퇴하면 이전 계정의 토큰을 보내지 않는다`() = runTest {
+        val fakeDataSource = FakeLocalAuthDataSource(
+            initialAccessToken = "old-access-token",
+            initialRefreshToken = "old-refresh-token",
+        )
+        val authEventBus = AuthEventBus()
+        val requestLog = mutableListOf<HttpRequestData>()
+
+        val mainEngine = MockEngine { request ->
+            requestLog.add(request)
+            jsonResponse(successApiResponse())
+        }
+        val refreshEngine = MockEngine { jsonResponse(successApiResponse()) }
+
+        val client = buildTestClient(fakeDataSource, authEventBus, mainEngine, refreshEngine)
+        val authRepository = AuthRepositoryImpl(
+            remoteAuthDataSource = FakeRemoteAuthDataSource(
+                SignInResult(accessToken = "unused", refreshToken = "unused", isPortalLinked = false),
+            ),
+            localAuthDataSource = fakeDataSource,
+            authTokenCache = AuthTokenCacheImpl(client),
+        )
+
+        // 첫 요청에서 클라이언트가 토큰을 캐시한다.
+        client.get("timetable")
+        // WithdrawHandler가 부르는 경로
+        authRepository.clearTokens()
+        client.get("timetable")
+
+        assertEquals(2, requestLog.size)
+        assertEquals(
+            "Bearer old-access-token",
+            requestLog[0].headers[HttpHeaders.Authorization],
+        )
+        assertNull(requestLog[1].headers[HttpHeaders.Authorization])
+    }
+
+    @Test
+    fun `탈퇴 후 재가입하면 새 계정의 토큰으로 요청한다`() = runTest {
+        val fakeDataSource = FakeLocalAuthDataSource(
+            initialAccessToken = "old-access-token",
+            initialRefreshToken = "old-refresh-token",
+        )
+        val authEventBus = AuthEventBus()
+        val requestLog = mutableListOf<HttpRequestData>()
+
+        val mainEngine = MockEngine { request ->
+            requestLog.add(request)
+            jsonResponse(successApiResponse())
+        }
+        val refreshEngine = MockEngine { jsonResponse(successApiResponse()) }
+
+        val client = buildTestClient(fakeDataSource, authEventBus, mainEngine, refreshEngine)
+        val authRepository = AuthRepositoryImpl(
+            remoteAuthDataSource = FakeRemoteAuthDataSource(
+                SignInResult(accessToken = "new-access-token", refreshToken = "new-refresh-token", isPortalLinked = false),
+            ),
+            localAuthDataSource = fakeDataSource,
+            authTokenCache = AuthTokenCacheImpl(client),
+        )
+
+        // 첫 요청에서 클라이언트가 토큰을 캐시한다.
+        client.get("timetable")
+        authRepository.clearTokens()
+        authRepository.signIn(provider = "kakao", idToken = "id-token", nonce = "nonce")
+        client.post("portal/scrape-results")
+
+        assertEquals(2, requestLog.size)
+        assertEquals(
+            "Bearer old-access-token",
+            requestLog[0].headers[HttpHeaders.Authorization],
+        )
+        assertEquals(
+            "Bearer new-access-token",
+            requestLog[1].headers[HttpHeaders.Authorization],
+        )
     }
 
     // --- 토큰 리프레시 + 재시도 테스트 ---

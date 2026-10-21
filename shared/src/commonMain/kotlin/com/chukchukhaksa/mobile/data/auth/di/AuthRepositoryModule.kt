@@ -1,8 +1,10 @@
 package com.chukchukhaksa.mobile.data.auth.di
 
+import com.chukchukhaksa.mobile.data.auth.datasource.AuthTokenCache
 import com.chukchukhaksa.mobile.data.auth.datasource.RemoteAuthDataSource
 import com.chukchukhaksa.mobile.data.auth.repository.AuthRepository
 import com.chukchukhaksa.mobile.data.auth.repository.AuthRepositoryImpl
+import com.chukchukhaksa.mobile.remote.auth.AuthTokenCacheImpl
 import com.chukchukhaksa.mobile.remote.auth.RemoteAuthDataSourceImpl
 import com.chukchukhaksa.mobile.remote.di.AUTH_REFRESH_CLIENT_QUALIFIER
 import org.koin.dsl.module
@@ -13,5 +15,7 @@ val authRepositoryModule = module {
     single<RemoteAuthDataSource> {
         RemoteAuthDataSourceImpl(get(qualifier = AUTH_REFRESH_CLIENT_QUALIFIER))
     }
-    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
+    // 캐시를 비울 대상은 Auth 플러그인이 설치된 기본 클라이언트다.
+    single<AuthTokenCache> { AuthTokenCacheImpl(get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get(), get()) }
 }
