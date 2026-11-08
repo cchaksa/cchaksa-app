@@ -69,7 +69,11 @@ class PortalLinkRepositoryImpl(
   override suspend fun upload(upload: PortalScrapeUpload) {
     for (attempt in 1..UPLOAD_MAX_ATTEMPTS) {
       try {
-        remotePortalLinkDataSource.uploadScrapeResult(upload.scrapeResult.rawJson, upload.idempotencyKey)
+        remotePortalLinkDataSource.uploadScrapeResult(
+          rawJson = upload.scrapeResult.rawJson,
+          referenceRankingRawJson = upload.scrapeResult.referenceRankingRawJson,
+          idempotencyKey = upload.idempotencyKey,
+        )
         return
       } catch (e: CancellationException) {
         throw e
@@ -77,6 +81,13 @@ class PortalLinkRepositoryImpl(
         if (e.code == SNAPSHOT_STALE_CODE) {
           // 이 결과보다 나중에 접수된 결과가 이미 반영됐다. 이 결과는 버리고 연동이 끝난 것으로 본다.
           Napier.i(tag = LOG_TAG) { "더 최신 포털 데이터가 이미 반영됨(${e.code}) → 업로드 중단" }
+          return
+        }
+        if (e.code == INVALID_RAW_CODE && upload.scrapeResult.referenceRankingRawJson != null) {
+          // 참고 석차 원본이 서버 계약과 어긋나도 연동은 막지 않는다. 같은 키로 다른 본문을 보내면 서버가 `409 C07`로
+          // 거부하므로, 원본을 뺀 결과를 새 키로 올린다.
+          Napier.w(tag = LOG_TAG) { "참고 석차 원본 거부(${e.code}) → 원본 없이 다시 업로드" }
+          upload(PortalScrapeUpload(upload.scrapeResult.copy(referenceRankingRawJson = null), newIdempotencyKey()))
           return
         }
         // 서버가 내용을 보고 거부했으므로 같은 결과를 다시 올려도 결과가 같다. 다시 시도하려면 새로 스크래핑한다.
@@ -174,6 +185,9 @@ class PortalLinkRepositoryImpl(
 
     /** 업로드한 결과보다 최신 포털 데이터가 이미 반영됐다. */
     const val SNAPSHOT_STALE_CODE = "C22"
+
+    /** 원본 형식·학번·조회 학기·크기 제한 위반. 참고 석차 원본이 서버 검증과 어긋날 때 온다. */
+    const val INVALID_RAW_CODE = "C17"
 
     /** 서버 job으로 넘어가지 않는 경로에서 일부 학기 조회가 실패한 결과를 버릴 때 남기는 코드. */
     const val PARTIAL_SCRAPE_CODE = "PARTIAL_SCRAPE"

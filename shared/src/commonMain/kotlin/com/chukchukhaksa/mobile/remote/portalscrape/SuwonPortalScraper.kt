@@ -4,6 +4,7 @@ import com.chukchukhaksa.mobile.common.model.portalscrape.PortalScrapeErrorCode
 import com.chukchukhaksa.mobile.common.model.portalscrape.PortalScrapeException
 import com.chukchukhaksa.mobile.common.model.portalscrape.PortalScrapeProgress
 import com.chukchukhaksa.mobile.common.model.portalscrape.PortalScrapeStep
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
@@ -13,6 +14,7 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.io.IOException
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -29,6 +31,8 @@ internal class PortalScrapeRawResult(
   val academicRecords: JsonObject,
   val designatedCourses: JsonArray,
   val warnings: List<String> = emptyList(),
+  /** 업로드의 `payload.referenceRankingRaw`. 수집하지 못했으면 null이고, 서버는 기존 참고 석차 자료를 유지한다. */
+  val referenceRankingRaw: JsonObject? = null,
 ) {
   fun toJsonObject(): JsonObject = buildJsonObject {
     put("student", student)
@@ -37,6 +41,8 @@ internal class PortalScrapeRawResult(
     put("designatedCourses", designatedCourses)
   }
 }
+
+private val REFERENCE_RANKING_MARGIN = 5.seconds
 
 /**
  * suwon-scraper-v1의 스크래핑을 기기에서 수행한다.
@@ -47,6 +53,7 @@ internal class SuwonPortalScraper(
   private val clientFactory: () -> HttpClient = ::createPortalHttpClient,
   // 워커의 WORKER_TOTAL_TIMEOUT_MS(120초)와 같다.
   private val totalTimeout: Duration = 120.seconds,
+  private val referenceRankingTimeout: Duration = 30.seconds,
 ) {
   suspend fun scrape(
     studentId: String,
@@ -58,11 +65,27 @@ internal class SuwonPortalScraper(
     }
     val tracker = PortalScrapeProgressTracker(onProgress)
     val client = clientFactory()
+    val started = TimeSource.Monotonic.markNow()
     try {
       return withTimeout(totalTimeout) {
         tracker.track(PortalScrapeStep.PORTAL_LOGIN) { client.loginToPortal(studentId, password) }
         tracker.track(PortalScrapeStep.ACADEMIC_SSO) { client.handOffToAcademicSystem() }
-        scrapeAuthenticatedData(HttpPortalCrawlers(client), studentId.trim(), tracker)
+        val exchangeLog = PortalAcademicExchangeLog()
+        val collector = ReferenceRankingRawCollector(PortalAcademicApi(client, exchangeLog), exchangeLog)
+        scrapeAuthenticatedData(
+          crawlers = HttpPortalCrawlers(client, exchangeLog),
+          studentId = studentId.trim(),
+          tracker = tracker,
+          collectReferenceRanking = { studentNumber ->
+            // 참고 석차 원본 때문에 전체 제한 시간을 넘겨 연동이 실패하지 않도록, 남은 시간 안에서만 모은다.
+            val budget = minOf(referenceRankingTimeout, totalTimeout - started.elapsedNow() - REFERENCE_RANKING_MARGIN)
+            if (budget.isPositive()) {
+              withTimeoutOrNull(budget) { collector.collect(studentId.trim(), studentNumber) }
+            } else {
+              null
+            }
+          },
+        )
       }
     } catch (e: TimeoutCancellationException) {
       throw PortalScrapeException(
@@ -89,6 +112,7 @@ internal suspend fun scrapeAuthenticatedData(
   crawlers: PortalCrawlers,
   studentId: String,
   tracker: PortalScrapeProgressTracker = PortalScrapeProgressTracker(),
+  collectReferenceRanking: (suspend (studentNumber: String) -> JsonObject?)? = null,
 ): PortalScrapeRawResult = coroutineScope {
   val student = async { tracker.track(PortalScrapeStep.STUDENT) { crawlers.scrapeStudent(studentId) } }
   val courses = async {
@@ -113,12 +137,43 @@ internal suspend fun scrapeAuthenticatedData(
   val semesters = tracker.track(PortalScrapeStep.MERGE, detail = { "${it.size}개 학기" }) {
     mergeCreditCourse(creditResult.creditDTOs, courseDTOs)
   }
+  val studentNumber = (student.await()["sno"] as? JsonPrimitive)?.takeIf { it.isString }?.content
+  val referenceRankingRaw = when {
+    collectReferenceRanking == null -> null
+    // 일부 학기 조회가 실패한 결과는 올리지 않으므로 원본도 모으지 않는다.
+    creditResult.warnings.isNotEmpty() -> {
+      tracker.skip(PortalScrapeStep.REFERENCE_RANKING, reason = "업로드하지 않는 결과")
+      null
+    }
+
+    // 서버는 원본의 학번을 학생 정보의 학번 문자열과 대조한다. 대조할 학번이 없으면 원본을 보내지 않는다.
+    studentNumber == null -> {
+      tracker.skip(PortalScrapeStep.REFERENCE_RANKING, reason = "학번 없음")
+      null
+    }
+
+    else -> tracker.track(
+      PortalScrapeStep.REFERENCE_RANKING,
+      detail = { raw -> (raw?.get("responses") as? JsonArray)?.let { "${it.size}건" } ?: "보내지 않음" },
+    ) {
+      // 참고 석차 원본은 부가 자료다. 모으지 못해도 기본 학사 자료는 그대로 올린다.
+      try {
+        collectReferenceRanking(studentNumber)
+      } catch (e: CancellationException) {
+        throw e
+      } catch (e: Exception) {
+        Napier.w(tag = LOG_TAG, throwable = e) { "참고 석차 원본 수집 실패 → 원본 없이 업로드" }
+        null
+      }
+    }
+  }
   PortalScrapeRawResult(
     student = student.await(),
     semesters = semesters,
     academicRecords = creditResult.gradeResponse,
     designatedCourses = designatedCourses.await(),
     warnings = creditResult.warnings,
+    referenceRankingRaw = referenceRankingRaw,
   )
 }
 

@@ -23,6 +23,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 
 /**
@@ -33,7 +34,14 @@ class RemotePortalLinkDataSourceImpl(
   private val client: HttpClient,
 ) : RemotePortalLinkDataSource {
 
-  override suspend fun uploadScrapeResult(rawJson: String, idempotencyKey: String) {
+  override suspend fun uploadScrapeResult(rawJson: String, referenceRankingRawJson: String?, idempotencyKey: String) {
+    val payload = Json.parseToJsonElement(rawJson).jsonObject.let { base ->
+      if (referenceRankingRawJson == null) {
+        base
+      } else {
+        JsonObject(base + (REFERENCE_RANKING_RAW_KEY to Json.parseToJsonElement(referenceRankingRawJson)))
+      }
+    }
     Napier.d(tag = LOG_TAG) { "POST $SCRAPE_RESULTS_PATH" }
     val response = client.post(SCRAPE_RESULTS_PATH) {
       // 서버는 저장을 마친 뒤에 응답한다. 앱 기본 제한 시간(15초)에 걸리면 서버가 아직 저장하는 중에
@@ -43,7 +51,7 @@ class RemotePortalLinkDataSourceImpl(
         socketTimeoutMillis = UPLOAD_TIMEOUT_MILLIS
       }
       header(IDEMPOTENCY_KEY_HEADER, idempotencyKey)
-      setBody(PortalScrapeUploadRequest(portalType = PORTAL_TYPE, payload = Json.parseToJsonElement(rawJson).jsonObject))
+      setBody(PortalScrapeUploadRequest(portalType = PORTAL_TYPE, payload = payload))
     }
     // 5xx는 서버가 결과를 보고 거부한 것이 아니다. 본문에 오류 코드가 있어도 ApiException으로 바꾸지 않아야
     // 호출하는 쪽이 같은 결과를 다시 보낸다.
@@ -97,6 +105,7 @@ class RemotePortalLinkDataSourceImpl(
     const val LINK_PATH = "/portal/link"
     const val SCRAPE_RESULTS_PATH = "/portal/link/scrape-results"
     const val IDEMPOTENCY_KEY_HEADER = "Idempotency-Key"
+    const val REFERENCE_RANKING_RAW_KEY = "referenceRankingRaw"
     const val UPLOAD_TIMEOUT_MILLIS = 60_000L
   }
 }

@@ -63,6 +63,7 @@ internal fun PortalScrapeRawResult.toPortalScrapeResult(elapsedMillis: Long): Po
     warnings = warnings,
     elapsedMillis = elapsedMillis,
     rawJson = prettyJson.encodeToString(JsonObject.serializer(), toJsonObject()),
+    referenceRankingRawJson = referenceRankingRaw?.toString(),
   )
 }
 
