@@ -4,14 +4,6 @@ import com.chukchukhaksa.mobile.common.model.portalscrape.PortalScrapeErrorCode
 import com.chukchukhaksa.mobile.common.model.portalscrape.PortalScrapeException
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
-import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.content.TextContent
-import io.ktor.http.isSuccess
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -37,11 +29,11 @@ internal class PortalCreditResult(
   val warnings: List<String> = emptyList(),
 )
 
-private const val STUDENT_PATH = "/scrgBas/selectScrgBas.do"
-private const val COURSE_SEMESTERS_PATH = "/atlecApplDtai/listAtlecApplDtaiTabYearSmr.do"
-private const val COURSE_DETAIL_PATH = "/atlecApplDtai/listAtlecApplDtaiTabSubjt.do"
-private const val GRADE_SUMMARY_PATH = "/smrCretSum/listSmrCretSumTabYearSmrStud.do"
-private const val CREDIT_DETAIL_PATH = "/cretBas/listSmrCretSumTabSubjt.do"
+internal const val STUDENT_PATH = "/scrgBas/selectScrgBas.do"
+internal const val COURSE_SEMESTERS_PATH = "/atlecApplDtai/listAtlecApplDtaiTabYearSmr.do"
+internal const val COURSE_DETAIL_PATH = "/atlecApplDtai/listAtlecApplDtaiTabSubjt.do"
+internal const val GRADE_SUMMARY_PATH = "/smrCretSum/listSmrCretSumTabYearSmrStud.do"
+internal const val CREDIT_DETAIL_PATH = "/cretBas/listSmrCretSumTabSubjt.do"
 private const val DESIGNATED_COURSE_PATH = "/precpSbjt/listPrecpSbjt.do"
 
 // 학부 전용 조회 코드. 근거: https://info.suwon.ac.kr/js/sa/commSa.js 의 openSubjtPopUp.
@@ -61,11 +53,11 @@ private val DEFAULT_GRADE_TOTAL = buildJsonObject {
   put("gainTavgPont", "0")
 }
 
-private val ACADEMIC_JSON = ContentType.parse("application/json;charset=UTF-8")
-
 internal class HttpPortalCrawlers(
-  private val client: HttpClient,
+  client: HttpClient,
+  exchangeLog: PortalAcademicExchangeLog? = null,
 ) : PortalCrawlers {
+  private val api = PortalAcademicApi(client, exchangeLog)
 
   override suspend fun scrapeStudent(studentId: String): JsonObject {
     val root = postAcademicApi(STUDENT_PATH, snoBody(studentId), label = "학생 정보").requireObject("학생 정보")
@@ -171,14 +163,10 @@ internal class HttpPortalCrawlers(
   }
 
   private suspend fun postAcademicApi(path: String, body: JsonObject, label: String): JsonElement {
-    val response = client.post(SuwonPortalUrls.ACADEMIC_BASE + path) {
-      header(HttpHeaders.Accept, "application/json")
-      header(HttpHeaders.Referrer, SuwonPortalUrls.ACADEMIC_REFERER)
-      setBody(TextContent(body.toString(), ACADEMIC_JSON))
-    }
-    Napier.d(tag = LOG_TAG) { "POST $path → ${response.status.value}" }
-    if (!response.status.isSuccess()) {
-      val status = response.status.value
+    val exchange = api.exchange(path, body)
+    exchange.transportError?.let { throw it }
+    val status = exchange.httpStatus ?: 0
+    if (status !in 200..299) {
       if (status in 500..599) {
         throw PortalScrapeException(
           errorCode = PortalScrapeErrorCode.PORTAL_TEMPORARY_UNAVAILABLE,
@@ -190,7 +178,7 @@ internal class HttpPortalCrawlers(
     }
 
     val element = try {
-      Json.parseToJsonElement(response.bodyAsText())
+      Json.parseToJsonElement(exchange.bodyText.orEmpty())
     } catch (e: SerializationException) {
       throw schemaMismatch("$label 응답을 JSON으로 해석할 수 없습니다.", e)
     }
@@ -199,7 +187,7 @@ internal class HttpPortalCrawlers(
   }
 }
 
-private fun snoBody(studentId: String) = buildJsonObject { put("sno", studentId) }
+internal fun snoBody(studentId: String) = buildJsonObject { put("sno", studentId) }
 
 internal fun mapStudent(studentInfo: JsonObject): JsonObject = buildJsonObject {
   STUDENT_FIELDS.forEach { key ->

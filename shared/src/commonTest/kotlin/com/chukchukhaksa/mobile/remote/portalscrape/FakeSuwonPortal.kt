@@ -41,6 +41,14 @@ internal class FakeSuwonPortal {
   var creditsBySemester: Map<String, JsonArray> = mapOf("2025-10" to defaultCredits())
   var designatedResponse: JsonElement = buildJsonObject { put("precpSbjtList", JsonArray(emptyList())) }
 
+  /** 성적 요약 응답 원문. null이면 [gradeSummary]를 직렬화해 보낸다. */
+  var gradeSummaryText: String? = null
+  var registrationResponse: String = DEFAULT_REGISTRATION
+  var majorHistoryResponse: String = DEFAULT_MAJOR_HISTORY
+
+  /** `applYear-applSmrCd`별 전공배정 응답 원문. 없는 학기는 `{"mjorChngAppl":null}`이다. */
+  var majorAssignments: Map<String, String> = mapOf("2025-10" to DEFAULT_MAJOR_ASSIGNMENT)
+
   val requests = mutableListOf<HttpRequestData>()
 
   val engine = MockEngine { request ->
@@ -123,7 +131,7 @@ internal class FakeSuwonPortal {
       json(buildJsonObject { put("listAtlecApplDtaiTabSubjt", coursesBySemester[key] ?: JsonArray(emptyList())) }.toString())
     }
 
-    "/smrCretSum/listSmrCretSumTabYearSmrStud.do" -> json(gradeSummary.toString())
+    "/smrCretSum/listSmrCretSumTabYearSmrStud.do" -> json(gradeSummaryText ?: gradeSummary.toString())
     "/cretBas/listSmrCretSumTabSubjt.do" -> {
       val key = "${body.text("cretGainYear")}-${body.text("cretSmrCd")}"
       creditsBySemester[key]
@@ -132,6 +140,10 @@ internal class FakeSuwonPortal {
     }
 
     "/precpSbjt/listPrecpSbjt.do" -> json(designatedResponse.toString())
+    "/tutnBas/listTutnTabStud.do" -> json(registrationResponse)
+    "/mjorChngInfo/listMjorChngInfoTab.do" -> json(majorHistoryResponse)
+    "/mjorChngAppl/selectMjorChngAppl.do" ->
+      json(majorAssignments["${body.text("applYear")}-${body.text("applSmrCd")}"] ?: """{"mjorChngAppl":null}""")
     else -> respond("", HttpStatusCode.NotFound)
   }
 
@@ -159,6 +171,17 @@ internal class FakeSuwonPortal {
   )
 
   companion object {
+    // 학적 응답에는 석차와 무관한 개인정보가 함께 온다. 앱은 허용 필드만 남겨야 한다.
+    const val DEFAULT_REGISTRATION =
+      """{"listTutnTab":[{"regYearSmr":"2025-1학기","studGrde":"2","studNm":"테스트 학생","acntNo":"110-123"}],""" +
+        """"listSchoPaytTab":[{"schoNm":"성적장학","schoAmt":1000000}]}"""
+    const val DEFAULT_MAJOR_HISTORY =
+      """{"listMjorChngInfoTab":[{"mjorChngSeq":1,"mjorChngYearSmr":"2025-1학기","mjorChngNm":"주전공배정",""" +
+        """"achgMjorNm":"정보통신","mjorChngCancDt":null,"telNo":"010-0000-0000"}]}"""
+    const val DEFAULT_MAJOR_ASSIGNMENT =
+      """{"mjorChngAppl":{"sno":"24020044","mjorChngCd":"11","applYear":"2025","applSmrCd":"10",""" +
+        """"applMjorCd":"2000999","alotMjorCd":"2000516","applStatCd":"30","mjorStatCd":"승인","hpNo":"010-0000-0000"}}"""
+
     fun portalPageWithError(message: String) = """
       <script>
         function initEnview() {

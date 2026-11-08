@@ -10,6 +10,8 @@ data class PortalScrapeResult(
   val elapsedMillis: Long,
   /** 스크래퍼가 S3에 저장하던 원문과 같은 구조(`student`, `semesters`, `academicRecords`, `designatedCourses`)의 JSON. */
   val rawJson: String,
+  /** 업로드할 때 `payload.referenceRankingRaw`에 넣을 참고 석차 원본 JSON. 수집하지 못했으면 null이다. */
+  val referenceRankingRawJson: String? = null,
 )
 
 data class PortalStudent(

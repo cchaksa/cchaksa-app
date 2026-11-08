@@ -202,6 +202,51 @@ class PortalLinkRepositoryImplTest {
   }
 
   @Test
+  fun `reference ranking raw is uploaded together with the scrape result`() = runTest {
+    val withRaw = portalScrapeResultFixture(referenceRankingRawJson = REFERENCE_RANKING_RAW)
+    scrapeDataSource.result = { withRaw }
+
+    repository.link("20231234", "pw")
+
+    assertEquals(listOf(Upload(withRaw.rawJson, "key-1", REFERENCE_RANKING_RAW)), linkDataSource.uploads)
+  }
+
+  @Test
+  fun `invalid reference ranking raw is dropped and the scrape result is uploaded again with a new key`() = runTest {
+    val withRaw = portalScrapeResultFixture(referenceRankingRawJson = REFERENCE_RANKING_RAW)
+    scrapeDataSource.result = { withRaw }
+    linkDataSource.uploadErrors = ArrayDeque(listOf(ApiException(code = "C17", message = "원본 형식 오류")))
+
+    repository.link("20231234", "pw")
+
+    assertEquals(
+      listOf(Upload(withRaw.rawJson, "key-1", REFERENCE_RANKING_RAW), Upload(withRaw.rawJson, "key-2", null)),
+      linkDataSource.uploads,
+    )
+  }
+
+  @Test
+  fun `invalid scrape result without reference ranking raw is still rejected`() = runTest {
+    scrapeDataSource.result = { portalScrapeResultFixture(referenceRankingRawJson = REFERENCE_RANKING_RAW) }
+    linkDataSource.uploadErrors = ArrayDeque(List(2) { ApiException(code = "C17", message = "원본 형식 오류") })
+
+    assertEquals(PortalLinkFailure.System("C17"), failureOf { repository.link("20231234", "pw") })
+    assertEquals(listOf(REFERENCE_RANKING_RAW, null), linkDataSource.uploads.map { it.referenceRankingRawJson })
+  }
+
+  @Test
+  fun `retry after a dropped reference ranking raw keeps the new key and the result without raw`() = runTest {
+    scrapeDataSource.result = { portalScrapeResultFixture(referenceRankingRawJson = REFERENCE_RANKING_RAW) }
+    linkDataSource.uploadErrors = ArrayDeque(listOf(ApiException(code = "C17", message = "원본 형식 오류")) + List(3) { IOException("$it") })
+
+    val failure = failureOf { repository.link("20231234", "pw") }
+
+    assertIs<PortalLinkFailure.UploadFailed>(failure)
+    repository.upload(failure.upload)
+    assertEquals(List(4) { "key-2" to null }, linkDataSource.uploads.drop(1).map { it.idempotencyKey to it.referenceRankingRawJson })
+  }
+
+  @Test
   fun `stale snapshot response ends the link without retrying`() = runTest {
     scrapeDataSource.result = { scrapeResult }
     linkDataSource.uploadErrors = ArrayDeque(listOf(ApiException(code = "C22", message = "더 최신 데이터")))
@@ -262,6 +307,10 @@ class PortalLinkRepositoryImplTest {
     assertEquals(listOf(Upload(scrapeResult.rawJson, "key-1")), linkDataSource.uploads)
   }
 
+  private companion object {
+    const val REFERENCE_RANKING_RAW = """{"schemaVersion":1,"responses":[]}"""
+  }
+
   private suspend fun failureOf(block: suspend () -> Unit): PortalLinkFailure =
     assertFailsWith<PortalLinkException> { block() }.failure
 
@@ -283,7 +332,7 @@ class PortalLinkRepositoryImplTest {
 
   private data class CreatedJob(val studentId: String, val password: String, val idempotencyKey: String)
 
-  private data class Upload(val rawJson: String, val idempotencyKey: String)
+  private data class Upload(val rawJson: String, val idempotencyKey: String, val referenceRankingRawJson: String? = null)
 
   private class FakeLinkDataSource : RemotePortalLinkDataSource {
     val uploads = mutableListOf<Upload>()
@@ -297,8 +346,8 @@ class PortalLinkRepositoryImplTest {
     var pollCount = 0
     var summaryStatus = PortalLinkJobStatus.IN_PROGRESS
 
-    override suspend fun uploadScrapeResult(rawJson: String, idempotencyKey: String) {
-      uploads += Upload(rawJson, idempotencyKey)
+    override suspend fun uploadScrapeResult(rawJson: String, referenceRankingRawJson: String?, idempotencyKey: String) {
+      uploads += Upload(rawJson, idempotencyKey, referenceRankingRawJson)
       uploadErrors.removeFirstOrNull()?.let { throw it }
     }
 

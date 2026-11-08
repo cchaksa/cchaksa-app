@@ -9,6 +9,9 @@ enum class PortalScrapeStep {
   CREDITS,
   DESIGNATED_COURSES,
   MERGE,
+
+  /** 참고 석차 원본 수집. 성적·수강 응답을 재사용하고, 목록에 없는 이전 정규학기 상세와 학적 조회만 추가로 호출한다. */
+  REFERENCE_RANKING,
 }
 
 sealed interface PortalScrapeProgress {

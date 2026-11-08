@@ -21,6 +21,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.test.Test
@@ -98,7 +99,7 @@ class RemotePortalLinkDataSourceImplTest {
   @Test
   fun `upload wraps the raw scrape json as payload with an idempotency key`() = runTest {
     dataSource(body = UPLOAD_SUCCESS_BODY)
-      .uploadScrapeResult("""{"student":{"sno":"20231234"},"semesters":[]}""", idempotencyKey = "key-1")
+      .uploadScrapeResult("""{"student":{"sno":"20231234"},"semesters":[]}""", referenceRankingRawJson = null, idempotencyKey = "key-1")
 
     val request = requests.single()
     assertEquals(HttpMethod.Post, request.method)
@@ -111,6 +112,22 @@ class RemotePortalLinkDataSourceImplTest {
       "20231234",
       body["payload"]?.jsonObject?.get("student")?.jsonObject?.get("sno")?.jsonPrimitive?.content,
     )
+    assertEquals(setOf("student", "semesters"), body["payload"]?.jsonObject?.keys)
+  }
+
+  @Test
+  fun `reference ranking raw is added to the payload as an object`() = runTest {
+    val raw = """{"schemaVersion":1,"responses":[{"source":"REGISTRATION","year":null,"semester":null,""" +
+      """"status":"EMPTY","httpStatus":200,"responseBody":"{\"listTutnTab\":[]}","errorCode":null}]}"""
+    dataSource(body = UPLOAD_SUCCESS_BODY)
+      .uploadScrapeResult("""{"student":{"sno":"20231234"},"semesters":[]}""", referenceRankingRawJson = raw, idempotencyKey = "key-1")
+
+    val payload = Json.parseToJsonElement((requests.single().body as TextContent).text).jsonObject["payload"]!!.jsonObject
+    assertEquals(listOf("student", "semesters", "referenceRankingRaw"), payload.keys.toList())
+    assertEquals(Json.parseToJsonElement(raw), payload["referenceRankingRaw"])
+    // responseBody는 JSON 문자열로 남는다.
+    val entry = payload["referenceRankingRaw"]!!.jsonObject["responses"]!!.jsonArray.single().jsonObject
+    assertEquals("""{"listTutnTab":[]}""", entry["responseBody"]?.jsonPrimitive?.content)
   }
 
   @Test
@@ -119,7 +136,7 @@ class RemotePortalLinkDataSourceImplTest {
       dataSource(
         status = HttpStatusCode.Conflict,
         body = """{"success":false,"error":{"code":"C21","message":"현재 계정에 연결할 수 없는 학번입니다."}}""",
-      ).uploadScrapeResult("""{"student":{}}""", idempotencyKey = "key-1")
+      ).uploadScrapeResult("""{"student":{}}""", referenceRankingRawJson = null, idempotencyKey = "key-1")
     }
 
     assertEquals("C21", error.code)
@@ -131,7 +148,7 @@ class RemotePortalLinkDataSourceImplTest {
       dataSource(
         status = HttpStatusCode.InternalServerError,
         body = """{"success":false,"error":{"code":"C18","message":"후처리 실패"}}""",
-      ).uploadScrapeResult("""{"student":{}}""", idempotencyKey = "key-1")
+      ).uploadScrapeResult("""{"student":{}}""", referenceRankingRawJson = null, idempotencyKey = "key-1")
     }
   }
 

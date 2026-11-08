@@ -3,6 +3,7 @@ package com.chukchukhaksa.mobile.common.model.portalscrape
 internal fun portalScrapeResultFixture(
   studentNumber: String = "20231234",
   warnings: List<String> = emptyList(),
+  referenceRankingRawJson: String? = null,
 ): PortalScrapeResult = PortalScrapeResult(
   student = PortalStudent(
     studentNumber = studentNumber,
@@ -24,4 +25,5 @@ internal fun portalScrapeResultFixture(
   warnings = warnings,
   elapsedMillis = 0,
   rawJson = """{"student":{"sno":"$studentNumber"}}""",
+  referenceRankingRawJson = referenceRankingRawJson,
 )
