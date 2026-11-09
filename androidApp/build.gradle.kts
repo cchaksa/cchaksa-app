@@ -51,12 +51,28 @@ android {
       excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
   }
+  // Upload-key signing for release builds (used by fastlane). Without RELEASE_STORE_FILE in
+  // local.properties the release build stays unsigned, so signing in Android Studio still works.
+  val releaseStoreFile = localProperty("RELEASE_STORE_FILE")
+  if (releaseStoreFile.isNotEmpty()) {
+    signingConfigs {
+      create("release") {
+        // A leading ~ is the home directory (the keystore lives with the other secrets outside the repo);
+        // a relative path resolves against the repo root.
+        storeFile = rootProject.file(releaseStoreFile.replaceFirst(Regex("^~(?=/|$)"), Regex.escapeReplacement(System.getProperty("user.home"))))
+        storePassword = localProperty("RELEASE_STORE_PASSWORD")
+        keyAlias = localProperty("RELEASE_KEY_ALIAS")
+        keyPassword = localProperty("RELEASE_KEY_PASSWORD")
+      }
+    }
+  }
   buildTypes {
     getByName("debug") {
       manifestPlaceholders["ADMOB_APP_ID"] = localProperty("ADMOB_APP_ID_TEST")
       buildConfigField("String", "ADMOB_INTERSTITIAL_AD_UNIT_ID", "\"${localProperty("ADMOB_INTERSTITIAL_AD_UNIT_ID_TEST")}\"")
     }
     getByName("release") {
+      signingConfigs.findByName("release")?.let { signingConfig = it }
       isMinifyEnabled = false
       manifestPlaceholders["ADMOB_APP_ID"] = localProperty("ADMOB_APP_ID_PROD")
       buildConfigField("String", "ADMOB_INTERSTITIAL_AD_UNIT_ID", "\"${localProperty("ADMOB_INTERSTITIAL_AD_UNIT_ID_PROD")}\"")

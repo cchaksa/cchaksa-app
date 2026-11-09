@@ -195,11 +195,31 @@ com.chukchukhaksa.mobile/
 ### Bumping the App Version
 Four values, two files — keep them in sync:
 - `androidApp/build.gradle.kts`: `versionCode`, `versionName`
-- `iosApp/iosApp.xcodeproj/project.pbxproj`: `CURRENT_PROJECT_VERSION`, `MARKETING_VERSION` (**two
-  occurrences each** — Debug and Release configs)
+- `iosApp/iosApp.xcodeproj/project.pbxproj`: `CURRENT_PROJECT_VERSION`, `MARKETING_VERSION` (**four
+  occurrences each** — Debug and Release configs of the app and the widget extension)
+
+fastlane does this for you (see "Release Automation"): `bump` sets the marketing version, and the upload
+lanes set the build number from the stores.
 
 `iosApp/Configuration/Config.xcconfig` also defines `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION`, but
 those are **dead values** — the target-level settings in `project.pbxproj` win. Edit the pbxproj.
+
+### Release Automation (fastlane)
+Run from the repo root after `bundle install` (gems go to `vendor/bundle`):
+```bash
+bundle exec fastlane bump version:3.2.5     # versionName + MARKETING_VERSION
+bundle exec fastlane android internal       # next versionCode from Play, signed AAB → internal track
+bundle exec fastlane ios beta               # next build number from ASC, archive → TestFlight
+# add dry_run:true to build and validate without publishing (version files are restored)
+```
+- Credentials live outside the repo in `~/.config/chukchukhaksa/` (override with `CCH_SECRETS_DIR`):
+  `play-service-account.json` (service account with testing-track permissions only), `AuthKey_<id>.p8` and
+  `asc-api-key.env` (`ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`; App Manager team key).
+- Android signing: `RELEASE_STORE_FILE`/`RELEASE_STORE_PASSWORD`/`RELEASE_KEY_ALIAS`/`RELEASE_KEY_PASSWORD` in
+  `local.properties`. Without them the release build stays unsigned and the lane stops before building.
+- iOS signs with the Apple ID signed in to Xcode on the machine (automatic signing, `-allowProvisioningUpdates`).
+- `ios beta` stops if the local `MARKETING_VERSION` is older than the latest upload on App Store Connect; run
+  `bump` first. Production release and App Review submission stay manual in the consoles.
 
 ### Secrets and Build-Config IDs
 Never hardcode keys or ad unit IDs in source. They live in git-ignored files and flow in through build config:

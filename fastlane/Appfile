@@ -1,0 +1,12 @@
+# Credentials live outside the repo (default ~/.config/chukchukhaksa, override with CCH_SECRETS_DIR).
+secrets_dir = File.expand_path(ENV.fetch("CCH_SECRETS_DIR", "~/.config/chukchukhaksa"))
+
+for_platform :android do
+  package_name("com.kunize.uswtimetable")
+  json_key_file(File.join(secrets_dir, "play-service-account.json"))
+end
+
+for_platform :ios do
+  app_identifier("com.chukchukhaksa.moblie.ChukChukHaksa")
+  team_id("2733AMRJU9")
+end

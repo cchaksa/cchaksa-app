@@ -1,0 +1,186 @@
+# Release automation. Run from the repo root with `bundle exec fastlane <lane>`.
+#
+#   bundle exec fastlane bump version:3.2.5          # versionName + MARKETING_VERSION
+#   bundle exec fastlane android internal            # Play internal testing track
+#   bundle exec fastlane ios beta                    # TestFlight
+#
+# `dry_run:true` builds and validates without publishing, then restores the version files.
+# Production release and App Review submission stay manual in the consoles.
+
+ROOT = File.expand_path("..", FastlaneCore::FastlaneFolder.path)
+SECRETS_DIR = File.expand_path(ENV.fetch("CCH_SECRETS_DIR", "~/.config/chukchukhaksa"))
+GRADLE_FILE = File.join(ROOT, "androidApp/build.gradle.kts")
+PBXPROJ = File.join(ROOT, "iosApp/iosApp.xcodeproj/project.pbxproj")
+AAB_PATH = File.join(ROOT, "androidApp/build/outputs/bundle/release/androidApp-release.aab")
+IOS_OUTPUT_DIR = File.join(ROOT, "build/fastlane/ios")
+
+# The app and widget targets each have Debug and Release configs.
+PBX_VERSION_COUNT = 4
+
+# Replaces every match of `pattern` (group 1 = prefix kept as is) and checks how many there were,
+# so a changed file layout fails loudly instead of silently bumping only some of the values.
+def replace_exactly(path, pattern, expected_count, value)
+  content = File.read(path)
+  count = content.scan(pattern).length
+  UI.user_error!("Expected #{expected_count} match(es) of #{pattern.inspect} in #{path}, found #{count}") if count != expected_count
+  File.write(path, content.gsub(pattern) { "#{Regexp.last_match(1)}#{value}" })
+end
+
+def read_single(path, pattern, expected_count)
+  matches = File.read(path).scan(pattern).map(&:last)
+  values = matches.uniq
+  if matches.length != expected_count || values.length != 1
+    UI.user_error!("Expected #{expected_count} identical match(es) of #{pattern.inspect} in #{path}, found #{matches.inspect}")
+  end
+  values.first
+end
+
+GRADLE_VERSION_CODE = /^(\s*versionCode = )(\d+)$/
+GRADLE_VERSION_NAME = /^(\s*versionName = )"([^"]+)"$/
+PBX_BUILD = /(CURRENT_PROJECT_VERSION = )(\d+)(?=;)/
+PBX_MARKETING = /(MARKETING_VERSION = )([\d.]+)(?=;)/
+
+# Restores the given files after the block when `dry_run` is set, so a dry run leaves no diff.
+def with_restore(paths, dry_run)
+  originals = paths.to_h { |p| [p, File.read(p)] }
+  begin
+    yield
+  ensure
+    if dry_run
+      originals.each { |p, c| File.write(p, c) }
+      UI.message("dry_run: restored #{paths.map { |p| File.basename(p) }.join(', ')}")
+    end
+  end
+end
+
+def dry_run?(options)
+  options[:dry_run].to_s == "true"
+end
+
+def git_status_warning(*paths)
+  dirty = sh("git", "-C", ROOT, "status", "--porcelain", "--", *paths, log: false).strip
+  UI.important("Version files already have uncommitted changes:\n#{dirty}") unless dirty.empty?
+end
+
+desc "Set the marketing version on both platforms (versionName and MARKETING_VERSION)"
+lane :bump do |options|
+  version = options[:version].to_s
+  UI.user_error!("Pass version:X.Y.Z") unless version.match?(/\A\d+\.\d+\.\d+\z/)
+  replace_exactly(GRADLE_FILE, GRADLE_VERSION_NAME, 1, "\"#{version}\"")
+  replace_exactly(PBXPROJ, PBX_MARKETING, PBX_VERSION_COUNT, version)
+  UI.success("Marketing version set to #{version}. Commit and tag (v#{version}-android / v#{version}-ios) yourself.")
+end
+
+platform :android do
+  def play_max_version_code
+    tracks = %w[production beta alpha internal]
+    failed = []
+    codes = tracks.flat_map do |track|
+      google_play_track_version_codes(track: track)
+    rescue StandardError => e
+      UI.important("Could not read Play track '#{track}': #{e.message}")
+      failed << track
+      []
+    end
+    # Every track failing means credentials or the API are broken, not that the tracks are empty;
+    # falling back to the local versionCode would build and upload a code Play already has.
+    UI.user_error!("Could not read any Play track; check #{SECRETS_DIR}/play-service-account.json") if failed.length == tracks.length
+    codes.max || 0
+  end
+
+  def ensure_release_signing
+    props = File.exist?(File.join(ROOT, "local.properties")) ? File.read(File.join(ROOT, "local.properties")) : ""
+    missing = %w[RELEASE_STORE_FILE RELEASE_STORE_PASSWORD RELEASE_KEY_ALIAS RELEASE_KEY_PASSWORD]
+      .reject { |key| props.match?(/^\s*#{key}\s*[=:]\s*\S/) }
+    UI.user_error!("local.properties is missing upload-key signing values: #{missing.join(', ')}") unless missing.empty?
+  end
+
+  desc "Build a signed AAB with the next versionCode and upload it to the internal testing track"
+  lane :internal do |options|
+    dry_run = dry_run?(options)
+    ensure_release_signing
+    git_status_warning(GRADLE_FILE)
+
+    local_code = read_single(GRADLE_FILE, GRADLE_VERSION_CODE, 1).to_i
+    next_code = [play_max_version_code + 1, local_code].max
+    version_name = read_single(GRADLE_FILE, GRADLE_VERSION_NAME, 1)
+    UI.message("Android #{version_name}: versionCode #{local_code} -> #{next_code}")
+
+    with_restore([GRADLE_FILE], dry_run) do
+      replace_exactly(GRADLE_FILE, GRADLE_VERSION_CODE, 1, next_code)
+      gradle(task: ":androidApp:bundleRelease", project_dir: ROOT)
+      upload_to_play_store(
+        track: "internal",
+        release_status: "completed",
+        aab: AAB_PATH,
+        skip_upload_apk: true,
+        skip_upload_metadata: true,
+        skip_upload_changelogs: true,
+        skip_upload_images: true,
+        skip_upload_screenshots: true,
+        validate_only: dry_run,
+      )
+    end
+    UI.success(dry_run ? "dry_run: Play accepted versionCode #{next_code} (nothing published)" :
+                         "Uploaded #{version_name} (#{next_code}) to the internal track. Commit the versionCode change.")
+  end
+end
+
+platform :ios do
+  def asc_api_key
+    env_file = File.join(SECRETS_DIR, "asc-api-key.env")
+    UI.user_error!("Missing #{env_file}") unless File.exist?(env_file)
+    env = File.readlines(env_file, chomp: true).reject { |l| l.strip.empty? || l.start_with?("#") }
+              .to_h { |l| l.split("=", 2).map { |part| part.strip.delete_prefix('"').delete_suffix('"') } }
+    app_store_connect_api_key(
+      key_id: env.fetch("ASC_KEY_ID"),
+      issuer_id: env.fetch("ASC_ISSUER_ID"),
+      # A relative path means a key file next to asc-api-key.env, not one in the repo root.
+      key_filepath: File.expand_path(env.fetch("ASC_KEY_PATH"), SECRETS_DIR),
+    )
+  end
+
+  desc "Archive with the next build number and upload it to TestFlight"
+  lane :beta do |options|
+    dry_run = dry_run?(options)
+    git_status_warning(PBXPROJ)
+    api_key = asc_api_key
+
+    local_build = read_single(PBXPROJ, PBX_BUILD, PBX_VERSION_COUNT).to_i
+    # Latest upload of any version: build numbers on ASC have run ahead of the pbxproj before.
+    latest = latest_testflight_build_number(api_key: api_key, initial_build_number: 0).to_i
+    next_build = [latest + 1, local_build].max
+    version = read_single(PBXPROJ, PBX_MARKETING, PBX_VERSION_COUNT)
+    latest_version = lane_context[SharedValues::LATEST_TESTFLIGHT_VERSION].to_s
+    if latest_version.match?(/\A\d+(\.\d+)*\z/) && Gem::Version.new(version) < Gem::Version.new(latest_version)
+      UI.user_error!("Local version #{version} is older than #{latest_version} on App Store Connect. " \
+                     "Run `bundle exec fastlane bump version:X.Y.Z` first.")
+    end
+    UI.message("iOS #{version}: build #{local_build} -> #{next_build} (latest on ASC: #{latest_version} (#{latest}))")
+
+    with_restore([PBXPROJ], dry_run) do
+      replace_exactly(PBXPROJ, PBX_BUILD, PBX_VERSION_COUNT, next_build)
+      # Signing uses the Apple ID signed in to Xcode on this Mac (automatic signing, cloud
+      # distribution certificate), the same way a manual archive does.
+      ipa = build_app(
+        project: File.join(ROOT, "iosApp/iosApp.xcodeproj"),
+        scheme: "iosApp",
+        configuration: "Release",
+        export_method: "app-store",
+        export_options: { manageAppVersionAndBuildNumber: false },
+        xcargs: "-allowProvisioningUpdates",
+        # xcargs only reach the archive step; the export step needs its own flag to fetch the
+        # cloud-managed distribution certificate and App Store profiles.
+        export_xcargs: "-allowProvisioningUpdates",
+        output_directory: IOS_OUTPUT_DIR,
+        output_name: "ChukChukHaksa-#{version}-#{next_build}",
+      )
+      if dry_run
+        UI.success("dry_run: built #{ipa} (not uploaded)")
+      else
+        upload_to_testflight(api_key: api_key, ipa: ipa, skip_waiting_for_build_processing: true)
+        UI.success("Uploaded #{version} (#{next_build}) to TestFlight. Commit the build number change.")
+      end
+    end
+  end
+end

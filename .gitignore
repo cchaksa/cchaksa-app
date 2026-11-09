@@ -46,3 +46,12 @@ build/
 /androidApp/google-services.json
 /iosApp/iosApp/GoogleService-Info.plist
 /iosApp/Configuration/Config.xcconfig
+
+# fastlane (credentials live in ~/.config/chukchukhaksa, never in the repo)
+/.bundle/
+/vendor/bundle/
+/fastlane/report.xml
+/fastlane/README.md
+/fastlane/test_output/
+# Android Studio "Generate Signed App Bundle" output
+/androidApp/release/
