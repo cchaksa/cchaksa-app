@@ -55,3 +55,6 @@ build/
 /fastlane/test_output/
 # Android Studio "Generate Signed App Bundle" output
 /androidApp/release/
+
+# fastlane status, notes and logs written by the /release skill
+/fastlane/output/

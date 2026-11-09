@@ -193,7 +193,8 @@ com.chukchukhaksa.mobile/
 - **Java Compatibility**: Java 17
 
 ### Bumping the App Version
-Four values, two files — keep them in sync:
+Four values, two files. The release flow bumps only the platform it ships, so Android and iOS versions can
+differ for a while; when bumping by hand, change every occurrence in a file together:
 - `androidApp/build.gradle.kts`: `versionCode`, `versionName`
 - `iosApp/iosApp.xcodeproj/project.pbxproj`: `CURRENT_PROJECT_VERSION`, `MARKETING_VERSION` (**four
   occurrences each** — Debug and Release configs of the app and the widget extension)
@@ -207,18 +208,27 @@ those are **dead values** — the target-level settings in `project.pbxproj` win
 ### Release Automation (fastlane)
 Run from the repo root after `bundle install` (gems go to `vendor/bundle`):
 ```bash
-bundle exec fastlane bump version:3.2.5     # versionName + MARKETING_VERSION
-bundle exec fastlane android internal       # next versionCode from Play, signed AAB → internal track
-bundle exec fastlane ios beta               # next build number from ASC, archive → TestFlight
+bundle exec fastlane bump version:3.2.5 [platform:android|ios]   # versionName / MARKETING_VERSION
+bundle exec fastlane android internal [notes_file:PATH]  # next versionCode (above Play and the repo), signed AAB → internal track
+bundle exec fastlane ios beta [notes_file:PATH]          # next build number from ASC, archive → TestFlight
+bundle exec fastlane android status / ios status         # repo vs store versions → fastlane/output/status-*.json
+bundle exec fastlane android qa build_type:debug|release # QA: APK → Firebase App Distribution group '척척학사'
+bundle exec fastlane ios qa build_type:debug|release     # QA: Debug/Release archive → TestFlight internal testers
+                                                         # ("What to Test" starts with a do-not-submit banner)
 # add dry_run:true to build and validate without publishing (version files are restored)
 ```
+The `/release` project skill (`.claude/skills/release/`) wraps these: it asks for the platforms, the next
+version and the release notes, uploads, then commits the version files, tags `vX.Y.Z-android`/`-ios` and
+pushes main. Its QA mode runs the `qa` lanes instead, commits only the build number and pushes the current
+branch (no tags). Firebase uploads use the firebase CLI logged in on the machine and read the app ID from
+`androidApp/google-services.json`.
 - Credentials live outside the repo in `~/.config/chukchukhaksa/` (override with `CCH_SECRETS_DIR`):
   `play-service-account.json` (service account with testing-track permissions only), `AuthKey_<id>.p8` and
   `asc-api-key.env` (`ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`; App Manager team key).
 - Android signing: `RELEASE_STORE_FILE`/`RELEASE_STORE_PASSWORD`/`RELEASE_KEY_ALIAS`/`RELEASE_KEY_PASSWORD` in
   `local.properties`. Without them the release build stays unsigned and the lane stops before building.
 - iOS signs with the Apple ID signed in to Xcode on the machine (automatic signing, `-allowProvisioningUpdates`).
-- `ios beta` stops if the local `MARKETING_VERSION` is older than the latest upload on App Store Connect; run
+- `ios beta` stops if the local `MARKETING_VERSION` is older than the latest upload on App Store Connect or is already live (closed train); run
   `bump` first. Production release and App Review submission stay manual in the consoles.
 
 ### Secrets and Build-Config IDs
