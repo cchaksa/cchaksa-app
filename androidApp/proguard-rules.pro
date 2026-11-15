@@ -55,6 +55,12 @@
 # NoSuchMethodException and Crashlytics never starts in release.
 -keep class * implements com.google.firebase.components.ComponentRegistrar { <init>(); }
 
+# --- WorkManager 2.7.1 (pulled in by Glance) ---
+# WorkManager instantiates the InputMerger named in each WorkSpec through its no-arg constructor. The bundled rule
+# keeps only the classes, so R8 full mode drops the constructor and every worker fails with "Could not create Input
+# Merger" - including Glance's SessionWorker, which leaves the home screen widget stuck on "can't load widget".
+-keep class * extends androidx.work.InputMerger { public <init>(); }
+
 # --- Amplitude ---
 # The SDK reads the advertising ID and checks Play services through reflection (Amplitude's Android guide rules).
 -keep class com.google.android.gms.ads.identifier.AdvertisingIdClient {
