@@ -73,7 +73,12 @@ android {
     }
     getByName("release") {
       signingConfigs.findByName("release")?.let { signingConfig = it }
-      isMinifyEnabled = false
+      isMinifyEnabled = true
+      isShrinkResources = true
+      proguardFiles(
+        getDefaultProguardFile("proguard-android-optimize.txt"),
+        "proguard-rules.pro",
+      )
       manifestPlaceholders["ADMOB_APP_ID"] = localProperty("ADMOB_APP_ID_PROD")
       buildConfigField("String", "ADMOB_INTERSTITIAL_AD_UNIT_ID", "\"${localProperty("ADMOB_INTERSTITIAL_AD_UNIT_ID_PROD")}\"")
     }
