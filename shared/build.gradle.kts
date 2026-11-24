@@ -25,6 +25,13 @@ kotlin {
     androidResources {
       enable = true
     }
+    // The app's R8 run picks these up, so rules for shared code stay next to it.
+    optimization {
+      consumerKeepRules.apply {
+        publish = true
+        file("consumer-rules.pro")
+      }
+    }
     // Without a host test compilation, commonTest does not run on Android.
     withHostTest {}
 

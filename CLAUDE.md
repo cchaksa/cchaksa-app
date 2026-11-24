@@ -290,6 +290,10 @@ ViewModels wrap repository calls in `runCatchingIgnoreCancelled` (`common/extens
 - Gradle configuration cache and build cache enabled
 - Kotlin daemon: 3GB heap / Gradle JVM: 4GB heap
 - Non-transitive R classes enabled
+- R8 (minify + resource shrinking) runs on `:androidApp` release builds only, so obfuscation bugs reproduce
+  only in release (QA with `build_type:release`). App-wide rules: `androidApp/proguard-rules.pro`; rules for
+  `:shared` code (e.g. the `@JavascriptInterface` WebView bridge) go in `shared/consumer-rules.pro`, published
+  via `optimization { consumerKeepRules }` in `shared/build.gradle.kts`
 - Core library desugaring enabled in the app module (`androidApp`); the shared library does not set it, since
   the app desugars every class it packages
 
